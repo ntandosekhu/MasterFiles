@@ -1,0 +1,1780 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>House Beyers Naude - Breakages</title>
+
+<style>
+
+/* =========================
+   GLOBAL
+========================= */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    background: #f4f5f7;
+
+    color: #1f2937;
+
+}
+
+
+/* =========================
+   COLOUR SYSTEM
+========================= */
+
+:root {
+
+    --space-blue: #1D2951;
+
+    --space-blue-light: #263968;
+
+    --space-blue-dark: #151f3d;
+
+    --background: #f4f5f7;
+
+    --border: #d1d5db;
+
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+.header {
+
+    background: var(--space-blue);
+
+    color: white;
+
+    padding: 20px 28px;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 20px;
+
+}
+
+.header h1 {
+
+    font-size: 24px;
+
+    font-weight: 700;
+
+}
+
+.header p {
+
+    color: #dbe4ff;
+
+    font-size: 13px;
+
+    margin-top: 5px;
+
+}
+
+.header-actions {
+
+    display: flex;
+
+    gap: 8px;
+
+}
+
+.back-button,
+.logout-button {
+
+    border: none;
+
+    padding: 10px 16px;
+
+    border-radius: 7px;
+
+    cursor: pointer;
+
+    font-weight: bold;
+
+}
+
+.back-button {
+
+    background: rgba(255,255,255,.15);
+
+    color: white;
+
+}
+
+.back-button:hover {
+
+    background: rgba(255,255,255,.25);
+
+}
+
+.logout-button {
+
+    background: #dc2626;
+
+    color: white;
+
+}
+
+.logout-button:hover {
+
+    background: #b91c1c;
+
+}
+
+
+/* =========================
+   MAIN
+========================= */
+
+.container {
+
+    max-width: 1000px;
+
+    margin: auto;
+
+    padding: 35px 20px;
+
+}
+
+
+/* =========================
+   PAGE TITLE
+========================= */
+
+.page-title {
+
+    margin-bottom: 25px;
+
+}
+
+.page-title h2 {
+
+    color: var(--space-blue);
+
+    font-size: 29px;
+
+    margin-bottom: 7px;
+
+}
+
+.page-title p {
+
+    color: #64748b;
+
+    line-height: 1.5;
+
+}
+
+
+/* =========================
+   USER INFO
+========================= */
+
+.user-info {
+
+    background: white;
+
+    border-radius: 12px;
+
+    padding: 18px 20px;
+
+    margin-bottom: 25px;
+
+    box-shadow:
+        0 3px 12px rgba(0,0,0,.07);
+
+    border-left:
+        4px solid var(--space-blue);
+
+}
+
+.user-info strong {
+
+    font-size: 16px;
+
+}
+
+.user-account {
+
+    margin-top: 5px;
+
+    color: #64748b;
+
+    font-size: 13px;
+
+}
+
+
+/* =========================
+   REPORT CARD & SECTIONS
+========================= */
+
+.report-card,
+.breakages-card {
+
+    background: white;
+
+    border-radius: 14px;
+
+    padding: 28px;
+
+    box-shadow:
+        0 3px 12px rgba(0,0,0,.07);
+
+    margin-bottom: 25px;
+
+}
+
+.report-card h3,
+.breakages-card h3 {
+
+    color: var(--space-blue);
+
+    font-size: 20px;
+
+    margin-bottom: 6px;
+
+}
+
+.report-subtitle {
+
+    color: #64748b;
+
+    font-size: 13px;
+
+    margin-bottom: 25px;
+
+}
+
+
+/* =========================
+   FORM
+========================= */
+
+.form-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(200px, 1fr)
+        );
+
+    gap: 20px;
+
+}
+
+.form-group {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 7px;
+
+}
+
+.form-group.full {
+
+    grid-column: 1 / -1;
+
+}
+
+.form-group label {
+
+    font-size: 13px;
+
+    font-weight: bold;
+
+    color: #374151;
+
+}
+
+.form-group select,
+.form-group input[type="text"],
+.form-group textarea {
+
+    width: 100%;
+
+    padding: 12px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 8px;
+
+    background: white;
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    outline: none;
+
+    transition: .15s;
+
+}
+
+.form-group select:focus,
+.form-group textarea:focus {
+
+    border-color:
+        var(--space-blue);
+
+    box-shadow:
+        0 0 0 3px rgba(
+            29,
+            41,
+            81,
+            .10
+        );
+
+}
+
+.form-group textarea {
+
+    min-height: 130px;
+
+    resize: vertical;
+
+}
+
+.description-help {
+
+    font-size: 12px;
+
+    color: #64748b;
+
+}
+
+
+/* =========================
+   ROOM INFORMATION
+========================= */
+
+.room-info {
+
+    background: #f8fafc;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 9px;
+
+    padding: 15px;
+
+    margin-top: 20px;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            1fr
+        );
+
+    gap: 12px;
+
+}
+
+.room-item {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 4px;
+
+}
+
+.room-label {
+
+    font-size: 11px;
+
+    text-transform: uppercase;
+
+    color: #64748b;
+
+    font-weight: bold;
+
+}
+
+.room-value {
+
+    font-weight: bold;
+
+    color: var(--space-blue);
+
+}
+
+
+/* =========================
+   SUBMIT
+========================= */
+
+.submit-button {
+
+    margin-top: 25px;
+
+    width: 100%;
+
+    padding: 14px 20px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: var(--space-blue);
+
+    color: white;
+
+    font-size: 15px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition: .15s;
+
+}
+
+.submit-button:hover:not(:disabled) {
+
+    background:
+        var(--space-blue-light);
+
+}
+
+.submit-button:disabled {
+
+    background: #94a3b8;
+
+    cursor: not-allowed;
+
+}
+
+
+/* =========================
+   MESSAGE
+========================= */
+
+.message {
+
+    margin-top: 18px;
+
+    padding: 13px;
+
+    border-radius: 8px;
+
+    display: none;
+
+    font-size: 13px;
+
+}
+
+.message.success {
+
+    display: block;
+
+    background: #dcfce7;
+
+    color: #166534;
+
+}
+
+.message.error {
+
+    display: block;
+
+    background: #fee2e2;
+
+    color: #991b1b;
+
+}
+
+
+/* =========================
+   MY BREAKAGES SECTION
+========================= */
+
+.breakage-list {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 12px;
+
+    margin-top: 15px;
+
+}
+
+.breakage-item {
+
+    background: #f8fafc;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 10px;
+
+    padding: 16px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 8px;
+
+}
+
+.breakage-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+}
+
+.breakage-title {
+
+    font-weight: bold;
+
+    color: var(--space-blue);
+
+    font-size: 15px;
+
+}
+
+.status-badge {
+
+    font-size: 11px;
+
+    font-weight: bold;
+
+    padding: 4px 10px;
+
+    border-radius: 20px;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.5px;
+
+}
+
+.status-badge.status-open {
+
+    background: #fef3c7;
+
+    color: #92400e;
+
+}
+
+.status-badge.status-in_progress {
+
+    background: #dbeafe;
+
+    color: #1e40af;
+
+}
+
+.status-badge.status-solved,
+.status-badge.status-closed {
+
+    background: #dcfce7;
+
+    color: #166534;
+
+}
+
+.breakage-desc {
+
+    font-size: 14px;
+
+    color: #374151;
+
+    line-height: 1.4;
+
+    white-space: pre-wrap;
+
+}
+
+.breakage-footer {
+
+    font-size: 12px;
+
+    color: #64748b;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    margin-top: 4px;
+
+}
+
+.empty-breakages {
+
+    text-align: center;
+
+    padding: 25px;
+
+    color: #64748b;
+
+    font-size: 14px;
+
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:700px) {
+
+    .header {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+    }
+
+    .header-actions {
+
+        width: 100%;
+
+    }
+
+    .back-button,
+    .logout-button {
+
+        flex: 1;
+
+    }
+
+    .form-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+    .form-group.full {
+
+        grid-column: auto;
+
+    }
+
+    .room-info {
+
+        grid-template-columns: 1fr;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     HEADER
+========================= -->
+
+<header class="header">
+
+    <div>
+
+        <h1>
+            House Beyers Naude
+        </h1>
+
+        <p>
+            Breakages
+        </p>
+
+    </div>
+
+
+    <div class="header-actions">
+
+        <button
+            class="back-button"
+            id="backButton"
+        >
+            ← Dashboard
+        </button>
+
+
+        <button
+            class="logout-button"
+            id="logoutButton"
+        >
+            Log Out
+        </button>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+
+    <!-- =========================
+         TITLE
+    ========================= -->
+
+    <section class="page-title">
+
+        <h2>
+            Report a Breakage
+        </h2>
+
+        <p>
+            Report damaged or broken residence
+            property so that it can be logged
+            and attended to.
+        </p>
+
+    </section>
+
+
+    <!-- =========================
+         USER
+    ========================= -->
+
+    <section class="user-info">
+
+        <strong id="userName">
+            Loading...
+        </strong>
+
+        <div
+            id="userAccount"
+            class="user-account"
+        >
+            Loading account information...
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         REPORT
+    ========================= -->
+
+    <section class="report-card">
+
+        <h3>
+            Breakage Details
+        </h3>
+
+        <p class="report-subtitle">
+            Please provide enough information
+            for the breakage to be identified
+            and repaired.
+        </p>
+
+
+        <div class="form-grid">
+
+
+            <!-- BREAKAGE TYPE -->
+
+            <div class="form-group">
+
+                <label
+                    for="breakageType"
+                >
+                    What is broken?
+                </label>
+
+
+                <select
+                    id="breakageType"
+                    required
+                >
+
+                    <option value="">
+                        Select an item
+                    </option>
+
+                    <option value="PLUGS">
+                        Plugs
+                    </option>
+
+                    <option value="SHELVES">
+                        Shelves
+                    </option>
+
+                    <option value="BED">
+                        Bed
+                    </option>
+
+                    <option value="WINDOW">
+                        Window
+                    </option>
+
+                    <option value="MIRROR">
+                        Mirror
+                    </option>
+
+                    <option value="DOOR">
+                        Door
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- ROOM -->
+
+            <div class="form-group">
+
+                <label>
+                    Room
+                </label>
+
+                <input
+                    id="roomDisplay"
+                    type="text"
+                    readonly
+                    value="Loading..."
+                >
+
+            </div>
+
+
+            <!-- DESCRIPTION -->
+
+            <div class="form-group full">
+
+                <label
+                    for="description"
+                >
+                    Description
+                </label>
+
+
+                <textarea
+                    id="description"
+                    placeholder="Briefly describe what is broken, damaged, or not functioning..."
+                    maxlength="1000"
+                    required
+                ></textarea>
+
+
+                <span class="description-help">
+                    Please include any useful details,
+                    such as where the damage is located
+                    or what is not working.
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             USER LOCATION
+        ========================= -->
+
+        <div class="room-info">
+
+            <div class="room-item">
+
+                <span class="room-label">
+                    Room Number
+                </span>
+
+                <span
+                    class="room-value"
+                    id="roomNumber"
+                >
+                    Loading...
+                </span>
+
+            </div>
+
+
+            <div class="room-item">
+
+                <span class="room-label">
+                    Corridor
+                </span>
+
+                <span
+                    class="room-value"
+                    id="corridorNumber"
+                >
+                    Loading...
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             SUBMIT
+        ========================= -->
+
+        <button
+            id="submitButton"
+            class="submit-button"
+            disabled
+        >
+            Report Breakage
+        </button>
+
+
+        <div
+            id="message"
+            class="message"
+        ></div>
+
+    </section>
+
+
+    <!-- =========================
+         MY BREAKAGES
+    ========================= -->
+
+    <section class="breakages-card">
+
+        <h3>
+            My Breakages
+        </h3>
+
+        <p class="report-subtitle">
+            A list of all logged breakages for your specific room.
+        </p>
+
+
+        <div
+            id="breakagesList"
+            class="breakage-list"
+        >
+
+            <div class="empty-breakages">
+                Loading room breakages...
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<script type="module">
+
+
+/* =========================
+   FIREBASE IMPORTS
+========================= */
+
+import {
+    initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+
+
+import {
+    getAuth,
+    onAuthStateChanged,
+    signOut
+}
+from
+"https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+
+
+import {
+    getFirestore,
+    doc,
+    getDoc,
+    collection,
+    addDoc,
+    query,
+    where,
+    onSnapshot
+}
+from
+"https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+
+
+/* =========================
+   FIREBASE CONFIG
+========================= */
+
+const firebaseConfig = {
+
+    apiKey:
+        "AIzaSyDW6IArj2dZiqbf00Ix3SPPSqvxTKG0GgE",
+
+    authDomain:
+        "master-files-95f6b.firebaseapp.com",
+
+    projectId:
+        "master-files-95f6b",
+
+    storageBucket:
+        "master-files-95f6b.firebasestorage.app",
+
+    messagingSenderId:
+        "537891510061",
+
+    appId:
+        "1:537891510061:web:fb46c8d1abae02b9e725a4",
+
+    measurementId:
+        "G-4GNVR5EBJX"
+
+};
+
+
+const app =
+    initializeApp(
+        firebaseConfig
+    );
+
+
+const auth =
+    getAuth(app);
+
+
+const db =
+    getFirestore(app);
+
+
+/* =========================
+   STATE
+========================= */
+
+let currentUser = null;
+
+let currentUserRecord = null;
+
+let unsubscribeBreakages = null;
+
+
+/* =========================
+   ELEMENTS
+========================= */
+
+const breakageType =
+    document.getElementById(
+        "breakageType"
+    );
+
+
+const description =
+    document.getElementById(
+        "description"
+    );
+
+
+const submitButton =
+    document.getElementById(
+        "submitButton"
+    );
+
+
+const breakagesList =
+    document.getElementById(
+        "breakagesList"
+    );
+
+
+/* =========================
+   FORM VALIDATION
+========================= */
+
+function updateSubmitButton() {
+
+    const valid =
+        currentUser &&
+        currentUserRecord &&
+        breakageType.value &&
+        description.value.trim().length > 0;
+
+
+    submitButton.disabled =
+        !valid;
+
+}
+
+
+breakageType.addEventListener(
+    "change",
+    updateSubmitButton
+);
+
+
+description.addEventListener(
+    "input",
+    updateSubmitButton
+);
+
+
+/* =========================
+   MESSAGE
+========================= */
+
+function showMessage(
+    text,
+    error = false
+) {
+
+    const message =
+        document.getElementById(
+            "message"
+        );
+
+
+    message.textContent =
+        text;
+
+
+    message.className =
+        "message " +
+        (
+            error
+                ? "error"
+                : "success"
+        );
+
+}
+
+
+/* =========================
+   LOAD ROOM BREAKAGES
+========================= */
+
+function subscribeToRoomBreakages(
+    roomNumber
+) {
+
+    if (unsubscribeBreakages) {
+
+        unsubscribeBreakages();
+
+    }
+
+
+    if (
+        !roomNumber ||
+        roomNumber === "Not assigned"
+    ) {
+
+        breakagesList.innerHTML = `
+            <div class="empty-breakages">
+                No room assigned. Unable to load breakages.
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    const q =
+        query(
+            collection(
+                db,
+                "breakages"
+            ),
+            where(
+                "roomNumber",
+                "==",
+                roomNumber
+            )
+        );
+
+
+    unsubscribeBreakages =
+        onSnapshot(
+            q,
+            snapshot => {
+
+                if (snapshot.empty) {
+
+                    breakagesList.innerHTML = `
+                        <div class="empty-breakages">
+                            No breakages recorded for Room ${roomNumber}.
+                        </div>
+                    `;
+
+                    return;
+
+                }
+
+
+                const records = [];
+
+
+                snapshot.forEach(
+                    docSnap => {
+
+                        records.push({
+
+                            id: docSnap.id,
+
+                            ...docSnap.data()
+
+                        });
+
+                    }
+                );
+
+
+                /* Sort client-side by date descending */
+
+                records.sort((a, b) => {
+
+                    return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+
+                });
+
+
+                breakagesList.innerHTML =
+                    records
+                        .map(item => {
+
+                            const rawStatus =
+                                item.status || "OPEN";
+
+                            const statusClass =
+                                "status-" + rawStatus.toLowerCase();
+
+
+                            const formattedDate =
+                                item.createdAt
+                                    ? new Date(item.createdAt).toLocaleDateString(
+                                        undefined,
+                                        {
+                                            year: "numeric",
+                                            month: "short",
+                                            day: "numeric",
+                                            hour: "2-digit",
+                                            minute: "2-digit"
+                                        }
+                                    )
+                                    : "";
+
+
+                            return `
+                                <div class="breakage-item">
+                                    <div class="breakage-header">
+                                        <span class="breakage-title">
+                                            ${item.breakageType || "Item"}
+                                        </span>
+                                        <span class="status-badge ${statusClass}">
+                                            ${rawStatus.replace("_", " ")}
+                                        </span>
+                                    </div>
+
+                                    <div class="breakage-desc">
+                                        ${item.description || ""}
+                                    </div>
+
+                                    <div class="breakage-footer">
+                                        <span>Reported by: ${item.reporterName || "Unknown"}</span>
+                                        <span>${formattedDate}</span>
+                                    </div>
+                                </div>
+                            `;
+
+                        })
+                        .join("");
+
+            },
+            error => {
+
+                console.error(
+                    "Error loading room breakages:",
+                    error
+                );
+
+
+                breakagesList.innerHTML = `
+                    <div class="empty-breakages">
+                        Could not load room breakages: ${error.message}
+                    </div>
+                `;
+
+            }
+        );
+
+}
+
+
+/* =========================
+   LOAD USER
+========================= */
+
+onAuthStateChanged(
+    auth,
+    async user => {
+
+        /*
+         * No authenticated user.
+         */
+
+        if (!user) {
+
+            window.location.href =
+                "index.html";
+
+            return;
+
+        }
+
+
+        currentUser =
+            user;
+
+
+        try {
+
+            /*
+             * USER DOCUMENT
+             *
+             * users/{Firebase Auth UID}
+             */
+
+            const userRef =
+                doc(
+                    db,
+                    "users",
+                    user.uid
+                );
+
+
+            const userSnap =
+                await getDoc(
+                    userRef
+                );
+
+
+            if (
+                !userSnap.exists()
+            ) {
+
+                await signOut(
+                    auth
+                );
+
+
+                window.location.href =
+                    "index.html";
+
+                return;
+
+            }
+
+
+            currentUserRecord = {
+
+                id:
+                    user.uid,
+
+                ...userSnap.data()
+
+            };
+
+
+            /* =========================
+               DISPLAY USER
+            ========================= */
+
+            document
+                .getElementById(
+                    "userName"
+                )
+                .textContent =
+                currentUserRecord.name ||
+                user.email ||
+                "User";
+
+
+            document
+                .getElementById(
+                    "userAccount"
+                )
+                .textContent =
+                currentUserRecord.accountType ||
+                "Account";
+
+
+            /* =========================
+               ROOM
+            ========================= */
+
+            const room =
+                currentUserRecord.roomNumber ||
+                "Not assigned";
+
+
+            const corridor =
+                currentUserRecord[
+                    "corridor number"
+                ] ||
+                "Not assigned";
+
+
+            document
+                .getElementById(
+                    "roomDisplay"
+                )
+                .value =
+                room;
+
+
+            document
+                .getElementById(
+                    "roomNumber"
+                )
+                .textContent =
+                room;
+
+
+            document
+                .getElementById(
+                    "corridorNumber"
+                )
+                .textContent =
+                corridor;
+
+
+            updateSubmitButton();
+
+
+            /* =========================
+               LOAD ROOM BREAKAGES
+            ========================= */
+
+            subscribeToRoomBreakages(
+                room
+            );
+
+        }
+
+        catch(error) {
+
+            console.error(
+                "Could not load user:",
+                error
+            );
+
+
+            showMessage(
+                "Could not load your account: " +
+                error.message,
+                true
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================
+   SUBMIT BREAKAGE
+========================= */
+
+submitButton.addEventListener(
+    "click",
+    async () => {
+
+        if (
+            !currentUser ||
+            !currentUserRecord
+        ) {
+
+            return;
+
+        }
+
+
+        const type =
+            breakageType.value;
+
+
+        const details =
+            description.value.trim();
+
+
+        if (
+            !type ||
+            !details
+        ) {
+
+            showMessage(
+                "Please select the item and provide a description.",
+                true
+            );
+
+            return;
+
+        }
+
+
+        submitButton.disabled =
+            true;
+
+
+        submitButton.textContent =
+            "Submitting...";
+
+
+        try {
+
+            /*
+             * Each report creates its
+             * own Firestore document.
+             */
+
+            const breakageData = {
+
+                /*
+                 * USER IDENTIFICATION
+                 */
+
+                reportedBy:
+                    currentUser.uid,
+
+                reporterName:
+                    currentUserRecord.name ||
+                    currentUser.email ||
+                    "Unknown",
+
+
+                /*
+                 * LOCATION
+                 */
+
+                roomNumber:
+                    currentUserRecord.roomNumber ||
+                    null,
+
+                corridorNumber:
+                    currentUserRecord[
+                        "corridor number"
+                    ] ||
+                    null,
+
+
+                /*
+                 * BREAKAGE
+                 */
+
+                breakageType:
+                    type,
+
+                description:
+                    details,
+
+
+                /*
+                 * WORKFLOW
+                 *
+                 * OPEN
+                 * → IN_PROGRESS
+                 * → SOLVED
+                 * → CLOSED
+                 */
+
+                status:
+                    "OPEN",
+
+
+                /*
+                 * TIMESTAMP
+                 */
+
+                createdAt:
+                    new Date().toISOString()
+
+            };
+
+
+            const report =
+                await addDoc(
+                    collection(
+                        db,
+                        "breakages"
+                    ),
+                    breakageData
+                );
+
+
+            console.log(
+                "Breakage logged:",
+                report.id
+            );
+
+
+            showMessage(
+                "Breakage reported successfully.",
+                false
+            );
+
+
+            /*
+             * Reset form.
+             */
+
+            breakageType.value =
+                "";
+
+
+            description.value =
+                "";
+
+
+            updateSubmitButton();
+
+        }
+
+        catch(error) {
+
+            console.error(
+                "Could not submit breakage:",
+                error
+            );
+
+
+            showMessage(
+                "Could not report breakage: " +
+                error.message,
+                true
+            );
+
+
+            updateSubmitButton();
+
+        }
+
+        finally {
+
+            submitButton.textContent =
+                "Report Breakage";
+
+        }
+
+    }
+);
+
+
+/* =========================
+   BACK BUTTON
+========================= */
+
+document
+    .getElementById(
+        "backButton"
+    )
+    .addEventListener(
+        "click",
+        () => {
+
+            window.location.href =
+                "clienthub.html";
+
+        }
+    );
+
+
+/* =========================
+   LOGOUT
+========================= */
+
+document
+    .getElementById(
+        "logoutButton"
+    )
+    .addEventListener(
+        "click",
+        async () => {
+
+            try {
+
+                if (unsubscribeBreakages) {
+
+                    unsubscribeBreakages();
+
+                }
+
+
+                await signOut(
+                    auth
+                );
+
+
+                window.location.href =
+                    "index.html";
+
+            }
+
+            catch(error) {
+
+                console.error(
+                    "Logout failed:",
+                    error
+                );
+
+
+                showMessage(
+                    "Could not log out.",
+                    true
+                );
+
+            }
+
+        }
+    );
+
+</script>
+
+
+</body>
+
+</html>

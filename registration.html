@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Files - Registration</title>
+
+    <style>
+        :root {
+            --primary: #1d2951;
+            --primary-hover: #151f3d;
+            --primary-light: #3b82f6;
+            --background-dark: #0b1329;
+            --card-bg: #ffffff;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --error-color: #dc2626;
+            --error-bg: #fef2f2;
+            --error-border: #fecaca;
+            --success-color: #166534;
+            --success-bg: #f0fdf4;
+            --success-border: #bbf7d0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: radial-gradient(circle at 80% 20%, #1e3a8a 0%, #0f172a 50%, var(--background-dark) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 32px 20px;
+            color: var(--text-dark);
+            line-height: 1.5;
+        }
+
+        .registration-card {
+            width: 100%;
+            max-width: 600px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 40px 36px;
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .header h1 {
+            color: var(--primary);
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            margin-top: 6px;
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 400;
+        }
+
+        .account-type-info {
+            background: #f0f9ff;
+            border-left: 4px solid var(--primary-light);
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            color: #1e293b;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #334155;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 15px;
+            background-color: #f8fafc;
+            color: var(--text-dark);
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        input:focus,
+        select:focus {
+            background-color: #ffffff;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+
+        .account-fields {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .account-fields h3 {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .register-button {
+            width: 100%;
+            margin-top: 28px;
+            border: none;
+            border-radius: 8px;
+            padding: 13px;
+            background: var(--primary);
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(29, 41, 81, 0.25);
+        }
+
+        .register-button:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .register-button:active {
+            transform: translateY(0);
+        }
+
+        .register-button:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .message {
+            display: none;
+            margin-top: 20px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            line-height: 1.5;
+            text-align: center;
+        }
+
+        .message.error {
+            display: block;
+            background: var(--error-bg);
+            border: 1px solid var(--error-border);
+            color: var(--error-color);
+        }
+
+        .message.success {
+            display: block;
+            background: var(--success-bg);
+            border: 1px solid var(--success-border);
+            color: var(--success-color);
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .login-link a {
+            color: var(--primary);
+            font-weight: 700;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .login-link a:hover {
+            color: var(--primary-light);
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 16px;
+            }
+
+            .registration-card {
+                padding: 32px 20px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full {
+                grid-column: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="registration-card">
+
+    <div class="header">
+        <h1>Master Files</h1>
+        <p>Create your account</p>
+    </div>
+
+    <div class="account-type-info">
+        Select the type of account you are registering. Your account status will be determined automatically.
+    </div>
+
+    <form id="registrationForm">
+
+        <div class="form-grid">
+
+            <div class="form-group">
+                <label for="name">First Name</label>
+                <input
+                    type="text"
+                    id="name"
+                    required
+                    autocomplete="given-name"
+                    placeholder="First name"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="surname">Surname</label>
+                <input
+                    type="text"
+                    id="surname"
+                    required
+                    autocomplete="family-name"
+                    placeholder="Surname"
+                >
+            </div>
+
+            <div class="form-group full">
+                <label for="email">Email Address</label>
+                <input
+                    type="email"
+                    id="email"
+                    required
+                    autocomplete="email"
+                    placeholder="Enter your email"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input
+                    type="password"
+                    id="password"
+                    required
+                    minlength="6"
+                    autocomplete="new-password"
+                    placeholder="Enter password"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <input
+                    type="password"
+                    id="confirmPassword"
+                    required
+                    minlength="6"
+                    autocomplete="new-password"
+                    placeholder="Repeat your password"
+                >
+            </div>
+
+            <div class="form-group full">
+                <label for="accountType">Account Type</label>
+                <select id="accountType" required>
+                    <option value="">Select account type</option>
+                    <option value="HOUSE_MEMBER">House Member</option>
+                    <option value="ALUMNI">Alumni</option>
+                    <option value="ORGANISATION">Organisation</option>
+                </select>
+            </div>
+
+        </div>
+
+        <!-- HOUSE MEMBER FIELDS -->
+        <div id="houseMemberFields" class="account-fields" style="display:none;">
+            <h3>House Member Information</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="studentNumber">Student Number</label>
+                    <input type="text" id="studentNumber" placeholder="Student number">
+                </div>
+
+                <div class="form-group">
+                    <label for="roomNumber">Room Number</label>
+                    <input type="text" id="roomNumber" placeholder="Room number">
+                </div>
+
+                <div class="form-group full">
+                    <label for="keyNumber">Key Number</label>
+                    <input type="text" id="keyNumber" placeholder="Key number">
+                </div>
+            </div>
+        </div>
+
+        <!-- ALUMNI FIELDS -->
+        <div id="alumniFields" class="account-fields" style="display:none;">
+            <h3>Alumni Information</h3>
+            <div class="form-grid">
+                <div class="form-group full">
+                    <label for="alumniStudentNumber">Student Number</label>
+                    <input type="text" id="alumniStudentNumber" placeholder="Previous student number">
+                </div>
+            </div>
+        </div>
+
+        <!-- ORGANISATION FIELDS -->
+        <div id="organisationFields" class="account-fields" style="display:none;">
+            <h3>Organisation Information</h3>
+            <div class="form-grid">
+                <div class="form-group full">
+                    <label for="organisationName">Organisation Name</label>
+                    <input type="text" id="organisationName" placeholder="Organisation name">
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" id="registerButton" class="register-button">
+            Create Account
+        </button>
+
+        <div id="message" class="message"></div>
+
+    </form>
+
+    <div class="login-link">
+        Already have an account? <a href="index.html">Log in</a>
+    </div>
+
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDW6IArj2dZiqbf00Ix3SPPSqvxTKG0GgE",
+        authDomain: "master-files-95f6b.firebaseapp.com",
+        projectId: "master-files-95f6b",
+        storageBucket: "master-files-95f6b.firebasestorage.app",
+        messagingSenderId: "537891510061",
+        appId: "1:537891510061:web:fb46c8d1abae02b9e725a4",
+        measurementId: "G-4GNVR5EBJX"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const form = document.getElementById("registrationForm");
+    const accountType = document.getElementById("accountType");
+    const houseMemberFields = document.getElementById("houseMemberFields");
+    const alumniFields = document.getElementById("alumniFields");
+    const organisationFields = document.getElementById("organisationFields");
+    const registerButton = document.getElementById("registerButton");
+    const message = document.getElementById("message");
+
+    accountType.addEventListener("change", () => {
+        const type = accountType.value;
+
+        houseMemberFields.style.display = type === "HOUSE_MEMBER" ? "block" : "none";
+        alumniFields.style.display = type === "ALUMNI" ? "block" : "none";
+        organisationFields.style.display = type === "ORGANISATION" ? "block" : "none";
+
+        document.getElementById("studentNumber").required = type === "HOUSE_MEMBER";
+        document.getElementById("roomNumber").required = type === "HOUSE_MEMBER";
+        document.getElementById("keyNumber").required = type === "HOUSE_MEMBER";
+        document.getElementById("alumniStudentNumber").required = type === "ALUMNI";
+        document.getElementById("organisationName").required = type === "ORGANISATION";
+    });
+
+    form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        clearMessage();
+
+        const name = document.getElementById("name").value.trim();
+        const surname = document.getElementById("surname").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value;
+        const confirmPassword = document.getElementById("confirmPassword").value;
+        const type = accountType.value;
+
+        if (password !== confirmPassword) {
+            showMessage("The passwords do not match.", true);
+            return;
+        }
+
+        if (!type) {
+            showMessage("Please select an account type.", true);
+            return;
+        }
+
+        registerButton.disabled = true;
+        registerButton.textContent = "Creating Account...";
+
+        try {
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+
+            console.log("Firebase Auth UID:", user.uid);
+
+            let userData = {
+                name: name,
+                surname: surname,
+                email: email,
+                accountType: type,
+                status: type === "ORGANISATION" ? "ACTIVE" : "PENDING",
+                createdAt: new Date().toISOString()
+            };
+
+            if (type === "HOUSE_MEMBER") {
+                userData.studentNumber = document.getElementById("studentNumber").value.trim();
+                userData.roomNumber = document.getElementById("roomNumber").value.trim();
+                userData.keyNumber = document.getElementById("keyNumber").value.trim();
+            }
+
+            if (type === "ALUMNI") {
+                userData.studentNumber = document.getElementById("alumniStudentNumber").value.trim();
+            }
+
+            if (type === "ORGANISATION") {
+                userData.organisationName = document.getElementById("organisationName").value.trim();
+            }
+
+            await setDoc(doc(db, "users", user.uid), userData);
+
+            console.log("User document created:", `users/${user.uid}`);
+
+            showMessage(
+                type === "ORGANISATION"
+                    ? "Account created successfully. You can now log in."
+                    : "Account created successfully. Your account is pending approval.",
+                false
+            );
+
+            form.reset();
+
+            houseMemberFields.style.display = "none";
+            alumniFields.style.display = "none";
+            organisationFields.style.display = "none";
+
+            registerButton.textContent = "Account Created";
+        } catch (error) {
+            console.error("Registration error:", error);
+
+            let errorMessage = "Registration failed.";
+
+            switch (error.code) {
+                case "auth/email-already-in-use":
+                    errorMessage = "An account with this email already exists.";
+                    break;
+                case "auth/invalid-email":
+                    errorMessage = "Please enter a valid email address.";
+                    break;
+                case "auth/weak-password":
+                    errorMessage = "The password is too weak.";
+                    break;
+                case "permission-denied":
+                    errorMessage = "The account was created, but Firestore did not allow the user profile to be created.";
+                    break;
+                default:
+                    errorMessage = error.message;
+            }
+
+            showMessage(errorMessage, true);
+
+            registerButton.disabled = false;
+            registerButton.textContent = "Create Account";
+        }
+    });
+
+    function showMessage(text, isError) {
+        message.textContent = text;
+        message.className = "message " + (isError ? "error" : "success");
+    }
+
+    function clearMessage() {
+        message.textContent = "";
+        message.className = "message";
+    }
+</script>
+
+</body>
+</html>

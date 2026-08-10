@@ -1,0 +1,1851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>House Beyers Naude - Admin Venue Management</title>
+
+<style>
+/* =========================
+   GLOBAL & COLOUR SYSTEM
+========================= */
+:root {
+    --space-blue: #1D2951;
+    --space-blue-hover: #151f3d;
+    --space-blue-light: #263968;
+    --space-blue-subtle: #f0f4ff;
+    
+    --background: #f4f5f7;
+    --card-bg: #ffffff;
+    --border: #e2e8f0;
+    --text-primary: #1f2937;
+    --text-muted: #64748b;
+    
+    /* Calendar & Status Colors */
+    --status-available-bg: #ffffff;
+    --status-available-border: #cbd5e1;
+    --status-available-text: #1e293b;
+    
+    --status-booked-bg: #fef2f2;
+    --status-booked-border: #fecaca;
+    --status-booked-text: #991b1b;
+    
+    --status-admin-bg: #eff6ff;
+    --status-admin-border: #bfdbfe;
+    --status-admin-text: #1e40af;
+
+    --status-event-bg: #f3e8ff;
+    --status-event-border: #d8b4fe;
+    --status-event-text: #6b21a8;
+    
+    --status-passed-bg: #f1f5f9;
+    --status-passed-border: #e2e8f0;
+    --status-passed-text: #94a3b8;
+
+    --status-selected-bg: #1D2951;
+    --status-selected-text: #ffffff;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--background);
+    color: var(--text-primary);
+    line-height: 1.5;
+    min-height: 100vh;
+}
+
+/* =========================
+   HEADER
+========================= */
+.header {
+    background: var(--space-blue);
+    color: white;
+    padding: 18px 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.header-branding h1 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+}
+
+.header-branding p {
+    color: #cbd5e1;
+    font-size: 13px;
+    margin-top: 2px;
+}
+
+.header-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.header-button {
+    border: none;
+    padding: 9px 16px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: background 0.15s ease;
+}
+
+.back-button {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+}
+
+.back-button:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.logout-button {
+    background: #dc2626;
+    color: white;
+}
+
+.logout-button:hover {
+    background: #b91c1c;
+}
+
+/* =========================
+   CONTAINER & LAYOUT
+========================= */
+.container {
+    max-width: 1320px;
+    margin: auto;
+    padding: 32px 20px 48px 20px;
+}
+
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    gap: 12px;
+    color: var(--text-muted);
+}
+
+.spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid var(--border);
+    border-top-color: var(--space-blue);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.message-banner {
+    display: none;
+    padding: 14px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    margin-bottom: 24px;
+    font-weight: 600;
+}
+
+.message-banner.error {
+    display: block;
+    background: #fee2e2;
+    border: 1px solid #fca5a5;
+    color: #991b1b;
+}
+
+.message-banner.success {
+    display: block;
+    background: #dcfce7;
+    border: 1px solid #86efac;
+    color: #166534;
+}
+
+.page-content {
+    display: none;
+}
+
+/* =========================
+   PAGE TITLE & ADMIN INFO
+========================= */
+.page-title {
+    margin-bottom: 24px;
+}
+
+.page-title h2 {
+    color: var(--space-blue);
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.page-title p {
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+.admin-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 16px 24px;
+    margin-bottom: 28px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    border-left: 5px solid var(--space-blue);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.admin-card-info h3 {
+    font-size: 16px;
+    color: var(--text-primary);
+}
+
+.admin-card-info p {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.admin-badge {
+    background: #fef3c7;
+    color: #92400e;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+/* =========================
+   ADMIN ACTION PANEL (TABS & FORMS)
+========================= */
+.action-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 32px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.mode-tabs {
+    display: flex;
+    gap: 12px;
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+}
+
+.mode-tab {
+    background: none;
+    border: none;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-muted);
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.mode-tab.active {
+    background: var(--space-blue-subtle);
+    color: var(--space-blue);
+}
+
+.mode-tab:hover:not(.active) {
+    color: var(--space-blue);
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    align-items: flex-end;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-group label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.form-input, .form-select, .form-textarea {
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 14px;
+    background: #fafafa;
+    color: var(--text-primary);
+    width: 100%;
+}
+
+.form-textarea {
+    resize: vertical;
+    min-height: 70px;
+}
+
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+    outline: none;
+    border-color: var(--space-blue);
+    background: #ffffff;
+}
+
+.form-input:disabled, .form-select:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.btn-primary {
+    background: var(--space-blue);
+    color: white;
+    border: none;
+    padding: 11px 20px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    width: 100%;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background: var(--space-blue-hover);
+}
+
+.btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-secondary {
+    background: #e2e8f0;
+    color: var(--text-primary);
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.btn-secondary:hover {
+    background: #cbd5e1;
+}
+
+/* Student Lookup Confirmation Box */
+.student-search-box {
+    display: flex;
+    gap: 10px;
+}
+
+.student-card {
+    display: none;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-top: 12px;
+    margin-bottom: 16px;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.student-card.active {
+    display: flex;
+}
+
+.student-card-details h4 {
+    font-size: 15px;
+    color: var(--space-blue);
+}
+
+.student-card-details p {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+/* =========================
+   CONTROLS & VENUE SELECTOR
+========================= */
+.controls-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.venue-selector-label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+
+.venue-tabs {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.venue-tab {
+    background: var(--background);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.venue-tab:hover {
+    border-color: var(--space-blue);
+    color: var(--space-blue);
+}
+
+.venue-tab.active {
+    background: var(--space-blue);
+    color: white;
+    border-color: var(--space-blue);
+}
+
+.legend {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.legend-box {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    border: 1px solid;
+}
+
+.legend-box.available { background: var(--status-available-bg); border-color: var(--status-available-border); }
+.legend-box.booked { background: var(--status-booked-bg); border-color: var(--status-booked-border); }
+.legend-box.admin-booking { background: var(--status-admin-bg); border-color: var(--status-admin-border); }
+.legend-box.house-event { background: var(--status-event-bg); border-color: var(--status-event-border); }
+.legend-box.passed { background: var(--status-passed-bg); border-color: var(--status-passed-border); }
+
+/* =========================
+   14-DAY CALENDAR GRID
+========================= */
+.calendar-section {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 32px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.calendar-scroll-wrapper {
+    overflow-x: auto;
+    width: 100%;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: 75px repeat(14, minmax(110px, 1fr));
+    gap: 6px;
+    min-width: 1600px;
+}
+
+.calendar-cell {
+    padding: 8px 6px;
+    border-radius: 6px;
+    font-size: 12px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 52px;
+    border: 1px solid var(--border);
+    transition: all 0.15s ease;
+}
+
+.calendar-cell.header-cell {
+    background: var(--space-blue);
+    color: white;
+    font-weight: 700;
+    border: none;
+    min-height: 44px;
+}
+
+.calendar-cell.header-cell span {
+    font-size: 11px;
+    font-weight: 400;
+    opacity: 0.85;
+}
+
+.calendar-cell.time-cell {
+    background: #f8fafc;
+    font-weight: 700;
+    color: var(--text-muted);
+    border-color: #e2e8f0;
+}
+
+/* Cell Visual States */
+.calendar-cell.status-available {
+    background: var(--status-available-bg);
+    border-color: var(--status-available-border);
+    color: var(--status-available-text);
+    cursor: pointer;
+}
+
+.calendar-cell.status-available:hover {
+    border-color: var(--space-blue);
+    background: #f0f4ff;
+}
+
+.calendar-cell.status-booked {
+    background: var(--status-booked-bg);
+    border-color: var(--status-booked-border);
+    color: var(--status-booked-text);
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.calendar-cell.status-admin-booking {
+    background: var(--status-admin-bg);
+    border-color: var(--status-admin-border);
+    color: var(--status-admin-text);
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.calendar-cell.status-house-event {
+    background: var(--status-event-bg);
+    border-color: var(--status-event-border);
+    color: var(--status-event-text);
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.calendar-cell.status-passed {
+    background: var(--status-passed-bg);
+    border-color: var(--status-passed-border);
+    color: var(--status-passed-text);
+    cursor: not-allowed;
+}
+
+.calendar-cell.status-selected {
+    background: var(--status-selected-bg) !important;
+    border-color: var(--status-selected-bg) !important;
+    color: var(--status-selected-text) !important;
+    font-weight: 700;
+    box-shadow: 0 0 0 2px var(--space-blue);
+}
+
+/* =========================
+   LIST & FILTER SECTION
+========================= */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--space-blue);
+}
+
+.filter-bar {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.filter-select {
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 13px;
+    background: white;
+}
+
+.list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 32px;
+}
+
+.item-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+
+.item-details h4 {
+    font-size: 16px;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.item-meta {
+    font-size: 13px;
+    color: var(--text-muted);
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.badge {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.badge.status-APPROVED { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+.badge.status-PENDING { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+.badge.status-CANCELLED { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+.badge.type-EVENT { background: #f3e8ff; color: #6b21a8; border: 1px solid #d8b4fe; }
+
+.cancel-button {
+    background: white;
+    color: #dc2626;
+    border: 1px solid #dc2626;
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.cancel-button:hover {
+    background: #dc2626;
+    color: white;
+}
+
+.details-button {
+    background: white;
+    color: var(--space-blue);
+    border: 1px solid var(--space-blue);
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.details-button:hover {
+    background: var(--space-blue);
+    color: white;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 28px 20px;
+    background: var(--card-bg);
+    border: 1px dashed var(--border);
+    border-radius: 10px;
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+/* =========================
+   MODAL / INFORMATION PANEL
+========================= */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.55);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+.modal-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    max-width: 540px;
+    width: 100%;
+    padding: 24px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 12px;
+}
+
+.modal-header h3 {
+    font-size: 18px;
+    color: var(--space-blue);
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: var(--text-muted);
+    cursor: pointer;
+}
+
+.modal-body-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    font-size: 13px;
+}
+
+.modal-field label {
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    font-size: 11px;
+    display: block;
+}
+
+.modal-field span {
+    color: var(--text-primary);
+    font-size: 14px;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+}
+
+/* =========================
+   RESPONSIVE DESIGN
+========================= */
+@media (max-width: 640px) {
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 16px 20px;
+    }
+
+    .header-actions {
+        width: 100%;
+    }
+
+    .header-button {
+        flex: 1;
+        text-align: center;
+    }
+
+    .admin-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .item-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .modal-body-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- =========================
+     HEADER
+========================= -->
+<header class="header">
+    <div class="header-branding">
+        <h1>House Beyers Naude</h1>
+        <p>Venue & House Event Management</p>
+    </div>
+
+    <div class="header-actions">
+        <button class="header-button back-button" id="dashboardButton">← Dashboard</button>
+        <button class="header-button logout-button" id="logoutButton">Log Out</button>
+    </div>
+</header>
+
+<main class="container">
+
+    <!-- LOADING & MESSAGES -->
+    <div id="loadingState" class="loading-container">
+        <div class="spinner"></div>
+        <p>Initializing Administrative Booking Portal...</p>
+    </div>
+
+    <div id="messageBanner" class="message-banner"></div>
+
+    <!-- MAIN PAGE CONTENT -->
+    <div id="pageContent" class="page-content">
+
+        <!-- PAGE INTRO -->
+        <section class="page-title">
+            <h2>Manage Bookings</h2>
+            <p>View venue availability, create bookings on behalf of residents, and manage house events.</p>
+        </section>
+
+        <!-- ADMIN INFO CARD -->
+        <section class="admin-card">
+            <div class="admin-card-info">
+                <h3 id="adminName">Loading...</h3>
+                <p id="adminEmail">Administrator</p>
+            </div>
+            <span class="admin-badge">Administrative Mode</span>
+        </section>
+
+        <!-- ADMIN ACTION PANEL -->
+        <section class="action-card">
+            <div class="mode-tabs">
+                <button class="mode-tab active" id="tabResident">Book for Resident</button>
+                <button class="mode-tab" id="tabHouseEvent">Create House Event</button>
+            </div>
+
+            <!-- MODE 1: BOOK FOR RESIDENT -->
+            <div id="modeResident">
+                <!-- Student Lookup -->
+                <div class="form-group" style="margin-bottom: 12px;">
+                    <label>Step 1: Identify Resident (Student Number)</label>
+                    <div class="student-search-box">
+                        <input type="text" id="studentNumberSearch" class="form-input" placeholder="e.g. 2023123456">
+                        <button type="button" id="btnSearchStudent" class="btn-secondary" style="white-space: nowrap;">Find Student</button>
+                    </div>
+                </div>
+
+                <!-- Student Confirmation Card -->
+                <div id="studentCard" class="student-card">
+                    <div class="student-card-details">
+                        <h4 id="stName">John Doe</h4>
+                        <p>Student #: <strong id="stNum">2023123456</strong> | Room: <span id="stRoom">102</span> | Role: <span id="stRole">Resident</span></p>
+                    </div>
+                    <button type="button" id="btnClearStudent" class="btn-secondary" style="font-size: 11px; padding: 4px 10px;">Change</button>
+                </div>
+
+                <!-- Resident Booking Form -->
+                <form id="residentBookingForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Venue</label>
+                            <input type="text" id="resFormVenue" class="form-input" value="Bond" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label>Start Time</label>
+                            <input type="text" id="resFormStart" class="form-input" placeholder="Click available slot on calendar" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label>Duration (Max 3 hrs)</label>
+                            <select id="resFormEnd" class="form-select" disabled>
+                                <option value="">Select slot on calendar first</option>
+                            </select>
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Booking Purpose / Admin Notes</label>
+                            <input type="text" id="resFormPurpose" class="form-input" placeholder="e.g. Academic Group Study Session">
+                        </div>
+                        <div class="form-group full-width">
+                            <button type="submit" id="btnSubmitResBooking" class="btn-primary" disabled>Create Resident Booking</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- MODE 2: CREATE HOUSE EVENT -->
+            <div id="modeHouseEvent" style="display: none;">
+                <form id="houseEventForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Event Name</label>
+                            <input type="text" id="eventTitle" class="form-input" placeholder="e.g. House General Meeting" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Responsible Body</label>
+                            <select id="eventOrganiser" class="form-select">
+                                <option value="House Committee">House Committee</option>
+                                <option value="RC Committee">RC Committee</option>
+                                <option value="Academic Committee">Academic Committee</option>
+                                <option value="Social Committee">Social Committee</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Venue</label>
+                            <input type="text" id="eventFormVenue" class="form-input" value="Bond" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label>Start Time</label>
+                            <input type="text" id="eventFormStart" class="form-input" placeholder="Click available slot on calendar" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label>Duration (Max 3 hrs)</label>
+                            <select id="eventFormEnd" class="form-select" disabled>
+                                <option value="">Select slot on calendar first</option>
+                            </select>
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Event Description</label>
+                            <textarea id="eventDescription" class="form-textarea" placeholder="Brief details regarding the event..."></textarea>
+                        </div>
+                        <div class="form-group full-width">
+                            <button type="submit" id="btnSubmitEvent" class="btn-primary" disabled>Create Official House Event</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </section>
+
+        <!-- VENUE SELECTOR & LEGEND -->
+        <section class="controls-card">
+            <div>
+                <div class="venue-selector-label">Select Venue</div>
+                <div class="venue-tabs">
+                    <button class="venue-tab active" data-venue-id="bond" data-venue-name="Bond">Bond</button>
+                    <button class="venue-tab" data-venue-id="gazelle" data-venue-name="Gazelle">Gazelle</button>
+                    <button class="venue-tab" data-venue-id="piano_room" data-venue-name="Piano Room">Piano Room</button>
+                </div>
+            </div>
+
+            <div class="legend">
+                <div class="legend-item"><div class="legend-box available"></div> Available</div>
+                <div class="legend-item"><div class="legend-box booked"></div> Resident Booking</div>
+                <div class="legend-item"><div class="legend-box admin-booking"></div> Admin-Created Booking</div>
+                <div class="legend-item"><div class="legend-box house-event"></div> House Event</div>
+                <div class="legend-item"><div class="legend-box passed"></div> Passed</div>
+            </div>
+        </section>
+
+        <!-- 14-DAY CALENDAR -->
+        <section class="calendar-section">
+            <div class="calendar-scroll-wrapper">
+                <div id="calendarGrid" class="calendar-grid">
+                    <!-- Dynamic rendering -->
+                </div>
+            </div>
+        </section>
+
+        <!-- UPCOMING BOOKINGS OVERVIEW -->
+        <section>
+            <div class="section-header">
+                <h3 class="section-title">Schedule Overview & Manage</h3>
+                <div class="filter-bar">
+                    <select id="filterVenue" class="filter-select">
+                        <option value="ALL">All Venues</option>
+                        <option value="bond">Bond</option>
+                        <option value="gazelle">Gazelle</option>
+                        <option value="piano_room">Piano Room</option>
+                    </select>
+                    <select id="filterType" class="filter-select">
+                        <option value="ALL">All Booking Types</option>
+                        <option value="RESIDENT">Resident Bookings</option>
+                        <option value="EVENT">House Events</option>
+                    </select>
+                    <select id="filterStatus" class="filter-select">
+                        <option value="ACTIVE">Active Only</option>
+                        <option value="CANCELLED">Cancelled</option>
+                        <option value="ALL">All Statuses</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="adminBookingsList" class="list-container">
+                <div class="empty-state">Loading bookings schedule...</div>
+            </div>
+        </section>
+
+    </div>
+
+</main>
+
+<!-- BOOKING DETAILS MODAL -->
+<div id="bookingModal" class="modal-overlay">
+    <div class="modal-card">
+        <div class="modal-header">
+            <h3 id="modalTitle">Booking Details</h3>
+            <button class="modal-close" id="btnModalClose">&times;</button>
+        </div>
+        <div class="modal-body-grid">
+            <div class="modal-field">
+                <label>Venue</label>
+                <span id="mdVenue">-</span>
+            </div>
+            <div class="modal-field">
+                <label>Status</label>
+                <span id="mdStatus">-</span>
+            </div>
+            <div class="modal-field">
+                <label>Date</label>
+                <span id="mdDate">-</span>
+            </div>
+            <div class="modal-field">
+                <label>Time</label>
+                <span id="mdTime">-</span>
+            </div>
+            <div class="modal-field">
+                <label>Assigned To / Event</label>
+                <span id="mdBooker">-</span>
+            </div>
+            <div class="modal-field">
+                <label>Student Number</label>
+                <span id="mdStudentNum">-</span>
+            </div>
+            <div class="modal-field">
+                <label>Created By</label>
+                <span id="mdCreatedBy">-</span>
+            </div>
+            <div class="modal-field">
+                <label>Created Date</label>
+                <span id="mdCreatedDate">-</span>
+            </div>
+            <div class="modal-field" style="grid-column: 1 / -1;">
+                <label>Purpose / Description</label>
+                <span id="mdPurpose">-</span>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary" id="btnModalCloseFooter">Close</button>
+            <button class="cancel-button" id="btnModalCancelBooking" style="display: none;">Cancel Booking</button>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+
+/* =========================
+   FIREBASE IMPORTS
+========================= */
+import {
+    initializeApp
+} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+
+import {
+    getAuth,
+    onAuthStateChanged,
+    signOut
+} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+
+import {
+    getFirestore,
+    doc,
+    getDoc,
+    collection,
+    getDocs,
+    addDoc,
+    updateDoc,
+    query,
+    where,
+    orderBy
+} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+
+/* =========================
+   FIREBASE CONFIG
+========================= */
+const firebaseConfig = {
+    apiKey: "AIzaSyDW6IArj2dZiqbf00Ix3SPPSqvxTKG0GgE",
+    authDomain: "master-files-95f6b.firebaseapp.com",
+    projectId: "master-files-95f6b",
+    storageBucket: "master-files-95f6b.firebasestorage.app",
+    messagingSenderId: "537891510061",
+    appId: "1:537891510061:web:fb46c8d1abae02b9e725a4",
+    measurementId: "G-4GNVR5EBJX"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+/* =========================
+   STATE MANAGEMENT
+========================= */
+let currentAdmin = null;
+let currentAdminRecord = null;
+
+let allBookings = [];
+let allUsers = [];
+
+let currentVenueId = "bond";
+let currentVenueName = "Bond";
+
+let activeMode = "RESIDENT"; // "RESIDENT" or "EVENT"
+let selectedStudent = null; // Verified student object
+
+let selectedSlotStart = null;
+let activeModalBooking = null;
+
+/* =========================
+   DOM ELEMENTS
+========================= */
+const loadingState = document.getElementById("loadingState");
+const pageContent = document.getElementById("pageContent");
+const messageBanner = document.getElementById("messageBanner");
+
+const adminNameEl = document.getElementById("adminName");
+const adminEmailEl = document.getElementById("adminEmail");
+
+const tabResident = document.getElementById("tabResident");
+const tabHouseEvent = document.getElementById("tabHouseEvent");
+const modeResident = document.getElementById("modeResident");
+const modeHouseEvent = document.getElementById("modeHouseEvent");
+
+// Student search DOMs
+const studentNumberSearch = document.getElementById("studentNumberSearch");
+const btnSearchStudent = document.getElementById("btnSearchStudent");
+const studentCard = document.getElementById("studentCard");
+const stName = document.getElementById("stName");
+const stNum = document.getElementById("stNum");
+const stRoom = document.getElementById("stRoom");
+const stRole = document.getElementById("stRole");
+const btnClearStudent = document.getElementById("btnClearStudent");
+
+// Resident Form DOMs
+const residentBookingForm = document.getElementById("residentBookingForm");
+const resFormVenue = document.getElementById("resFormVenue");
+const resFormStart = document.getElementById("resFormStart");
+const resFormEnd = document.getElementById("resFormEnd");
+const resFormPurpose = document.getElementById("resFormPurpose");
+const btnSubmitResBooking = document.getElementById("btnSubmitResBooking");
+
+// House Event Form DOMs
+const houseEventForm = document.getElementById("houseEventForm");
+const eventTitle = document.getElementById("eventTitle");
+const eventOrganiser = document.getElementById("eventOrganiser");
+const eventFormVenue = document.getElementById("eventFormVenue");
+const eventFormStart = document.getElementById("eventFormStart");
+const eventFormEnd = document.getElementById("eventFormEnd");
+const eventDescription = document.getElementById("eventDescription");
+const btnSubmitEvent = document.getElementById("btnSubmitEvent");
+
+// Calendar & List DOMs
+const calendarGrid = document.getElementById("calendarGrid");
+const adminBookingsList = document.getElementById("adminBookingsList");
+const filterVenue = document.getElementById("filterVenue");
+const filterType = document.getElementById("filterType");
+const filterStatus = document.getElementById("filterStatus");
+
+// Modal DOMs
+const bookingModal = document.getElementById("bookingModal");
+const btnModalClose = document.getElementById("btnModalClose");
+const btnModalCloseFooter = document.getElementById("btnModalCloseFooter");
+const btnModalCancelBooking = document.getElementById("btnModalCancelBooking");
+
+/* =========================
+   UTILITY FUNCTIONS
+========================= */
+function showMessage(text, isError = false) {
+    messageBanner.textContent = text;
+    messageBanner.className = "message-banner " + (isError ? "error" : "success");
+    setTimeout(() => {
+        messageBanner.className = "message-banner";
+    }, 6000);
+}
+
+function parseDate(val) {
+    if (!val) return null;
+    if (val.toDate && typeof val.toDate === "function") return val.toDate();
+    const d = new Date(val);
+    return isNaN(d.getTime()) ? null : d;
+}
+
+function formatDateShort(date) {
+    return date.toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short", year: "numeric" });
+}
+
+function formatTime(date) {
+    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false });
+}
+
+/* =========================
+   CALENDAR COMPUTATIONS
+========================= */
+function getCalendarDays() {
+    const now = new Date();
+    const dayOfWeek = now.getDay();
+    const distToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+    const monday = new Date(now);
+    monday.setDate(now.getDate() + distToMonday);
+    monday.setHours(0, 0, 0, 0);
+
+    const days = [];
+    for (let i = 0; i < 14; i++) {
+        const d = new Date(monday);
+        d.setDate(monday.getDate() + i);
+        days.push(d);
+    }
+    return days;
+}
+
+function getHourlySlots() {
+    const hours = [];
+    for (let h = 8; h <= 21; h++) {
+        hours.push(h);
+    }
+    return hours;
+}
+
+function getSlotStatus(slotStart, slotEnd) {
+    const now = new Date();
+
+    if (slotStart < now) {
+        return { type: "PASSED" };
+    }
+
+    for (const b of allBookings) {
+        if ((b.status || "").toUpperCase() === "CANCELLED") continue;
+        if ((b.venueId || "").toLowerCase() !== currentVenueId.toLowerCase()) continue;
+
+        const bStart = parseDate(b.startTime);
+        const bEnd = parseDate(b.endTime);
+
+        if (!bStart || !bEnd) continue;
+
+        // Overlap check
+        if (bStart < slotEnd && bEnd > slotStart) {
+            if (b.isHouseEvent || b.type === "HOUSE_EVENT") {
+                return { type: "HOUSE_EVENT", booking: b };
+            } else if (b.createdBy && b.createdBy !== b.bookerId) {
+                return { type: "ADMIN_BOOKING", booking: b };
+            } else {
+                return { type: "BOOKED", booking: b };
+            }
+        }
+    }
+
+    return { type: "AVAILABLE" };
+}
+
+/* =========================
+   RENDER CALENDAR
+========================= */
+function renderCalendar() {
+    const days = getCalendarDays();
+    const hours = getHourlySlots();
+
+    calendarGrid.innerHTML = "";
+
+    // Header Corner
+    const emptyCorner = document.createElement("div");
+    emptyCorner.className = "calendar-cell header-cell";
+    emptyCorner.textContent = "Time";
+    calendarGrid.appendChild(emptyCorner);
+
+    days.forEach(day => {
+        const headerCell = document.createElement("div");
+        headerCell.className = "calendar-cell header-cell";
+        headerCell.innerHTML = `${day.toLocaleDateString(undefined, { weekday: "short" })}<span>${day.getDate()} ${day.toLocaleDateString(undefined, { month: "short" })}</span>`;
+        calendarGrid.appendChild(headerCell);
+    });
+
+    hours.forEach(h => {
+        const timeCell = document.createElement("div");
+        timeCell.className = "calendar-cell time-cell";
+        timeCell.textContent = `${h.toString().padStart(2, "0")}:00`;
+        calendarGrid.appendChild(timeCell);
+
+        days.forEach(day => {
+            const slotStart = new Date(day.getFullYear(), day.getMonth(), day.getDate(), h, 0, 0, 0);
+            const slotEnd = new Date(day.getFullYear(), day.getMonth(), day.getDate(), h + 1, 0, 0, 0);
+
+            const statusInfo = getSlotStatus(slotStart, slotEnd);
+            const cell = document.createElement("div");
+
+            const isSelected = selectedSlotStart && selectedSlotStart.getTime() === slotStart.getTime();
+
+            if (isSelected) {
+                cell.className = "calendar-cell status-selected";
+                cell.innerHTML = `Selected<br><strong>${formatTime(slotStart)}</strong>`;
+            } else if (statusInfo.type === "PASSED") {
+                cell.className = "calendar-cell status-passed";
+                cell.textContent = "Passed";
+            } else if (statusInfo.type === "HOUSE_EVENT") {
+                cell.className = "calendar-cell status-house-event";
+                cell.textContent = statusInfo.booking.title || "House Event";
+                cell.addEventListener("click", () => openBookingModal(statusInfo.booking));
+            } else if (statusInfo.type === "ADMIN_BOOKING") {
+                cell.className = "calendar-cell status-admin-booking";
+                cell.textContent = statusInfo.booking.bookerName || "Admin Booking";
+                cell.addEventListener("click", () => openBookingModal(statusInfo.booking));
+            } else if (statusInfo.type === "BOOKED") {
+                cell.className = "calendar-cell status-booked";
+                cell.textContent = statusInfo.booking.bookerName || "Booked";
+                cell.addEventListener("click", () => openBookingModal(statusInfo.booking));
+            } else {
+                cell.className = "calendar-cell status-available";
+                cell.textContent = "Available";
+                cell.addEventListener("click", () => handleSelectSlot(slotStart));
+            }
+
+            calendarGrid.appendChild(cell);
+        });
+    });
+}
+
+/* =========================
+   SLOT SELECTION HANDLER
+========================= */
+function handleSelectSlot(slotStart) {
+    selectedSlotStart = slotStart;
+    renderCalendar();
+
+    const formattedStartStr = `${formatDateShort(slotStart)} @ ${formatTime(slotStart)}`;
+
+    if (activeMode === "RESIDENT") {
+        resFormVenue.value = currentVenueName;
+        resFormStart.value = formattedStartStr;
+        populateDurationOptions(resFormEnd, slotStart);
+        checkResFormState();
+    } else {
+        eventFormVenue.value = currentVenueName;
+        eventFormStart.value = formattedStartStr;
+        populateDurationOptions(eventFormEnd, slotStart);
+        checkEventFormState();
+    }
+}
+
+function populateDurationOptions(selectEl, slotStart) {
+    selectEl.innerHTML = "";
+    for (let durationHours = 1; durationHours <= 3; durationHours++) {
+        const checkEnd = new Date(slotStart.getTime() + durationHours * 60 * 60 * 1000);
+
+        if (checkEnd.getHours() > 22 || (checkEnd.getHours() === 22 && checkEnd.getMinutes() > 0) || (checkEnd.getDate() !== slotStart.getDate())) {
+            break;
+        }
+
+        let isRangeFree = true;
+        for (let subH = 0; subH < durationHours; subH++) {
+            const subStart = new Date(slotStart.getTime() + subH * 60 * 60 * 1000);
+            const subEnd = new Date(slotStart.getTime() + (subH + 1) * 60 * 60 * 1000);
+            const status = getSlotStatus(subStart, subEnd);
+            if (status.type !== "AVAILABLE") {
+                isRangeFree = false;
+                break;
+            }
+        }
+
+        if (isRangeFree) {
+            const opt = document.createElement("option");
+            opt.value = checkEnd.toISOString();
+            opt.textContent = `${formatTime(checkEnd)} (${durationHours} ${durationHours === 1 ? 'hour' : 'hours'})`;
+            selectEl.appendChild(opt);
+        } else {
+            break;
+        }
+    }
+
+    if (selectEl.options.length > 0) {
+        selectEl.disabled = false;
+    } else {
+        selectEl.innerHTML = `<option value="">No valid booking duration</option>`;
+        selectEl.disabled = true;
+    }
+}
+
+/* =========================
+   STUDENT LOOKUP
+========================= */
+btnSearchStudent.addEventListener("click", searchStudent);
+studentNumberSearch.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") {
+        e.preventDefault();
+        searchStudent();
+    }
+});
+
+function searchStudent() {
+    const val = studentNumberSearch.value.trim();
+    if (!val) {
+        showMessage("Please enter a student number.", true);
+        return;
+    }
+
+    // Search in allUsers array
+    const match = allUsers.find(u => 
+        (u.studentNumber && String(u.studentNumber).toLowerCase() === val.toLowerCase()) ||
+        (u.studentId && String(u.studentId).toLowerCase() === val.toLowerCase())
+    );
+
+    if (match) {
+        selectedStudent = match;
+        stName.textContent = match.name || match.fullName || "Student User";
+        stNum.textContent = match.studentNumber || match.studentId || val;
+        stRoom.textContent = match.roomNumber || "N/A";
+        stRole.textContent = (match.accountType || "Resident").replace(/_/g, " ");
+
+        studentCard.classList.add("active");
+        showMessage("Student account verified.");
+        checkResFormState();
+    } else {
+        selectedStudent = null;
+        studentCard.classList.remove("active");
+        showMessage("Student not found in database.", true);
+        checkResFormState();
+    }
+}
+
+btnClearStudent.addEventListener("click", () => {
+    selectedStudent = null;
+    studentCard.classList.remove("active");
+    studentNumberSearch.value = "";
+    checkResFormState();
+});
+
+function checkResFormState() {
+    const canSubmit = selectedStudent && selectedSlotStart && resFormEnd.value;
+    btnSubmitResBooking.disabled = !canSubmit;
+}
+
+function checkEventFormState() {
+    const canSubmit = eventTitle.value.trim().length > 0 && selectedSlotStart && eventFormEnd.value;
+    btnSubmitEvent.disabled = !canSubmit;
+}
+
+eventTitle.addEventListener("input", checkEventFormState);
+
+/* =========================
+   CREATE RESIDENT BOOKING
+========================= */
+residentBookingForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    if (!selectedStudent || !selectedSlotStart || !resFormEnd.value) {
+        showMessage("Please complete all required fields and select an available time slot.", true);
+        return;
+    }
+
+    const selectedEnd = new Date(resFormEnd.value);
+
+    btnSubmitResBooking.disabled = true;
+    btnSubmitResBooking.textContent = "Processing...";
+
+    try {
+        await addDoc(collection(db, "bookings"), {
+            venueId: currentVenueId,
+            venueName: currentVenueName,
+            bookerId: selectedStudent.uid,
+            bookerName: selectedStudent.name || selectedStudent.fullName || "Resident",
+            bookerStudentNumber: selectedStudent.studentNumber || selectedStudent.studentId || "",
+            bookerType: selectedStudent.accountType || "HOUSE_MEMBER",
+            createdBy: currentAdmin.uid,
+            createdByName: currentAdminRecord.name || "Administrator",
+            isHouseEvent: false,
+            startTime: selectedSlotStart.toISOString(),
+            endTime: selectedEnd.toISOString(),
+            purpose: resFormPurpose.value.trim() || "Admin Created Booking",
+            status: "APPROVED",
+            createdAt: new Date().toISOString()
+        });
+
+        showMessage(`Booking created successfully for ${selectedStudent.name || 'Resident'}.`);
+        resetForms();
+        await loadData();
+    } catch (error) {
+        console.error("Booking error:", error);
+        showMessage("Failed to create booking: " + error.message, true);
+    } finally {
+        btnSubmitResBooking.textContent = "Create Resident Booking";
+    }
+});
+
+/* =========================
+   CREATE HOUSE EVENT
+========================= */
+houseEventForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    if (!eventTitle.value.trim() || !selectedSlotStart || !eventFormEnd.value) {
+        showMessage("Please fill in event title and select a valid time slot.", true);
+        return;
+    }
+
+    const selectedEnd = new Date(eventFormEnd.value);
+
+    btnSubmitEvent.disabled = true;
+    btnSubmitEvent.textContent = "Creating Event...";
+
+    try {
+        const eventData = {
+            title: eventTitle.value.trim(),
+            venueId: currentVenueId,
+            venueName: currentVenueName,
+            bookerId: currentAdmin.uid,
+            bookerName: `[Event] ${eventTitle.value.trim()}`,
+            createdBy: currentAdmin.uid,
+            createdByName: currentAdminRecord.name || "Administrator",
+            isHouseEvent: true,
+            type: "HOUSE_EVENT",
+            organiser: eventOrganiser.value,
+            startTime: selectedSlotStart.toISOString(),
+            endTime: selectedEnd.toISOString(),
+            date: selectedSlotStart.toISOString(),
+            description: eventDescription.value.trim(),
+            purpose: eventDescription.value.trim() || "House Event",
+            status: "APPROVED",
+            createdAt: new Date().toISOString()
+        };
+
+        // Write to both `bookings` (to block availability) and `houseEvents` (for client listings)
+        await addDoc(collection(db, "bookings"), eventData);
+        await addDoc(collection(db, "houseEvents"), eventData);
+
+        showMessage(`House Event "${eventTitle.value.trim()}" created successfully.`);
+        resetForms();
+        await loadData();
+    } catch (error) {
+        console.error("Event creation error:", error);
+        showMessage("Failed to create House Event: " + error.message, true);
+    } finally {
+        btnSubmitEvent.textContent = "Create Official House Event";
+    }
+});
+
+function resetForms() {
+    selectedSlotStart = null;
+    selectedStudent = null;
+    studentCard.classList.remove("active");
+    studentNumberSearch.value = "";
+    
+    resFormStart.value = "";
+    resFormEnd.innerHTML = `<option value="">Select slot on calendar first</option>`;
+    resFormEnd.disabled = true;
+    resFormPurpose.value = "";
+    btnSubmitResBooking.disabled = true;
+
+    eventTitle.value = "";
+    eventFormStart.value = "";
+    eventFormEnd.innerHTML = `<option value="">Select slot on calendar first</option>`;
+    eventFormEnd.disabled = true;
+    eventDescription.value = "";
+    btnSubmitEvent.disabled = true;
+}
+
+/* =========================
+   MODE TABS SWITCHER
+========================= */
+tabResident.addEventListener("click", () => {
+    activeMode = "RESIDENT";
+    tabResident.classList.add("active");
+    tabHouseEvent.classList.remove("active");
+    modeResident.style.display = "block";
+    modeHouseEvent.style.display = "none";
+    resetForms();
+    renderCalendar();
+});
+
+tabHouseEvent.addEventListener("click", () => {
+    activeMode = "EVENT";
+    tabHouseEvent.classList.add("active");
+    tabResident.classList.remove("active");
+    modeHouseEvent.style.display = "block";
+    modeResident.style.display = "none";
+    resetForms();
+    renderCalendar();
+});
+
+/* =========================
+   SCHEDULE OVERVIEW LIST & FILTERS
+========================= */
+function renderAdminBookingsList() {
+    const venueFilterVal = filterVenue.value;
+    const typeFilterVal = filterType.value;
+    const statusFilterVal = filterStatus.value;
+
+    let filtered = allBookings.filter(b => {
+        // Venue Filter
+        if (venueFilterVal !== "ALL" && (b.venueId || "").toLowerCase() !== venueFilterVal.toLowerCase()) {
+            return false;
+        }
+
+        // Type Filter
+        if (typeFilterVal === "RESIDENT" && (b.isHouseEvent || b.type === "HOUSE_EVENT")) return false;
+        if (typeFilterVal === "EVENT" && !(b.isHouseEvent || b.type === "HOUSE_EVENT")) return false;
+
+        // Status Filter
+        const st = (b.status || "APPROVED").toUpperCase();
+        if (statusFilterVal === "ACTIVE" && st === "CANCELLED") return false;
+        if (statusFilterVal === "CANCELLED" && st !== "CANCELLED") return false;
+
+        return true;
+    });
+
+    // Sort newest start time first
+    filtered.sort((a, b) => (parseDate(b.startTime) || 0) - (parseDate(a.startTime) || 0));
+
+    if (filtered.length === 0) {
+        adminBookingsList.innerHTML = `<div class="empty-state">No matching bookings found.</div>`;
+        return;
+    }
+
+    adminBookingsList.innerHTML = filtered.map(b => {
+        const start = parseDate(b.startTime);
+        const end = parseDate(b.endTime);
+        const status = (b.status || "APPROVED").toUpperCase();
+        const isEvent = b.isHouseEvent || b.type === "HOUSE_EVENT";
+        const displayName = isEvent ? (b.title || "House Event") : (b.bookerName || "Resident Booking");
+
+        return `
+            <div class="item-card">
+                <div class="item-details">
+                    <h4>${displayName} <span style="font-weight: 400; font-size: 13px; color: #64748b;">(${b.venueName || b.venueId})</span></h4>
+                    <div class="item-meta">
+                        <span><strong>Date:</strong> ${start ? formatDateShort(start) : "N/A"}</span>
+                        <span><strong>Time:</strong> ${start ? formatTime(start) : "N/A"} → ${end ? formatTime(end) : "N/A"}</span>
+                        ${b.bookerStudentNumber ? `<span><strong>Student #:</strong> ${b.bookerStudentNumber}</span>` : ''}
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    ${isEvent ? `<span class="badge type-EVENT">EVENT</span>` : ''}
+                    <span class="badge status-${status}">${status}</span>
+                    <button class="details-button" data-id="${b.id}">Details</button>
+                </div>
+            </div>
+        `;
+    }).join("");
+}
+
+// Filter change listeners
+filterVenue.addEventListener("change", renderAdminBookingsList);
+filterType.addEventListener("change", renderAdminBookingsList);
+filterStatus.addEventListener("change", renderAdminBookingsList);
+
+adminBookingsList.addEventListener("click", (e) => {
+    if (e.target.classList.contains("details-button")) {
+        const bId = e.target.getAttribute("data-id");
+        const match = allBookings.find(b => b.id === bId);
+        if (match) openBookingModal(match);
+    }
+});
+
+/* =========================
+   BOOKING MODAL HANDLER
+========================= */
+function openBookingModal(b) {
+    activeModalBooking = b;
+
+    const start = parseDate(b.startTime);
+    const end = parseDate(b.endTime);
+    const createdDate = parseDate(b.createdAt);
+
+    document.getElementById("modalTitle").textContent = (b.isHouseEvent || b.type === "HOUSE_EVENT") ? "House Event Details" : "Resident Booking Details";
+    document.getElementById("mdVenue").textContent = b.venueName || b.venueId || "N/A";
+    document.getElementById("mdStatus").textContent = (b.status || "APPROVED").toUpperCase();
+    document.getElementById("mdDate").textContent = start ? formatDateShort(start) : "N/A";
+    document.getElementById("mdTime").textContent = (start && end) ? `${formatTime(start)} → ${formatTime(end)}` : "N/A";
+    document.getElementById("mdBooker").textContent = b.title || b.bookerName || b.bookerId || "N/A";
+    document.getElementById("mdStudentNum").textContent = b.bookerStudentNumber || "N/A";
+    document.getElementById("mdCreatedBy").textContent = b.createdByName || b.createdBy || "Self-Booked";
+    document.getElementById("mdCreatedDate").textContent = createdDate ? formatDateShort(createdDate) : "N/A";
+    document.getElementById("mdPurpose").textContent = b.description || b.purpose || "N/A";
+
+    if ((b.status || "").toUpperCase() !== "CANCELLED") {
+        btnModalCancelBooking.style.display = "inline-block";
+    } else {
+        btnModalCancelBooking.style.display = "none";
+    }
+
+    bookingModal.classList.add("active");
+}
+
+function closeModal() {
+    bookingModal.classList.remove("active");
+    activeModalBooking = null;
+}
+
+btnModalClose.addEventListener("click", closeModal);
+btnModalCloseFooter.addEventListener("click", closeModal);
+
+btnModalCancelBooking.addEventListener("click", async () => {
+    if (!activeModalBooking) return;
+
+    const confirmCancel = window.confirm("Are you sure you want to cancel this booking/event?");
+    if (!confirmCancel) return;
+
+    try {
+        await updateDoc(doc(db, "bookings", activeModalBooking.id), {
+            status: "CANCELLED"
+        });
+
+        showMessage("Booking cancelled successfully.");
+        closeModal();
+        await loadData();
+    } catch (error) {
+        console.error("Error cancelling booking:", error);
+        showMessage("Failed to cancel booking: " + error.message, true);
+    }
+});
+
+/* =========================
+   VENUE SWITCHING LISTENERS
+========================= */
+document.querySelectorAll(".venue-tab").forEach(tab => {
+    tab.addEventListener("click", (e) => {
+        document.querySelectorAll(".venue-tab").forEach(t => t.classList.remove("active"));
+        e.target.classList.add("active");
+
+        currentVenueId = e.target.getAttribute("data-venue-id");
+        currentVenueName = e.target.getAttribute("data-venue-name");
+
+        resetForms();
+        renderCalendar();
+    });
+});
+
+/* =========================
+   DATA LOADERS
+========================= */
+async function loadData() {
+    try {
+        // Load Bookings
+        const bookingsSnap = await getDocs(collection(db, "bookings"));
+        allBookings = [];
+        bookingsSnap.forEach(docSnap => {
+            allBookings.push({ id: docSnap.id, ...docSnap.data() });
+        });
+
+        // Load Users (for student lookup)
+        const usersSnap = await getDocs(collection(db, "users"));
+        allUsers = [];
+        usersSnap.forEach(docSnap => {
+            allUsers.push({ uid: docSnap.id, ...docSnap.data() });
+        });
+
+        renderCalendar();
+        renderAdminBookingsList();
+    } catch (error) {
+        console.error("Data load error:", error);
+        showMessage("Unable to load booking records: " + error.message, true);
+    }
+}
+
+async function verifyAdminAccess(user) {
+    const userRef = doc(db, "users", user.uid);
+    const userSnap = await getDoc(userRef);
+
+    if (userSnap.exists()) {
+        currentAdminRecord = userSnap.data();
+        adminNameEl.textContent = currentAdminRecord.name || user.displayName || "Admin User";
+        adminEmailEl.textContent = user.email || "Administrator";
+    } else {
+        adminNameEl.textContent = user.displayName || "Admin User";
+        adminEmailEl.textContent = user.email || "Administrator";
+    }
+}
+
+/* =========================
+   AUTHENTICATION LISTENER
+========================= */
+onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+        window.location.href = "index.html";
+        return;
+    }
+
+    currentAdmin = user;
+
+    try {
+        await verifyAdminAccess(user);
+        await loadData();
+
+        loadingState.style.display = "none";
+        pageContent.style.display = "block";
+    } catch (error) {
+        console.error("Initialization error:", error);
+        showMessage("Access verification failed: " + error.message, true);
+    }
+});
+
+/* =========================
+   NAVIGATION LISTENERS
+========================= */
+document.getElementById("dashboardButton").addEventListener("click", () => {
+    window.location.href = "admin.html";
+});
+
+document.getElementById("logoutButton").addEventListener("click", async () => {
+    try {
+        await signOut(auth);
+        window.location.href = "index.html";
+    } catch (error) {
+        console.error("Logout failed:", error);
+        showMessage("Could not log out.", true);
+    }
+});
+
+</script>
+
+</body>
+</html>

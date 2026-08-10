@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>House Beyers Naude - Fines</title>
+
+<style>
+/* =========================
+   GLOBAL
+========================= */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f5f7;
+    color: #1f2937;
+}
+
+/* =========================
+   COLOUR SYSTEM
+========================= */
+:root {
+    --space-blue: #1D2951;
+    --space-blue-light: #263968;
+    --space-blue-dark: #151f3d;
+    --background: #f4f5f7;
+    --border: #d1d5db;
+}
+
+/* =========================
+   HEADER
+========================= */
+.header {
+    background: var(--space-blue);
+    color: white;
+    padding: 20px 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.header h1 {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.header p {
+    color: #dbe4ff;
+    font-size: 13px;
+    margin-top: 5px;
+}
+
+.header-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.back-button,
+.logout-button {
+    border: none;
+    padding: 10px 16px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.15s;
+}
+
+.back-button {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+}
+
+.back-button:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.logout-button {
+    background: #dc2626;
+    color: white;
+}
+
+.logout-button:hover {
+    background: #b91c1c;
+}
+
+/* =========================
+   MAIN CONTAINER
+========================= */
+.container {
+    max-width: 1000px;
+    margin: auto;
+    padding: 35px 20px;
+}
+
+/* =========================
+   PAGE TITLE
+========================= */
+.page-title {
+    margin-bottom: 25px;
+}
+
+.page-title h2 {
+    color: var(--space-blue);
+    font-size: 29px;
+    margin-bottom: 7px;
+}
+
+.page-title p {
+    color: #64748b;
+    line-height: 1.5;
+}
+
+/* =========================
+   USER INFO
+========================= */
+.user-info {
+    background: white;
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+    border-left: 4px solid var(--space-blue);
+}
+
+.user-info strong {
+    font-size: 16px;
+}
+
+.user-account {
+    margin-top: 5px;
+    color: #64748b;
+    font-size: 13px;
+}
+
+/* =========================
+   TOP SUMMARY CARD
+========================= */
+.summary-card {
+    background: white;
+    border-radius: 14px;
+    padding: 24px 28px;
+    margin-bottom: 25px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 4px solid var(--space-blue);
+}
+
+.summary-details h3 {
+    color: var(--space-blue);
+    font-size: 18px;
+    margin-bottom: 4px;
+}
+
+.summary-details p {
+    color: #64748b;
+    font-size: 13px;
+}
+
+.summary-badge {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 12px 28px;
+    text-align: center;
+}
+
+.summary-number {
+    font-size: 38px;
+    font-weight: 800;
+    color: var(--space-blue);
+    line-height: 1;
+}
+
+.summary-number.has-fines {
+    color: #dc2626;
+}
+
+.summary-label {
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #64748b;
+    margin-top: 4px;
+}
+
+/* =========================
+   FINE SECTIONS & CARDS
+========================= */
+.fines-card {
+    background: white;
+    border-radius: 14px;
+    padding: 28px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+    margin-bottom: 25px;
+}
+
+.fines-card h3 {
+    color: var(--space-blue);
+    font-size: 20px;
+    margin-bottom: 4px;
+}
+
+.section-subtitle {
+    color: #64748b;
+    font-size: 13px;
+    margin-bottom: 20px;
+}
+
+.fines-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.fine-item {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: border-color 0.15s;
+}
+
+.fine-item:hover {
+    border-color: #cbd5e1;
+}
+
+.fine-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+.fine-reason {
+    font-size: 16px;
+    font-weight: bold;
+    color: #1f2937;
+    line-height: 1.3;
+}
+
+.fine-amount {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--space-blue);
+    white-space: nowrap;
+}
+
+.fine-meta {
+    font-size: 13px;
+    color: #64748b;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.fine-meta span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.dispute-statement {
+    background: #eff6ff;
+    border-left: 3px solid #2563eb;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #1e3a8a;
+    margin-top: 4px;
+}
+
+.fine-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 10px;
+    border-top: 1px solid #e2e8f0;
+    margin-top: 4px;
+}
+
+/* =========================
+   STATUS BADGES
+========================= */
+.status-badge {
+    font-size: 11px;
+    font-weight: bold;
+    padding: 5px 12px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-block;
+}
+
+.status-badge.status-active {
+    background: #fef2f2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+
+.status-badge.status-disputed {
+    background: #eff6ff;
+    color: #1e40af;
+    border: 1px solid #bfdbfe;
+}
+
+.status-badge.status-paid {
+    background: #f0fdf4;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+}
+
+.status-note {
+    font-size: 12px;
+    font-weight: bold;
+    color: #64748b;
+    font-style: italic;
+}
+
+/* =========================
+   BUTTONS & ACTIONS
+========================= */
+.dispute-button {
+    background: #fff;
+    color: #dc2626;
+    border: 1px solid #dc2626;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.dispute-button:hover:not(:disabled) {
+    background: #dc2626;
+    color: white;
+}
+
+.dispute-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 30px 20px;
+    color: #64748b;
+    font-size: 14px;
+    background: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    border-radius: 10px;
+}
+
+/* =========================
+   MESSAGE BANNER
+========================= */
+.message {
+    margin-top: 18px;
+    padding: 13px;
+    border-radius: 8px;
+    display: none;
+    font-size: 13px;
+}
+
+.message.success {
+    display: block;
+    background: #dcfce7;
+    color: #166534;
+}
+
+.message.error {
+    display: block;
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* =========================
+   MOBILE RESPONSIVENESS
+========================= */
+@media (max-width: 700px) {
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .header-actions {
+        width: 100%;
+    }
+
+    .back-button,
+    .logout-button {
+        flex: 1;
+        text-align: center;
+    }
+
+    .summary-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .summary-badge {
+        width: 100%;
+    }
+
+    .fine-top {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .fine-bottom {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .dispute-button {
+        width: 100%;
+        text-align: center;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- =========================
+     HEADER
+========================= -->
+<header class="header">
+    <div>
+        <h1>House Beyers Naude</h1>
+        <p>Fines</p>
+    </div>
+
+    <div class="header-actions">
+        <button class="back-button" id="backButton">← Dashboard</button>
+        <button class="logout-button" id="logoutButton">Log Out</button>
+    </div>
+</header>
+
+<main class="container">
+
+    <!-- =========================
+         PAGE TITLE
+    ========================= -->
+    <section class="page-title">
+        <h2>My Fines</h2>
+        <p>View your active fines, monitor dispute statuses, and review paid records.</p>
+    </section>
+
+    <!-- =========================
+         USER INFO
+    ========================= -->
+    <section class="user-info">
+        <strong id="userName">Loading...</strong>
+        <div id="userAccount" class="user-account">Loading account information...</div>
+    </section>
+
+    <!-- =========================
+         TOP FINE SUMMARY
+    ========================= -->
+    <section class="summary-card">
+        <div class="summary-details">
+            <h3>Current Fine Count</h3>
+            <p>Total active fines currently associated with your student profile.</p>
+        </div>
+        <div class="summary-badge">
+            <div class="summary-number" id="activeFineCount">-</div>
+            <div class="summary-label">Active Fines</div>
+        </div>
+    </section>
+
+    <div id="message" class="message"></div>
+
+    <!-- =========================
+         CURRENT FINES SECTION
+    ========================= -->
+    <section class="fines-card">
+        <h3>Current Fines</h3>
+        <p class="section-subtitle">Fines currently requiring attention or eligible for dispute.</p>
+        <div id="currentFinesList" class="fines-list">
+            <div class="empty-state">Loading current fines...</div>
+        </div>
+    </section>
+
+    <!-- =========================
+         DISPUTED FINES SECTION
+    ========================= -->
+    <section class="fines-card">
+        <h3>Disputed Fines</h3>
+        <p class="section-subtitle">Fines that you have submitted for official review.</p>
+        <div id="disputedFinesList" class="fines-list">
+            <div class="empty-state">Loading disputed fines...</div>
+        </div>
+    </section>
+
+    <!-- =========================
+         PAID FINES SECTION
+    ========================= -->
+    <section class="fines-card">
+        <h3>Paid Fines</h3>
+        <p class="section-subtitle">Historical record of all settled and cleared fines.</p>
+        <div id="paidFinesList" class="fines-list">
+            <div class="empty-state">Loading paid fines...</div>
+        </div>
+    </section>
+
+</main>
+
+<script type="module">
+
+/* =========================
+   FIREBASE IMPORTS
+========================= */
+import {
+    initializeApp
+} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+
+import {
+    getAuth,
+    onAuthStateChanged,
+    signOut
+} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+
+import {
+    getFirestore,
+    doc,
+    getDoc,
+    collection,
+    query,
+    where,
+    or,
+    onSnapshot,
+    updateDoc
+} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+
+/* =========================
+   FIREBASE CONFIG
+========================= */
+const firebaseConfig = {
+    apiKey: "AIzaSyDW6IArj2dZiqbf00Ix3SPPSqvxTKG0GgE",
+    authDomain: "master-files-95f6b.firebaseapp.com",
+    projectId: "master-files-95f6b",
+    storageBucket: "master-files-95f6b.firebasestorage.app",
+    messagingSenderId: "537891510061",
+    appId: "1:537891510061:web:fb46c8d1abae02b9e725a4",
+    measurementId: "G-4GNVR5EBJX"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+/* =========================
+   STATE
+========================= */
+let currentUser = null;
+let currentUserRecord = null;
+let unsubscribeFines = null;
+const currentFinesMap = new Map();
+
+/* =========================
+   ELEMENTS
+========================= */
+const activeFineCountEl = document.getElementById("activeFineCount");
+const currentFinesList = document.getElementById("currentFinesList");
+const disputedFinesList = document.getElementById("disputedFinesList");
+const paidFinesList = document.getElementById("paidFinesList");
+
+/* =========================
+   HELPERS & UTILITIES
+========================= */
+function showMessage(text, error = false) {
+    const message = document.getElementById("message");
+    message.textContent = text;
+    message.className = "message " + (error ? "error" : "success");
+    setTimeout(() => {
+        message.className = "message";
+    }, 5000);
+}
+
+function parseDate(dateValue) {
+    if (!dateValue) return null;
+    if (dateValue.toDate && typeof dateValue.toDate === "function") {
+        return dateValue.toDate();
+    }
+    const d = new Date(dateValue);
+    return isNaN(d.getTime()) ? null : d;
+}
+
+function formatDate(dateValue) {
+    const d = parseDate(dateValue);
+    if (!d) return "N/A";
+    return d.toLocaleDateString(undefined, {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+    });
+}
+
+function formatAmount(amount) {
+    const num = parseFloat(amount);
+    if (isNaN(num)) return "R0.00";
+    return "R" + num.toFixed(2);
+}
+
+/* =========================
+   RENDER FINES
+========================= */
+function renderFines(fines) {
+    const activeFines = [];
+    const disputedFines = [];
+    const paidFines = [];
+
+    fines.forEach(fine => {
+        let rawStatus = fine.status || "";
+        if (!rawStatus && fine.paid === true) rawStatus = "PAID";
+        if (!rawStatus && fine.paid === false) rawStatus = "ACTIVE";
+
+        const status = rawStatus.trim().toUpperCase();
+        if (status === "ACTIVE") {
+            activeFines.push(fine);
+        } else if (status === "DISPUTED") {
+            disputedFines.push(fine);
+        } else if (status === "PAID") {
+            paidFines.push(fine);
+        } else {
+            if (fine.paid) {
+                paidFines.push(fine);
+            } else {
+                activeFines.push(fine);
+            }
+        }
+    });
+
+    const count = activeFines.length;
+    activeFineCountEl.textContent = count;
+    if (count > 0) {
+        activeFineCountEl.classList.add("has-fines");
+    } else {
+        activeFineCountEl.classList.remove("has-fines");
+    }
+
+    // 1. RENDER ACTIVE FINES
+    if (activeFines.length === 0) {
+        currentFinesList.innerHTML = `<div class="empty-state">No active fines logged for your profile.</div>`;
+    } else {
+        const now = new Date();
+        currentFinesList.innerHTML = activeFines.map(fine => {
+            const issuedDate = parseDate(fine.dateIssued || fine.createdAt || fine.issuedAt);
+            let canDispute = false;
+            let disputeReasonText = "";
+
+            // Check if boolean `hasBeenDisputed` was ever set to true on this document
+            const hasBeenDisputed = fine.hasBeenDisputed === true || fine.hasBeenDisputed === "true";
+
+            if (hasBeenDisputed) {
+                canDispute = false;
+                disputeReasonText = "Previously disputed";
+            } else if (issuedDate) {
+                const diffHours = (now.getTime() - issuedDate.getTime()) / (1000 * 60 * 60);
+                if (diffHours <= 24) {
+                    canDispute = true;
+                } else {
+                    canDispute = false;
+                    disputeReasonText = "Dispute period expired";
+                }
+            } else {
+                canDispute = false;
+                disputeReasonText = "Dispute window unavailable";
+            }
+
+            return `
+                <div class="fine-item">
+                    <div class="fine-top">
+                        <div class="fine-reason">${fine.reason || "Residence Rule Violation"}</div>
+                        <div class="fine-amount">${formatAmount(fine.amount)}</div>
+                    </div>
+                    <div class="fine-meta">
+                        <span><strong>Issued:</strong> ${formatDate(fine.dateIssued || fine.createdAt || fine.issuedAt)}</span>
+                        ${fine.roomNumber ? `<span><strong>Room:</strong> ${fine.roomNumber}</span>` : ""}
+                        ${fine.infringementLevel ? `<span><strong>Level:</strong> ${fine.infringementLevel}</span>` : ""}
+                        ${fine.corridor && fine.corridor !== "Unassigned" ? `<span><strong>Corridor:</strong> ${fine.corridor}</span>` : ""}
+                    </div>
+                    <div class="fine-bottom">
+                        <span class="status-badge status-active">ACTIVE</span>
+                        <div>
+                            ${canDispute ? `
+                                <button class="dispute-button" data-id="${fine.id}">
+                                    Dispute Fine
+                                </button>
+                            ` : `
+                                <span class="status-note">${disputeReasonText}</span>
+                            `}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join("");
+    }
+
+    // 2. RENDER DISPUTED FINES
+    if (disputedFines.length === 0) {
+        disputedFinesList.innerHTML = `<div class="empty-state">No disputed fines recorded.</div>`;
+    } else {
+        disputedFinesList.innerHTML = disputedFines.map(fine => `
+            <div class="fine-item">
+                <div class="fine-top">
+                    <div class="fine-reason">${fine.reason || "Residence Rule Violation"}</div>
+                    <div class="fine-amount">${formatAmount(fine.amount)}</div>
+                </div>
+                <div class="fine-meta">
+                    <span><strong>Issued:</strong> ${formatDate(fine.dateIssued || fine.createdAt || fine.issuedAt)}</span>
+                    <span><strong>Disputed:</strong> ${formatDate(fine.disputedAt)}</span>
+                </div>
+                ${fine.disputeReason ? `
+                    <div class="dispute-statement">
+                        <strong>Dispute Reason:</strong> ${fine.disputeReason}
+                    </div>
+                ` : ""}
+                <div class="fine-bottom">
+                    <span class="status-badge status-disputed">DISPUTED</span>
+                    <span class="status-note">Under Review</span>
+                </div>
+            </div>
+        `).join("");
+    }
+
+    // 3. RENDER PAID FINES
+    if (paidFines.length === 0) {
+        paidFinesList.innerHTML = `<div class="empty-state">No paid fines logged.</div>`;
+    } else {
+        paidFinesList.innerHTML = paidFines.map(fine => `
+            <div class="fine-item">
+                <div class="fine-top">
+                    <div class="fine-reason">${fine.reason || "Residence Rule Violation"}</div>
+                    <div class="fine-amount">${formatAmount(fine.amount)}</div>
+                </div>
+                <div class="fine-meta">
+                    <span><strong>Issued:</strong> ${formatDate(fine.dateIssued || fine.createdAt || fine.issuedAt)}</span>
+                    <span><strong>Paid:</strong> ${formatDate(fine.paidAt)}</span>
+                </div>
+                <div class="fine-bottom">
+                    <span class="status-badge status-paid">PAID</span>
+                    <span class="status-note">Cleared</span>
+                </div>
+            </div>
+        `).join("");
+    }
+}
+
+/* =========================
+   SUBSCRIBE TO FINES
+========================= */
+function subscribeToUserFines(studentNumber, userId) {
+    if (unsubscribeFines) {
+        unsubscribeFines();
+    }
+
+    const cleanStudentNum = (studentNumber && studentNumber !== "Not assigned") ? String(studentNumber).trim() : null;
+
+    if (!cleanStudentNum && !userId) {
+        currentFinesList.innerHTML = `<div class="empty-state">No student number or account ID associated with profile.</div>`;
+        disputedFinesList.innerHTML = `<div class="empty-state">No student number or account ID associated with profile.</div>`;
+        paidFinesList.innerHTML = `<div class="empty-state">No student number or account ID associated with profile.</div>`;
+        activeFineCountEl.textContent = "0";
+        return;
+    }
+
+    const conditions = [];
+
+    if (userId) {
+        conditions.push(where("userId", "==", userId));
+    }
+
+    if (cleanStudentNum) {
+        conditions.push(where("studentNumber", "==", cleanStudentNum));
+    }
+
+    const q = query(
+        collection(db, "fines"),
+        conditions.length === 1 ? conditions[0] : or(...conditions)
+    );
+
+    unsubscribeFines = onSnapshot(
+        q,
+        snapshot => {
+            const fines = [];
+            currentFinesMap.clear();
+
+            snapshot.forEach(docSnap => {
+                const fineData = {
+                    id: docSnap.id,
+                    ...docSnap.data()
+                };
+                fines.push(fineData);
+                currentFinesMap.set(docSnap.id, fineData);
+            });
+
+            fines.sort((a, b) => {
+                const dA = parseDate(a.dateIssued || a.createdAt || a.issuedAt) || 0;
+                const dB = parseDate(b.dateIssued || b.createdAt || b.issuedAt) || 0;
+                return dB - dA;
+            });
+
+            renderFines(fines);
+        },
+        error => {
+            console.error("Error fetching user fines:", error);
+            showMessage("Could not load fines: " + error.message, true);
+        }
+    );
+}
+
+/* =========================
+   DISPUTE ACTION
+========================= */
+currentFinesList.addEventListener("click", async (e) => {
+    if (!e.target.classList.contains("dispute-button")) return;
+
+    const fineId = e.target.getAttribute("data-id");
+    if (!fineId) return;
+
+    const targetFine = currentFinesMap.get(fineId);
+    if (targetFine && (targetFine.hasBeenDisputed === true || targetFine.hasBeenDisputed === "true")) {
+        showMessage("This fine has already been disputed once and cannot be disputed again.", true);
+        return;
+    }
+
+    const disputeReason = window.prompt(
+        "Please state your reason for disputing this fine (e.g. absent from residence, permission granted, incorrect room logged):"
+    );
+
+    if (disputeReason === null) return;
+
+    const trimmedReason = disputeReason.trim();
+    if (!trimmedReason) {
+        showMessage("A valid reason is required to submit a dispute.", true);
+        return;
+    }
+
+    const confirmDispute = window.confirm(
+        `Are you sure you want to submit this dispute?\n\nReason: "${trimmedReason}"\n\nYour dispute will be submitted for official residence committee review.`
+    );
+
+    if (!confirmDispute) return;
+
+    const button = e.target;
+    button.disabled = true;
+    button.textContent = "Submitting...";
+
+    try {
+        const fineRef = doc(db, "fines", fineId);
+        // Sets status to DISPUTED and persists boolean flag hasBeenDisputed: true
+        await updateDoc(fineRef, {
+            status: "DISPUTED",
+            hasBeenDisputed: true,
+            disputeReason: trimmedReason,
+            disputedAt: new Date().toISOString()
+        });
+
+        showMessage("Dispute submitted successfully.");
+    } catch (error) {
+        console.error("Could not update dispute status:", error);
+        showMessage("Could not log dispute: " + error.message, true);
+        button.disabled = false;
+        button.textContent = "Dispute Fine";
+    }
+});
+
+/* =========================
+   LOAD USER
+========================= */
+onAuthStateChanged(auth, async user => {
+    if (!user) {
+        window.location.href = "index.html";
+        return;
+    }
+
+    currentUser = user;
+
+    try {
+        const userRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userRef);
+
+        if (!userSnap.exists()) {
+            await signOut(auth);
+            window.location.href = "index.html";
+            return;
+        }
+
+        currentUserRecord = {
+            id: user.uid,
+            ...userSnap.data()
+        };
+
+        const studentNumber =
+            currentUserRecord.studentNumber ||
+            currentUserRecord.studentnumber ||
+            currentUserRecord["student number"] ||
+            currentUserRecord.student_number ||
+            currentUserRecord.studentNo ||
+            "Not assigned";
+
+        const accountType =
+            currentUserRecord.accountType ||
+            "Resident";
+
+        document.getElementById("userName").textContent =
+            currentUserRecord.name || user.email || "Resident";
+
+        document.getElementById("userAccount").textContent =
+            `${accountType} | Student Number: ${studentNumber}`;
+
+        subscribeToUserFines(studentNumber, user.uid);
+
+    } catch (error) {
+        console.error("Could not load user profile:", error);
+        showMessage("Could not load account details: " + error.message, true);
+    }
+});
+
+/* =========================
+   NAVIGATION
+========================= */
+document.getElementById("backButton").addEventListener("click", () => {
+    window.location.href = "clienthub.html";
+});
+
+document.getElementById("logoutButton").addEventListener("click", async () => {
+    try {
+        if (unsubscribeFines) {
+            unsubscribeFines();
+        }
+        await signOut(auth);
+        window.location.href = "index.html";
+    } catch (error) {
+        console.error("Logout failed:", error);
+        showMessage("Could not log out.", true);
+    }
+});
+
+</script>
+
+</body>
+</html>

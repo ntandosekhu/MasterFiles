@@ -1,0 +1,2373 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>House Beyers Naude - My Info</title>
+
+<style>
+
+/* =========================================================
+   GLOBAL
+========================================================= */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+
+    --space-blue: #1D2951;
+
+    --space-blue-dark: #151f3d;
+
+    --space-blue-light: #2c3c70;
+
+    --background: #f4f6fa;
+
+    --card: #ffffff;
+
+    --text: #1f2937;
+
+    --muted: #64748b;
+
+    --border: #e2e8f0;
+
+    --success: #166534;
+
+}
+
+body {
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    background:
+        var(--background);
+
+    color:
+        var(--text);
+
+    min-height: 100vh;
+
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.header {
+
+    background:
+        var(--space-blue);
+
+    color:
+        white;
+
+    padding:
+        24px 30px;
+
+    box-shadow:
+        0 4px 15px rgba(0, 0, 0, .15);
+
+}
+
+.header-content {
+
+    max-width:
+        1200px;
+
+    margin:
+        auto;
+
+}
+
+.header h1 {
+
+    font-size:
+        28px;
+
+    font-weight:
+        700;
+
+}
+
+.header p {
+
+    margin-top:
+        5px;
+
+    color:
+        #dbe3ff;
+
+    font-size:
+        14px;
+
+}
+
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.container {
+
+    max-width:
+        1200px;
+
+    margin:
+        auto;
+
+    padding:
+        35px 20px 50px;
+
+}
+
+
+/* =========================================================
+   PROFILE CARD
+========================================================= */
+
+.profile-card {
+
+    background:
+        var(--card);
+
+    border-radius:
+        16px;
+
+    padding:
+        35px;
+
+    box-shadow:
+        0 5px 20px rgba(0, 0, 0, .07);
+
+}
+
+
+/* =========================================================
+   PROFILE TOP
+========================================================= */
+
+.profile-top {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        220px 1fr;
+
+    gap:
+        45px;
+
+    align-items:
+        center;
+
+    padding-bottom:
+        35px;
+
+    border-bottom:
+        1px solid var(--border);
+
+}
+
+
+/* =========================================================
+   PROFILE PHOTO
+========================================================= */
+
+.profile-left {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+}
+
+.profile-picture-wrapper {
+
+    position:
+        relative;
+
+    width:
+        150px;
+
+    height:
+        150px;
+
+}
+
+.profile-picture {
+
+    width:
+        150px;
+
+    height:
+        150px;
+
+    border-radius:
+        50%;
+
+    background:
+        var(--space-blue);
+
+    color:
+        white;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    font-size:
+        46px;
+
+    font-weight:
+        bold;
+
+    overflow:
+        hidden;
+
+    border:
+        5px solid #e8ecf7;
+
+    box-shadow:
+        0 4px 15px rgba(29, 41, 81, .25);
+
+}
+
+.profile-picture img {
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+    object-fit:
+        cover;
+
+}
+
+
+/* =========================================================
+   PHOTO BUTTON
+========================================================= */
+
+.photo-button {
+
+    position:
+        absolute;
+
+    right:
+        3px;
+
+    bottom:
+        3px;
+
+    width:
+        42px;
+
+    height:
+        42px;
+
+    border-radius:
+        50%;
+
+    border:
+        3px solid white;
+
+    background:
+        var(--space-blue);
+
+    color:
+        white;
+
+    cursor:
+        pointer;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    font-size:
+        18px;
+
+    transition:
+        .15s;
+
+}
+
+.photo-button:hover {
+
+    background:
+        var(--space-blue-light);
+
+    transform:
+        scale(1.05);
+
+}
+
+#profilePhotoInput {
+
+    display:
+        none;
+
+}
+
+
+/* =========================================================
+   OWL STATUS
+========================================================= */
+
+.owl-status {
+
+    margin-top:
+        15px;
+
+    text-align:
+        center;
+
+}
+
+.owl-status-title {
+
+    font-size:
+        17px;
+
+    font-weight:
+        bold;
+
+    color:
+        var(--space-blue);
+
+    letter-spacing:
+        .5px;
+
+}
+
+.owl-status-year {
+
+    margin-top:
+        4px;
+
+    font-size:
+        12px;
+
+    color:
+        var(--muted);
+
+}
+
+
+/* =========================================================
+   USER SUMMARY
+========================================================= */
+
+.profile-summary {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        8px;
+
+}
+
+.profile-summary h2 {
+
+    color:
+        var(--space-blue);
+
+    font-size:
+        30px;
+
+    line-height:
+        1.2;
+
+}
+
+.profile-summary .student-number {
+
+    color:
+        var(--muted);
+
+    font-size:
+        14px;
+
+}
+
+.status-badge {
+
+    display:
+        inline-flex;
+
+    width:
+        fit-content;
+
+    margin-top:
+        8px;
+
+    padding:
+        6px 12px;
+
+    border-radius:
+        20px;
+
+    background:
+        #dcfce7;
+
+    color:
+        var(--success);
+
+    font-size:
+        12px;
+
+    font-weight:
+        bold;
+
+}
+
+
+/* =========================================================
+   INFORMATION GRID
+========================================================= */
+
+.info-grid {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap:
+        0;
+
+    margin-top:
+        30px;
+
+}
+
+.info-item {
+
+    padding:
+        20px 15px;
+
+    border-bottom:
+        1px solid var(--border);
+
+}
+
+.info-item:nth-child(odd) {
+
+    border-right:
+        1px solid var(--border);
+
+}
+
+.info-label {
+
+    font-size:
+        12px;
+
+    font-weight:
+        bold;
+
+    text-transform:
+        uppercase;
+
+    letter-spacing:
+        .6px;
+
+    color:
+        var(--muted);
+
+    margin-bottom:
+        7px;
+
+}
+
+.info-value {
+
+    font-size:
+        16px;
+
+    color:
+        var(--text);
+
+    font-weight:
+        600;
+
+    min-height:
+        20px;
+
+}
+
+.info-value.empty {
+
+    color:
+        #94a3b8;
+
+    font-weight:
+        normal;
+
+}
+
+
+/* =========================================================
+   MESSAGE
+========================================================= */
+
+.message {
+
+    margin-top:
+        20px;
+
+    padding:
+        12px 15px;
+
+    border-radius:
+        8px;
+
+    display:
+        none;
+
+    font-size:
+        14px;
+
+}
+
+.message.success {
+
+    display:
+        block;
+
+    background:
+        #dcfce7;
+
+    color:
+        #166534;
+
+}
+
+.message.error {
+
+    display:
+        block;
+
+    background:
+        #fee2e2;
+
+    color:
+        #991b1b;
+
+}
+
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.loading {
+
+    text-align:
+        center;
+
+    padding:
+        60px 20px;
+
+    color:
+        var(--muted);
+
+}
+
+
+/* =========================================================
+   FOOTER ACTIONS
+========================================================= */
+
+.actions {
+
+    display:
+        flex;
+
+    justify-content:
+        space-between;
+
+    gap:
+        12px;
+
+    margin-top:
+        30px;
+
+}
+
+.action-button {
+
+    border:
+        none;
+
+    border-radius:
+        8px;
+
+    padding:
+        11px 18px;
+
+    cursor:
+        pointer;
+
+    font-weight:
+        bold;
+
+}
+
+.back-button {
+
+    background:
+        var(--space-blue);
+
+    color:
+        white;
+
+}
+
+.back-button:hover {
+
+    background:
+        var(--space-blue-light);
+
+}
+
+.logout-button {
+
+    background:
+        #dc2626;
+
+    color:
+        white;
+
+}
+
+.logout-button:hover {
+
+    background:
+        #b91c1c;
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media(max-width: 750px) {
+
+    .header {
+
+        padding:
+            20px;
+
+    }
+
+    .container {
+
+        padding:
+            20px 12px 40px;
+
+    }
+
+    .profile-card {
+
+        padding:
+            22px;
+
+    }
+
+    .profile-top {
+
+        grid-template-columns:
+            1fr;
+
+        gap:
+            25px;
+
+        text-align:
+            center;
+
+    }
+
+    .profile-summary {
+
+        align-items:
+            center;
+
+    }
+
+    .profile-summary h2 {
+
+        font-size:
+            25px;
+
+    }
+
+    .info-grid {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+    .info-item:nth-child(odd) {
+
+        border-right:
+            none;
+
+    }
+
+    .actions {
+
+        flex-direction:
+            column;
+
+    }
+
+    .action-button {
+
+        width:
+            100%;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<header class="header">
+
+    <div class="header-content">
+
+        <h1>
+            My Info
+        </h1>
+
+        <p>
+            House Beyers Naude
+        </p>
+
+    </div>
+
+</header>
+
+
+<!-- =========================================================
+     MAIN
+========================================================= -->
+
+<main class="container">
+
+    <div
+        id="loading"
+        class="loading"
+    >
+        Loading your information...
+    </div>
+
+
+    <section
+        id="profileCard"
+        class="profile-card"
+        style="display:none;"
+    >
+
+
+        <!-- =================================================
+             PROFILE TOP
+        ================================================= -->
+
+        <div class="profile-top">
+
+
+            <!-- =============================================
+                 PROFILE PICTURE
+            ============================================== -->
+
+            <div class="profile-left">
+
+                <div class="profile-picture-wrapper">
+
+                    <div
+                        id="profilePicture"
+                        class="profile-picture"
+                    >
+                        --
+                    </div>
+
+
+                    <button
+                        id="photoButton"
+                        class="photo-button"
+                        type="button"
+                        title="Change profile picture"
+                    >
+                        📷
+                    </button>
+
+
+                    <input
+                        id="profilePhotoInput"
+                        type="file"
+                        accept="image/*"
+                    >
+
+                </div>
+
+
+                <div class="owl-status">
+
+                    <div
+                        id="owlStatus"
+                        class="owl-status-title"
+                    >
+                        --
+                    </div>
+
+                    <div
+                        id="owlYear"
+                        class="owl-status-year"
+                    >
+                        --
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =============================================
+                 USER SUMMARY
+            ============================================== -->
+
+            <div class="profile-summary">
+
+                <h2 id="userName">
+                    Loading...
+                </h2>
+
+
+                <div
+                    id="studentNumber"
+                    class="student-number"
+                >
+                    Student number
+                </div>
+
+
+                <div
+                    id="accountStatus"
+                    class="status-badge"
+                >
+                    --
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             INFORMATION
+        ================================================= -->
+
+        <div class="info-grid">
+
+
+            <!-- NAME -->
+
+            <div class="info-item">
+
+                <div class="info-label">
+                    Name & Surname
+                </div>
+
+                <div
+                    id="infoName"
+                    class="info-value"
+                >
+                    --
+                </div>
+
+            </div>
+
+
+            <!-- STUDENT NUMBER -->
+
+            <div class="info-item">
+
+                <div class="info-label">
+                    Student Number
+                </div>
+
+                <div
+                    id="infoStudentNumber"
+                    class="info-value"
+                >
+                    --
+                </div>
+
+            </div>
+
+
+            <!-- COURSE -->
+
+            <div class="info-item">
+
+                <div class="info-label">
+                    Course
+                </div>
+
+                <div
+                    id="infoCourse"
+                    class="info-value"
+                >
+                    --
+                </div>
+
+            </div>
+
+
+            <!-- FACULTY -->
+
+            <div class="info-item">
+
+                <div class="info-label">
+                    Faculty
+                </div>
+
+                <div
+                    id="infoFaculty"
+                    class="info-value"
+                >
+                    --
+                </div>
+
+            </div>
+
+
+            <!-- PROGRAM DIRECTOR -->
+
+            <div class="info-item">
+
+                <div class="info-label">
+                    Program Director
+                </div>
+
+                <div
+                    id="infoProgramDirector"
+                    class="info-value"
+                >
+                    --
+                </div>
+
+            </div>
+
+
+            <!-- ROOM -->
+
+            <div class="info-item">
+
+                <div class="info-label">
+                    Room Number
+                </div>
+
+                <div
+                    id="infoRoom"
+                    class="info-value"
+                >
+                    --
+                </div>
+
+            </div>
+
+
+            <!-- CORRIDOR -->
+
+            <div class="info-item">
+
+                <div class="info-label">
+                    Corridor
+                </div>
+
+                <div
+                    id="infoCorridor"
+                    class="info-value"
+                >
+                    --
+                </div>
+
+            </div>
+
+
+            <!-- HOUSE ROLE -->
+
+            <div class="info-item">
+
+                <div class="info-label">
+                    House Role
+                </div>
+
+                <div
+                    id="infoHouseRole"
+                    class="info-value"
+                >
+                    --
+                </div>
+
+            </div>
+
+
+            <!-- YEAR -->
+
+            <div class="info-item">
+
+                <div class="info-label">
+                    Year of Study
+                </div>
+
+                <div
+                    id="infoYear"
+                    class="info-value"
+                >
+                    --
+                </div>
+
+            </div>
+
+
+            <!-- ACCOUNT TYPE -->
+
+            <div class="info-item">
+
+                <div class="info-label">
+                    Account Type
+                </div>
+
+                <div
+                    id="infoAccountType"
+                    class="info-value"
+                >
+                    --
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             MESSAGE
+        ================================================= -->
+
+        <div
+            id="message"
+            class="message"
+        ></div>
+
+
+        <!-- =================================================
+             ACTIONS
+        ================================================= -->
+
+        <div class="actions">
+
+            <button
+                id="backButton"
+                class="action-button back-button"
+                type="button"
+            >
+                ← Dashboard
+            </button>
+
+
+            <button
+                id="logoutButton"
+                class="action-button logout-button"
+                type="button"
+            >
+                Log Out
+            </button>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<script type="module">
+
+
+/* =========================================================
+   FIREBASE IMPORTS
+========================================================= */
+
+import {
+    initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+
+
+import {
+    getAuth,
+    onAuthStateChanged,
+    signOut
+}
+from
+"https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+
+
+import {
+    getFirestore,
+    doc,
+    getDoc,
+    setDoc
+}
+from
+"https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+
+
+/* =========================================================
+   FIREBASE CONFIG
+========================================================= */
+
+const firebaseConfig = {
+
+    apiKey:
+        "AIzaSyDW6IArj2dZiqbf00Ix3SPPSqvxTKG0GgE",
+
+    authDomain:
+        "master-files-95f6b.firebaseapp.com",
+
+    projectId:
+        "master-files-95f6b",
+
+    storageBucket:
+        "master-files-95f6b.firebasestorage.app",
+
+    messagingSenderId:
+        "537891510061",
+
+    appId:
+        "1:537891510061:web:fb46c8d1abae02b9e725a4",
+
+    measurementId:
+        "G-4GNVR5EBJX"
+
+};
+
+
+const app =
+    initializeApp(
+        firebaseConfig
+    );
+
+
+const auth =
+    getAuth(
+        app
+    );
+
+
+const db =
+    getFirestore(
+        app
+    );
+
+
+/* =========================================================
+   STATE
+========================================================= */
+
+let currentUser = null;
+
+let currentUserRecord = null;
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+
+/*
+ * Safely display a value.
+ */
+
+function displayValue(
+    elementId,
+    value
+) {
+
+    const element =
+        document.getElementById(
+            elementId
+        );
+
+
+    if (!element) {
+        return;
+    }
+
+
+    if (
+        value === undefined ||
+        value === null ||
+        String(value).trim() === ""
+    ) {
+
+        element.textContent =
+            "Not provided";
+
+        element.classList.add(
+            "empty"
+        );
+
+        return;
+
+    }
+
+
+    element.textContent =
+        value;
+
+    element.classList.remove(
+        "empty"
+    );
+
+}
+
+
+/* =========================================================
+   INITIALS
+========================================================= */
+
+function getInitials(
+    name
+) {
+
+    if (!name) {
+        return "--";
+    }
+
+
+    const parts =
+        String(name)
+            .trim()
+            .split(/\s+/)
+            .filter(Boolean);
+
+
+    if (
+        parts.length === 1
+    ) {
+
+        return parts[0]
+            .substring(0, 2)
+            .toUpperCase();
+
+    }
+
+
+    return (
+        parts[0][0] +
+        parts[parts.length - 1][0]
+    ).toUpperCase();
+
+}
+
+
+/* =========================================================
+   YEAR OF STUDY
+========================================================= */
+
+function getYearOfStudy(
+    userData
+) {
+
+    /*
+     * Primary field:
+     *
+     * yearOfStudy
+     *
+     * The extra fallbacks make the page
+     * tolerant of existing user documents.
+     */
+
+    const possibleValues = [
+
+        userData.yearOfStudy,
+
+        userData.year,
+
+        userData.studyYear
+
+    ];
+
+
+    for (
+        const value of possibleValues
+    ) {
+
+        if (
+            value !== undefined &&
+            value !== null &&
+            String(value).trim() !== ""
+        ) {
+
+            const number =
+                Number(value);
+
+
+            if (
+                Number.isFinite(number)
+            ) {
+
+                return number;
+
+            }
+
+        }
+
+    }
+
+
+    return null;
+
+}
+
+
+/* =========================================================
+   OWL / OWLET
+========================================================= */
+
+function getHouseAnimal(
+    yearOfStudy
+) {
+
+    /*
+     * First year = Owlet
+     *
+     * Anything beyond first year = Owl
+     */
+
+    if (
+        yearOfStudy === 1
+    ) {
+
+        return "OWLET";
+
+    }
+
+
+    if (
+        yearOfStudy > 1
+    ) {
+
+        return "OWL";
+
+    }
+
+
+    return "OWL";
+
+}
+
+
+/* =========================================================
+   PROFILE PICTURE
+========================================================= */
+
+function renderProfilePicture(
+    userData,
+    displayName
+) {
+
+    const picture =
+        document.getElementById(
+            "profilePicture"
+        );
+
+
+    /*
+     * If a stored profile image exists,
+     * use it.
+     *
+     * The field used is:
+     *
+     * profilePicture
+     */
+
+    if (
+        userData.profilePicture
+    ) {
+
+        picture.innerHTML = "";
+
+        const image =
+            document.createElement(
+                "img"
+            );
+
+
+        image.src =
+            userData.profilePicture;
+
+
+        image.alt =
+            displayName ||
+            "Profile picture";
+
+
+        picture.appendChild(
+            image
+        );
+
+
+        return;
+
+    }
+
+
+    /*
+     * Otherwise use initials.
+     */
+
+    picture.innerHTML = "";
+
+    picture.textContent =
+        getInitials(
+            displayName
+        );
+
+}
+
+
+/* =========================================================
+   FACULTY LOOKUP
+========================================================= */
+
+async function findFaculty(
+    course
+) {
+
+    if (!course) {
+
+        return {
+            faculty: "Not provided",
+            programDirector: "Not provided"
+        };
+
+    }
+
+
+    /*
+     * The faculty collection contains
+     * documents representing faculties.
+     *
+     * Each faculty document contains
+     * course fields.
+     *
+     * Therefore we check every faculty
+     * document until we find one whose
+     * fields contain the user's course.
+     */
+
+    /*
+     * IMPORTANT:
+     *
+     * Without knowing the exact faculty
+     * document IDs, we cannot directly
+     * address one document.
+     *
+     * This implementation expects a
+     * faculty index document:
+     *
+     * faculties/courses
+     *
+     * with:
+     *
+     * {
+     *     "courseName": "Faculty Name"
+     * }
+     *
+     * if that document exists.
+     */
+
+    try {
+
+        const facultyIndexRef =
+            doc(
+                db,
+                "faculties",
+                "courses"
+            );
+
+
+        const facultyIndexSnap =
+            await getDoc(
+                facultyIndexRef
+            );
+
+
+        if (
+            facultyIndexSnap.exists()
+        ) {
+
+            const data =
+                facultyIndexSnap.data();
+
+
+            /*
+             * Try exact course match.
+             */
+
+            if (
+                data[course]
+            ) {
+
+                return {
+                    faculty:
+                        data[course],
+                    programDirector:
+                        "Not provided"
+                };
+
+            }
+
+        }
+
+    }
+
+    catch(error) {
+
+        console.warn(
+            "Faculty lookup failed:",
+            error
+        );
+
+    }
+
+
+    return {
+        faculty: "Not provided",
+        programDirector: "Not provided"
+    };
+
+}
+
+
+/* =========================================================
+   PROGRAM DIRECTOR
+========================================================= */
+
+async function findProgramDirector(
+    course,
+    faculty
+) {
+
+    /*
+     * Program directors are stored
+     * separately.
+     *
+     * This implementation supports a
+     * document whose ID is the course.
+     *
+     * Example:
+     *
+     * programDirectors/
+     *     BSc Computer Science
+     *
+     * {
+     *     name: "John Smith"
+     * }
+     *
+     * If your repository uses a different
+     * document structure, this is the only
+     * lookup that needs changing.
+     */
+
+    if (!course) {
+
+        return "Not provided";
+
+    }
+
+
+    try {
+
+        const directorRef =
+            doc(
+                db,
+                "programDirectors",
+                course
+            );
+
+
+        const directorSnap =
+            await getDoc(
+                directorRef
+            );
+
+
+        if (
+            directorSnap.exists()
+        ) {
+
+            const data =
+                directorSnap.data();
+
+
+            return (
+                data.name ||
+                data.fullName ||
+                data.programDirector ||
+                "Not provided"
+            );
+
+        }
+
+    }
+
+    catch(error) {
+
+        console.warn(
+            "Program director lookup failed:",
+            error
+        );
+
+    }
+
+
+    return "Not provided";
+
+}
+
+
+/* =========================================================
+   RENDER USER
+========================================================= */
+
+async function renderUser(
+    userData
+) {
+
+    /*
+     * NAME
+     */
+
+    const displayName =
+        userData.name ||
+        userData.fullName ||
+        currentUser.displayName ||
+        currentUser.email ||
+        "User";
+
+
+    displayValue(
+        "userName",
+        displayName
+    );
+
+
+    displayValue(
+        "infoName",
+        displayName
+    );
+
+
+    /*
+     * STUDENT NUMBER
+     */
+
+    const studentNumber =
+        userData.studentnumber ||
+        userData.studentNumber ||
+        "Not provided";
+
+
+    displayValue(
+        "studentNumber",
+        "Student Number: " +
+        studentNumber
+    );
+
+
+    displayValue(
+        "infoStudentNumber",
+        studentNumber
+    );
+
+
+    /*
+     * COURSE
+     */
+
+    const course =
+        userData.course ||
+        userData.Course ||
+        "Not provided";
+
+
+    displayValue(
+        "infoCourse",
+        course
+    );
+
+
+    /*
+     * YEAR
+     */
+
+    const year =
+        getYearOfStudy(
+            userData
+        );
+
+
+    if (
+        year !== null
+    ) {
+
+        displayValue(
+            "infoYear",
+            year === 1
+                ? "1st Year"
+                : `${year}th Year`
+        );
+
+    }
+
+    else {
+
+        displayValue(
+            "infoYear",
+            "Not provided"
+        );
+
+    }
+
+
+    /*
+     * OWL / OWLET
+     */
+
+    const animal =
+        getHouseAnimal(
+            year
+        );
+
+
+    document
+        .getElementById(
+            "owlStatus"
+        )
+        .textContent =
+        animal;
+
+
+    document
+        .getElementById(
+            "owlYear"
+        )
+        .textContent =
+        year === null
+            ? "House member"
+            : (
+                year === 1
+                    ? "First Year"
+                    : `Year ${year}`
+            );
+
+
+    /*
+     * ROOM
+     */
+
+    displayValue(
+        "infoRoom",
+        userData.roomNumber ||
+        userData.room ||
+        "Not provided"
+    );
+
+
+    /*
+     * CORRIDOR
+     */
+
+    displayValue(
+        "infoCorridor",
+        userData["corridor number"] ||
+        userData.corridorNumber ||
+        userData.corridor ||
+        "Not provided"
+    );
+
+
+    /*
+     * HOUSE ROLE
+     */
+
+    let houseRole =
+        userData.houseRoles;
+
+
+    if (
+        Array.isArray(houseRole)
+    ) {
+
+        houseRole =
+            houseRole.join(
+                ", "
+            );
+
+    }
+
+
+    displayValue(
+        "infoHouseRole",
+        houseRole ||
+        "HOUSE MEMBER"
+    );
+
+
+    /*
+     * ACCOUNT TYPE
+     */
+
+    displayValue(
+        "infoAccountType",
+        userData.accountType ||
+        "Not provided"
+    );
+
+
+    /*
+     * ACCOUNT STATUS
+     */
+
+    const accountStatus =
+        userData.status ||
+        "UNKNOWN";
+
+
+    document
+        .getElementById(
+            "accountStatus"
+        )
+        .textContent =
+        accountStatus;
+
+
+    /*
+     * PROFILE PHOTO
+     */
+
+    renderProfilePicture(
+        userData,
+        displayName
+    );
+
+
+    /*
+     * FACULTY
+     */
+
+    const facultyResult =
+        await findFaculty(
+            course
+        );
+
+
+    displayValue(
+        "infoFaculty",
+        facultyResult.faculty
+    );
+
+
+    /*
+     * PROGRAM DIRECTOR
+     */
+
+    const programDirector =
+        await findProgramDirector(
+            course,
+            facultyResult.faculty
+        );
+
+
+    displayValue(
+        "infoProgramDirector",
+        programDirector
+    );
+
+}
+
+
+/* =========================================================
+   PHOTO UPLOAD
+========================================================= */
+
+document
+    .getElementById(
+        "photoButton"
+    )
+    .addEventListener(
+        "click",
+        () => {
+
+            document
+                .getElementById(
+                    "profilePhotoInput"
+                )
+                .click();
+
+        }
+    );
+
+
+/* =========================================================
+   HANDLE PHOTO
+========================================================= */
+
+document
+    .getElementById(
+        "profilePhotoInput"
+    )
+    .addEventListener(
+        "change",
+        async event => {
+
+            const file =
+                event.target.files[0];
+
+
+            if (!file) {
+
+                return;
+
+            }
+
+
+            if (
+                !file.type.startsWith(
+                    "image/"
+                )
+            ) {
+
+                showMessage(
+                    "Please select an image file.",
+                    true
+                );
+
+                return;
+
+            }
+
+
+            /*
+             * Limit the image size before
+             * storing it.
+             */
+
+            if (
+                file.size >
+                2 * 1024 * 1024
+            ) {
+
+                showMessage(
+                    "Please choose an image smaller than 2 MB.",
+                    true
+                );
+
+                return;
+
+            }
+
+
+            try {
+
+                /*
+                 * Convert image to a data URL.
+                 *
+                 * This allows the picture to
+                 * persist in Firestore without
+                 * requiring Firebase Storage.
+                 */
+
+                const reader =
+                    new FileReader();
+
+
+                reader.onload =
+                    async () => {
+
+                        const imageData =
+                            reader.result;
+
+
+                        const userRef =
+                            doc(
+                                db,
+                                "users",
+                                currentUser.uid
+                            );
+
+
+                        await setDoc(
+                            userRef,
+                            {
+                                profilePicture:
+                                    imageData
+                            },
+                            {
+                                merge:
+                                    true
+                            }
+                        );
+
+
+                        currentUserRecord.profilePicture =
+                            imageData;
+
+
+                        renderProfilePicture(
+                            currentUserRecord,
+                            currentUserRecord.name ||
+                            currentUser.displayName ||
+                            "User"
+                        );
+
+
+                        showMessage(
+                            "Profile picture updated.",
+                            false
+                        );
+
+                    };
+
+
+                reader.onerror =
+                    () => {
+
+                        showMessage(
+                            "Could not read the selected image.",
+                            true
+                        );
+
+                    };
+
+
+                reader.readAsDataURL(
+                    file
+                );
+
+            }
+
+            catch(error) {
+
+                console.error(
+                    "Profile picture update failed:",
+                    error
+                );
+
+
+                showMessage(
+                    "Could not update profile picture: " +
+                    error.message,
+                    true
+                );
+
+            }
+
+        }
+    );
+
+
+/* =========================================================
+   MESSAGE
+========================================================= */
+
+function showMessage(
+    message,
+    error
+) {
+
+    const element =
+        document.getElementById(
+            "message"
+        );
+
+
+    element.textContent =
+        message;
+
+
+    element.className =
+        "message " +
+        (
+            error
+                ? "error"
+                : "success"
+        );
+
+}
+
+
+/* =========================================================
+   AUTHENTICATION
+========================================================= */
+
+onAuthStateChanged(
+    auth,
+    async user => {
+
+        /*
+         * No authenticated user.
+         */
+
+        if (!user) {
+
+            window.location.href =
+                "index.html";
+
+            return;
+
+        }
+
+
+        currentUser =
+            user;
+
+
+        try {
+
+            /*
+             * USERS/{AUTH UID}
+             */
+
+            const userRef =
+                doc(
+                    db,
+                    "users",
+                    user.uid
+                );
+
+
+            const userSnap =
+                await getDoc(
+                    userRef
+                );
+
+
+            if (
+                !userSnap.exists()
+            ) {
+
+                console.error(
+                    "No Firestore profile found for UID:",
+                    user.uid
+                );
+
+
+                await signOut(
+                    auth
+                );
+
+
+                window.location.href =
+                    "index.html";
+
+                return;
+
+            }
+
+
+            currentUserRecord = {
+
+                id:
+                    user.uid,
+
+                ...userSnap.data()
+
+            };
+
+
+            console.log(
+                "My Info user:",
+                currentUserRecord
+            );
+
+
+            /*
+             * Render everything.
+             */
+
+            await renderUser(
+                currentUserRecord
+            );
+
+
+            /*
+             * Hide loading and display
+             * the actual profile.
+             */
+
+            document
+                .getElementById(
+                    "loading"
+                )
+                .style.display =
+                "none";
+
+
+            document
+                .getElementById(
+                    "profileCard"
+                )
+                .style.display =
+                "block";
+
+        }
+
+        catch(error) {
+
+            console.error(
+                "Could not load My Info:",
+                error
+            );
+
+
+            document
+                .getElementById(
+                    "loading"
+                )
+                .textContent =
+                "Could not load your information: " +
+                error.message;
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   BACK BUTTON
+========================================================= */
+
+document
+    .getElementById(
+        "backButton"
+    )
+    .addEventListener(
+        "click",
+        () => {
+
+            window.location.href =
+                "clienthub.html";
+
+        }
+    );
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+document
+    .getElementById(
+        "logoutButton"
+    )
+    .addEventListener(
+        "click",
+        async () => {
+
+            try {
+
+                await signOut(
+                    auth
+                );
+
+
+                window.location.href =
+                    "index.html";
+
+            }
+
+            catch(error) {
+
+                console.error(
+                    "Logout failed:",
+                    error
+                );
+
+
+                showMessage(
+                    "Could not log out.",
+                    true
+                );
+
+            }
+
+        }
+    );
+
+</script>
+
+</body>
+</html>
+

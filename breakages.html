@@ -1,0 +1,1887 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Beyers Naude - Breakages & Maintenance Dashboard</title>
+    <style>
+        :root {
+            --space-blue-primary: #1D2951;
+            --space-blue-hover: #141C38;
+            --space-blue-light: #EFF3F9;
+            --space-blue-border: #D0DCED;
+            --space-blue-accent: #3B5295;
+            --bg-page: #F4F6F9;
+            --bg-card: #FFFFFF;
+            --text-main: #0F172A;
+            --text-muted: #475569;
+            --text-subtle: #64748B;
+            --danger-red: #DC2626;
+            --danger-red-hover: #B91C1C;
+            --danger-light: #FEF2F2;
+            --danger-border: #FCA5A5;
+            --success-green: #16A34A;
+            --success-light: #F0FDF4;
+            --success-border: #86EFAC;
+            --warning-amber: #D97706;
+            --warning-light: #FFFBEB;
+            --warning-border: #FDE68A;
+            --scheduled-purple: #7E22CE;
+            --scheduled-light: #FAF5FF;
+            --scheduled-border: #E9D5FF;
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+            --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+            --shadow-md: 0 4px 12px rgba(29, 41, 81, 0.08);
+            --shadow-lg: 0 10px 25px rgba(29, 41, 81, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* HEADER */
+        .header {
+            background-color: var(--space-blue-primary);
+            color: #FFFFFF;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand h1 {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+
+        .brand p {
+            color: #A0B2D6;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 0.01em;
+            margin-top: 2px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-nav {
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #FFFFFF;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-nav:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .logout-button {
+            border: none;
+            background-color: var(--danger-red);
+            color: #FFFFFF;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: background-color 0.15s ease;
+        }
+
+        .logout-button:hover {
+            background-color: var(--danger-red-hover);
+        }
+
+        /* MAIN CONTAINER */
+        .container {
+            max-width: 1380px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 32px 24px 60px;
+            flex: 1;
+        }
+
+        /* PAGE INTRO */
+        .page-intro {
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--space-blue-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .page-intro h2 {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--space-blue-primary);
+            letter-spacing: -0.02em;
+            margin-bottom: 4px;
+        }
+
+        .page-intro p {
+            color: var(--text-muted);
+            font-size: 15px;
+        }
+
+        /* SUMMARY CARDS DASHBOARD */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(6, minmax(0, 1fr));
+            gap: 14px;
+            margin-bottom: 28px;
+        }
+
+        .summary-card {
+            background-color: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: 16px 18px;
+            border: 1px solid var(--space-blue-border);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .summary-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background-color: var(--space-blue-primary);
+        }
+
+        .summary-card.reported::before { background-color: var(--warning-amber); }
+        .summary-card.in-progress::before { background-color: var(--space-blue-accent); }
+        .summary-card.scheduled::before { background-color: var(--scheduled-purple); }
+        .summary-card.completed::before { background-color: var(--success-green); }
+        .summary-card.overdue::before { background-color: var(--danger-red); }
+
+        .summary-title {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-subtle);
+            margin-bottom: 6px;
+        }
+
+        .summary-value {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--space-blue-primary);
+            line-height: 1.1;
+        }
+
+        .summary-subtext {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+
+        /* FILTERS SECTION */
+        .filter-panel {
+            background-color: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            border: 1px solid var(--space-blue-border);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr auto;
+            gap: 12px;
+            align-items: end;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .filter-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-main);
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 9px 12px;
+            font-size: 14px;
+            border: 1px solid var(--space-blue-border);
+            border-radius: var(--radius-sm);
+            background-color: #FFFFFF;
+            color: var(--text-main);
+            outline: none;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--space-blue-accent);
+            box-shadow: 0 0 0 3px rgba(59, 82, 149, 0.15);
+        }
+
+        .btn-reset {
+            background-color: var(--space-blue-light);
+            color: var(--space-blue-primary);
+            border: 1px solid var(--space-blue-border);
+            padding: 9px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+            height: 38px;
+        }
+
+        .btn-reset:hover {
+            background-color: var(--space-blue-border);
+        }
+
+        .active-filter-indicator {
+            font-size: 13px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 8px;
+            border-top: 1px dashed var(--space-blue-border);
+        }
+
+        /* BULK ACTION BAR */
+        .bulk-action-bar {
+            background-color: var(--space-blue-primary);
+            color: #FFFFFF;
+            border-radius: var(--radius-md);
+            padding: 14px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-md);
+            animation: fadeIn 0.2s ease-in-out;
+        }
+
+        .bulk-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .bulk-counter-pill {
+            background-color: var(--space-blue-accent);
+            color: #FFFFFF;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 800;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .bulk-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .bulk-control-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .bulk-control-group label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #A0B2D6;
+            white-space: nowrap;
+        }
+
+        .bulk-control-group .form-control {
+            padding: 6px 10px;
+            font-size: 13px;
+            height: 34px;
+            width: auto;
+        }
+
+        .btn-bulk-apply {
+            background-color: #FFFFFF;
+            color: var(--space-blue-primary);
+            border: none;
+            padding: 8px 18px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            height: 34px;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .btn-bulk-apply:hover {
+            background-color: var(--space-blue-light);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-bulk-clear {
+            background: none;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #FFFFFF;
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .btn-bulk-clear:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* TABLE SECTION */
+        .table-card {
+            background-color: var(--bg-card);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--space-blue-border);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        thead {
+            background-color: var(--space-blue-light);
+            border-bottom: 2px solid var(--space-blue-border);
+        }
+
+        th {
+            padding: 14px 16px;
+            font-weight: 700;
+            color: var(--space-blue-primary);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #E2E8F0;
+            color: var(--text-main);
+            vertical-align: middle;
+        }
+
+        tbody tr:hover {
+            background-color: #F8FAFC;
+        }
+
+        tbody tr.selected-row {
+            background-color: #EFF3F9;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .checkbox-col {
+            width: 40px;
+            text-align: center;
+        }
+
+        .custom-checkbox {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--space-blue-primary);
+            cursor: pointer;
+        }
+
+        .resident-meta {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .resident-name {
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .resident-sub {
+            font-size: 12px;
+            color: var(--text-subtle);
+        }
+
+        .damage-tag {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 700;
+            background-color: #E2E8F0;
+            color: #334155;
+        }
+
+        .desc-preview {
+            max-width: 220px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .btn-view-desc {
+            background: none;
+            border: none;
+            color: var(--space-blue-accent);
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            padding: 0;
+            margin-top: 2px;
+            text-decoration: underline;
+        }
+
+        /* BADGES */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+            line-height: 1;
+            width: fit-content;
+        }
+
+        .badge-reported {
+            background-color: var(--warning-light);
+            color: var(--warning-amber);
+            border: 1px solid var(--warning-border);
+        }
+
+        .badge-in-progress {
+            background-color: var(--space-blue-light);
+            color: var(--space-blue-primary);
+            border: 1px solid var(--space-blue-border);
+        }
+
+        .badge-scheduled {
+            background-color: var(--scheduled-light);
+            color: var(--scheduled-purple);
+            border: 1px solid var(--scheduled-border);
+        }
+
+        .badge-completed {
+            background-color: var(--success-light);
+            color: var(--success-green);
+            border: 1px solid var(--success-border);
+        }
+
+        .badge-overdue {
+            background-color: var(--danger-light);
+            color: var(--danger-red);
+            border: 1px solid var(--danger-border);
+        }
+
+        .fixture-date-val {
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .fixture-date-val.is-overdue {
+            color: var(--danger-red);
+            font-weight: 700;
+        }
+
+        /* ACTION BUTTON */
+        .btn-action {
+            background-color: #FFFFFF;
+            border: 1px solid var(--space-blue-border);
+            color: var(--space-blue-primary);
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+        }
+
+        .btn-action:hover {
+            background-color: var(--space-blue-primary);
+            color: #FFFFFF;
+            border-color: var(--space-blue-primary);
+        }
+
+        /* STATE MESSAGES */
+        .state-container {
+            padding: 48px 24px;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        .state-container h4 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 6px;
+        }
+
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--space-blue-light);
+            border-top: 3px solid var(--space-blue-primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* MODAL */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(2px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-card {
+            background-color: var(--bg-card);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 650px;
+            border: 1px solid var(--space-blue-border);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            transform: translateY(10px);
+            transition: transform 0.2s ease;
+        }
+
+        .modal-overlay.active .modal-card {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            background-color: var(--space-blue-primary);
+            color: #FFFFFF;
+            padding: 18px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: #A0B2D6;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 4px;
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            color: #FFFFFF;
+        }
+
+        .modal-body {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            max-height: 75vh;
+            overflow-y: auto;
+        }
+
+        .detail-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            background-color: var(--bg-page);
+            padding: 16px;
+            border-radius: var(--radius-md);
+            border: 1px solid #E2E8F0;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .detail-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-subtle);
+            letter-spacing: 0.03em;
+        }
+
+        .detail-val {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-top: 2px;
+        }
+
+        .description-box {
+            background-color: #FFFFFF;
+            border: 1px solid var(--space-blue-border);
+            border-radius: var(--radius-sm);
+            padding: 14px;
+            font-size: 14px;
+            color: var(--text-main);
+            white-space: pre-wrap;
+            min-height: 80px;
+            line-height: 1.6;
+        }
+
+        .edit-section {
+            background-color: var(--space-blue-light);
+            border: 1px solid var(--space-blue-border);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            background-color: var(--space-blue-light);
+            border-top: 1px solid var(--space-blue-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-save-modal {
+            background-color: var(--space-blue-primary);
+            color: #FFFFFF;
+            border: none;
+            padding: 10px 20px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.15s ease;
+        }
+
+        .btn-save-modal:hover {
+            background-color: var(--space-blue-hover);
+        }
+
+        .btn-save-modal:disabled {
+            background-color: #9CA3AF;
+            cursor: not-allowed;
+        }
+
+        /* FOOTER */
+        .footer {
+            text-align: center;
+            color: var(--text-subtle);
+            font-size: 13px;
+            font-weight: 500;
+            padding: 24px 16px;
+            border-top: 1px solid var(--space-blue-border);
+            background-color: #FFFFFF;
+            margin-top: auto;
+        }
+
+        /* RESPONSIVE BREAKPOINTS */
+        @media (max-width: 1200px) {
+            .summary-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+            .filter-grid {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 16px 20px;
+            }
+
+            .container {
+                padding: 20px 16px 40px;
+            }
+
+            .page-intro {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .summary-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .filter-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .bulk-action-bar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 14px;
+            }
+
+            .bulk-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .bulk-control-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .bulk-control-group .form-control {
+                width: 100%;
+            }
+
+            .detail-group {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-footer {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="brand">
+            <h1>House Beyers Naude</h1>
+            <p>Master Files • Breakages & Maintenance</p>
+        </div>
+        <div class="header-actions">
+            <a href="admin.html" class="btn-nav">
+                &larr; Dashboard
+            </a>
+            <button class="logout-button" id="logoutButton">Log Out</button>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="container">
+
+        <!-- PAGE INTRO -->
+        <section class="page-intro">
+            <div>
+                <h2>Breakages & Maintenance</h2>
+                <p>Monitor, organise and manage maintenance reports across House Beyers Naude.</p>
+            </div>
+        </section>
+
+        <!-- HOUSE-WIDE SUMMARY METRICS -->
+        <section class="summary-grid">
+            <div class="summary-card">
+                <div>
+                    <div class="summary-title">Total Reports</div>
+                    <div class="summary-value" id="statTotal">--</div>
+                </div>
+                <div class="summary-subtext">All breakage records</div>
+            </div>
+
+            <div class="summary-card reported">
+                <div>
+                    <div class="summary-title">Reported</div>
+                    <div class="summary-value" id="statReported">--</div>
+                </div>
+                <div class="summary-subtext">Awaiting maintenance action</div>
+            </div>
+
+            <div class="summary-card in-progress">
+                <div>
+                    <div class="summary-title">In Progress</div>
+                    <div class="summary-value" id="statInProgress">--</div>
+                </div>
+                <div class="summary-subtext">Maintenance work active</div>
+            </div>
+
+            <div class="summary-card scheduled">
+                <div>
+                    <div class="summary-title">Scheduled</div>
+                    <div class="summary-value" id="statScheduled">--</div>
+                </div>
+                <div class="summary-subtext">Has expected fixture date</div>
+            </div>
+
+            <div class="summary-card completed">
+                <div>
+                    <div class="summary-title">Completed</div>
+                    <div class="summary-value" id="statCompleted">--</div>
+                </div>
+                <div class="summary-subtext">Successfully repaired</div>
+            </div>
+
+            <div class="summary-card overdue">
+                <div>
+                    <div class="summary-title">Overdue</div>
+                    <div class="summary-value" id="statOverdue">--</div>
+                </div>
+                <div class="summary-subtext">Passed fixture date</div>
+            </div>
+        </section>
+
+        <!-- SEARCH & COMBINED FILTERS -->
+        <section class="filter-panel">
+            <div class="filter-grid">
+                <div class="filter-group">
+                    <label for="searchInput" class="filter-label">Search Breakages</label>
+                    <input type="text" id="searchInput" class="form-control" placeholder="Search by resident name, student #, room, or description...">
+                </div>
+
+                <div class="filter-group">
+                    <label for="roomFilter" class="filter-label">Room</label>
+                    <select id="roomFilter" class="form-control">
+                        <option value="ALL">All Rooms</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="damageTypeFilter" class="filter-label">Damage Type</label>
+                    <select id="damageTypeFilter" class="form-control">
+                        <option value="ALL">All Categories</option>
+                        <option value="Plugs">Plugs</option>
+                        <option value="Shelves">Shelves</option>
+                        <option value="Bed">Bed</option>
+                        <option value="Window">Window</option>
+                        <option value="Mirror">Mirror</option>
+                        <option value="Door">Door</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="corridorFilter" class="filter-label">Corridor</label>
+                    <select id="corridorFilter" class="form-control">
+                        <option value="ALL">All Corridors</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="statusFilter" class="filter-label">Maintenance Status</label>
+                    <select id="statusFilter" class="form-control">
+                        <option value="ALL">All Statuses</option>
+                        <option value="Reported">Reported</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Scheduled">Scheduled</option>
+                        <option value="Completed">Completed</option>
+                        <option value="OVERDUE">Overdue Maintenance</option>
+                    </select>
+                </div>
+
+                <div>
+                    <button id="resetFiltersBtn" class="btn-reset">Clear Filters</button>
+                </div>
+            </div>
+
+            <div class="active-filter-indicator">
+                <span id="filteredCountLabel">Showing 0 of 0 records</span>
+                <span id="activeFilterTags" style="font-weight: 600; color: var(--space-blue-primary);"></span>
+            </div>
+        </section>
+
+        <!-- BULK ACTION BAR (HIDDEN BY DEFAULT) -->
+        <section class="bulk-action-bar" id="bulkActionBar" style="display: none;">
+            <div class="bulk-info">
+                <span class="bulk-counter-pill" id="bulkCountLabel">0 Selected</span>
+                <span>Bulk Maintenance Operations</span>
+            </div>
+
+            <div class="bulk-controls">
+                <div class="bulk-control-group">
+                    <label for="bulkStatusSelect">Set Status:</label>
+                    <select id="bulkStatusSelect" class="form-control">
+                        <option value="">-- No Change --</option>
+                        <option value="Reported">Reported</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Scheduled">Scheduled</option>
+                        <option value="Completed">Completed</option>
+                    </select>
+                </div>
+
+                <div class="bulk-control-group">
+                    <label for="bulkFixtureDate">Fixture Date:</label>
+                    <input type="date" id="bulkFixtureDate" class="form-control">
+                </div>
+
+                <button class="btn-bulk-apply" id="btnApplyBulk">Apply Changes</button>
+                <button class="btn-bulk-clear" id="btnClearSelection">Clear Selection</button>
+            </div>
+        </section>
+
+        <!-- BREAKAGES TABLE -->
+        <section class="table-card">
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="checkbox-col">
+                                <input type="checkbox" id="selectAllCheckbox" class="custom-checkbox" title="Select All Displayed">
+                            </th>
+                            <th>Resident</th>
+                            <th>Student No.</th>
+                            <th>Room / Corridor</th>
+                            <th>Damage Category</th>
+                            <th>Description</th>
+                            <th>Reported Date</th>
+                            <th>Expected Fixture</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="breakagesTableBody">
+                        <tr>
+                            <td colspan="10">
+                                <div class="state-container">
+                                    <div class="spinner"></div>
+                                    <h4>Loading house-wide breakage records...</h4>
+                                    <p>Connecting to database records.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- BREAKAGE DETAIL & MANAGEMENT MODAL -->
+    <div class="modal-overlay" id="detailModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Breakage Maintenance Record</h3>
+                <button class="modal-close" id="closeDetailModalBtn">&times;</button>
+            </div>
+            <div class="modal-body" id="detailModalBody">
+                <!-- Modal content rendered via JS -->
+            </div>
+            <div class="modal-footer">
+                <div id="modalStatusContainer"></div>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn-reset" id="cancelDetailModalBtn">Close</button>
+                    <button class="btn-save-modal" id="btnSaveDetail">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BULK ACTION CONFIRMATION MODAL -->
+    <div class="modal-overlay" id="bulkConfirmModal">
+        <div class="modal-card" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3>Confirm Bulk Maintenance Update</h3>
+                <button class="modal-close" id="closeBulkModalBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="bulkModalSummaryText" style="font-size: 15px; color: var(--text-main); font-weight: 600;"></p>
+                
+                <div style="background-color: var(--space-blue-light); padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--space-blue-border); margin-top: 10px;">
+                    <span class="detail-label">Changes to be applied:</span>
+                    <ul id="bulkChangesList" style="margin-top: 6px; padding-left: 20px; font-size: 14px; color: var(--text-main);">
+                    </ul>
+                </div>
+
+                <p style="font-size: 13px; color: var(--danger-red); font-weight: 500; margin-top: 6px;">
+                    This action will update all selected Firestore records.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-reset" id="cancelBulkConfirmBtn">Cancel</button>
+                <button class="btn-save-modal" id="btnConfirmBulkExecution">Confirm & Execute</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        House Beyers Naude • House of Masters
+    </footer>
+
+    <!-- FIREBASE & APPLICATION LOGIC -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, collection, getDocs, updateDoc, writeBatch, serverTimestamp, Timestamp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDW6IArj2dZiqbf00Ix3SPPSqvxTKG0GgE",
+            authDomain: "master-files-95f6b.firebaseapp.com",
+            projectId: "master-files-95f6b",
+            storageBucket: "master-files-95f6b.firebasestorage.app",
+            messagingSenderId: "537891510061",
+            appId: "1:537891510061:web:fb46c8d1abae02b9e725a4",
+            measurementId: "G-4GNVR5EBJX"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Primary Collections
+        const BREAKAGES_COLLECTION = "breakages";
+        const USERS_COLLECTION = "users";
+        const ADMINS_COLLECTION = "admins";
+
+        // Application State
+        let rawBreakages = [];
+        let residentMap = new Map();
+        let selectedIds = new Set();
+        let activeFilteredBreakages = [];
+        let currentAdminUid = null;
+        let isUserAdmin = false;
+        let activeDetailId = null;
+
+        /* AUTHENTICATION & ROLE ACCESS CONTROL */
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = "index.html";
+                return;
+            }
+
+            currentAdminUid = user.uid;
+
+            try {
+                // Verify admin privileges using standard admins/{auth.uid} lookup
+                const adminRef = doc(db, ADMINS_COLLECTION, user.uid);
+                const adminSnap = await getDoc(adminRef);
+
+                if (adminSnap.exists()) {
+                    isUserAdmin = true;
+                } else {
+                    // Alternative role check in users collection if admins collection record is absent
+                    const userRef = doc(db, USERS_COLLECTION, user.uid);
+                    const userSnap = await getDoc(userRef);
+                    if (userSnap.exists() && (userSnap.data().role === "admin" || userSnap.data().isAdmin === true)) {
+                        isUserAdmin = true;
+                    }
+                }
+
+                if (!isUserAdmin) {
+                    console.warn("Unauthorised access attempt by non-admin user.");
+                    await signOut(auth);
+                    window.location.href = "index.html";
+                    return;
+                }
+
+                // Authorised -> Load data
+                await initDashboard();
+
+            } catch (error) {
+                console.error("Admin Authentication Error:", error);
+                renderErrorState("Failed to verify administrative security permissions.");
+            }
+        });
+
+        /* INITIALISATION */
+        async function initDashboard() {
+            try {
+                await fetchResidents();
+                await fetchBreakages();
+                setupFilterListeners();
+                setupSelectionListeners();
+                setupModalListeners();
+            } catch (err) {
+                console.error("Dashboard Init Failure:", err);
+                renderErrorState("Failed to retrieve house breakage records. Please check database connectivity.");
+            }
+        }
+
+        /* FETCH RESIDENTS DATABASE FOR CROSS-REFERENCING */
+        async function fetchResidents() {
+            residentMap.clear();
+            try {
+                const usersSnap = await getDocs(collection(db, USERS_COLLECTION));
+                usersSnap.forEach(docSnap => {
+                    const data = docSnap.data();
+                    const studentNum = (data.studentNumber || data.studentNo || "").toString().trim();
+                    const resObj = {
+                        uid: docSnap.id,
+                        fullName: `${data.name || ''} ${data.surname || ''}`.trim() || "Unknown Resident",
+                        studentNumber: studentNum || "N/A",
+                        roomNumber: (data.roomNumber || data.room || "N/A").toString().trim(),
+                        corridor: (data.corridor || data.corridorNumber || "Unassigned").toString().trim()
+                    };
+
+                    if (studentNum) residentMap.set(studentNum, resObj);
+                    residentMap.set(docSnap.id, resObj);
+                });
+            } catch (e) {
+                console.warn("Could not pre-fetch full user directory, using embedded breakage metadata:", e);
+            }
+        }
+
+        /* FETCH BREAKAGES RECORDS */
+        async function fetchBreakages() {
+            const snap = await getDocs(collection(db, BREAKAGES_COLLECTION));
+            rawBreakages = [];
+            
+            const roomSet = new Set();
+            const corridorSet = new Set();
+
+            snap.forEach(docSnap => {
+                const data = docSnap.data();
+                const id = docSnap.id;
+
+                // Match with resident database if available
+                const userKey = (data.studentNumber || data.studentNo || data.userId || data.userUid || "").toString().trim();
+                const matchedRes = residentMap.get(userKey) || residentMap.get(data.userId) || {};
+
+                // Normalise Damage Category (Plugs, Shelves, Bed, Window, Mirror, Door)
+                const damageCategory = normalizeDamageType(data.damageType || data.category || data.item || data.type);
+
+                // Normalise Room & Corridor
+                const room = (data.roomNumber || data.room || matchedRes.roomNumber || "N/A").toString().trim();
+                const corridor = (data.corridor || matchedRes.corridor || "N/A").toString().trim();
+
+                if (room && room !== "N/A") roomSet.add(room);
+                if (corridor && corridor !== "N/A" && corridor !== "Unassigned") corridorSet.add(corridor);
+
+                // Date Reported
+                let dateReported = parseFirebaseDate(data.dateReported || data.createdAt || data.timestamp || data.date);
+
+                // Expected Fixture Date
+                let expectedFixtureDate = parseFirebaseDate(data.expectedFixtureDate || data.fixtureDate || data.scheduledDate);
+
+                // Maintenance Status (Reported, In Progress, Scheduled, Completed)
+                let status = normalizeStatus(data.status, expectedFixtureDate);
+
+                rawBreakages.push({
+                    id: id,
+                    residentName: matchedRes.fullName || data.residentName || `${data.name || ''} ${data.surname || ''}`.trim() || "Resident",
+                    studentNumber: userKey || matchedRes.studentNumber || "N/A",
+                    roomNumber: room,
+                    corridor: corridor,
+                    damageType: damageCategory,
+                    description: data.description || data.reason || data.details || "No description provided",
+                    dateReported: dateReported,
+                    expectedFixtureDate: expectedFixtureDate,
+                    status: status,
+                    originalData: data
+                });
+            });
+
+            // Populate Room Dropdown
+            const roomSelect = document.getElementById("roomFilter");
+            roomSelect.innerHTML = '<option value="ALL">All Rooms</option>';
+            Array.from(roomSet).sort((a, b) => a.localeCompare(b, undefined, { numeric: true })).forEach(r => {
+                const opt = document.createElement("option");
+                opt.value = r;
+                opt.textContent = `Room ${r}`;
+                roomSelect.appendChild(opt);
+            });
+
+            // Populate Corridor Dropdown
+            const corridorSelect = document.getElementById("corridorFilter");
+            corridorSelect.innerHTML = '<option value="ALL">All Corridors</option>';
+            Array.from(corridorSet).sort().forEach(c => {
+                const opt = document.createElement("option");
+                opt.value = c;
+                opt.textContent = c.startsWith("Corridor") ? c : `Corridor ${c}`;
+                corridorSelect.appendChild(opt);
+            });
+
+            // Recalculate Metrics & Apply Filters
+            calculateMetrics(rawBreakages);
+            applyFilters();
+        }
+
+        /* DATA NORMALISATION HELPERS */
+        function normalizeDamageType(typeStr) {
+            if (!typeStr) return "Other";
+            const clean = typeStr.toString().trim().toLowerCase();
+            
+            if (clean.includes("plug") || clean.includes("socket") || clean.includes("power")) return "Plugs";
+            if (clean.includes("shelf") || clean.includes("shelves") || clean.includes("cupboard")) return "Shelves";
+            if (clean.includes("bed") || clean.includes("mattress")) return "Bed";
+            if (clean.includes("window") || clean.includes("glass") || clean.includes("pane")) return "Window";
+            if (clean.includes("mirror")) return "Mirror";
+            if (clean.includes("door") || clean.includes("handle") || clean.includes("lock")) return "Door";
+
+            return typeStr.charAt(0).toUpperCase() + typeStr.slice(1);
+        }
+
+        function normalizeStatus(statusStr, expectedDate) {
+            let s = (statusStr || "Reported").toString().trim();
+            const lower = s.toLowerCase();
+
+            if (lower === "completed" || lower === "fixed" || lower === "resolved") return "Completed";
+            if (lower === "in progress" || lower === "inprogress" || lower === "working") return "In Progress";
+            if (lower === "scheduled") return "Scheduled";
+            
+            // If there's an expected fixture date set and status is reported, treat as Scheduled or In Progress
+            if (expectedDate && s.toUpperCase() === "REPORTED") {
+                return "Scheduled";
+            }
+
+            return "Reported";
+        }
+
+        function parseFirebaseDate(val) {
+            if (!val) return null;
+            if (typeof val.toDate === "function") return val.toDate();
+            if (val instanceof Date) return val;
+            const parsed = new Date(val);
+            return isNaN(parsed.getTime()) ? null : parsed;
+        }
+
+        function isReportOverdue(breakage) {
+            if (breakage.status === "Completed") return false;
+            if (!breakage.expectedFixtureDate) return false;
+            
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            const fixtureDate = new Date(breakage.expectedFixtureDate);
+            fixtureDate.setHours(0, 0, 0, 0);
+
+            return fixtureDate < today;
+        }
+
+        /* CALCULATE HOUSE METRICS */
+        function calculateMetrics(breakages) {
+            let total = breakages.length;
+            let reported = 0;
+            let inProgress = 0;
+            let scheduled = 0;
+            let completed = 0;
+            let overdue = 0;
+
+            breakages.forEach(b => {
+                if (isReportOverdue(b)) {
+                    overdue++;
+                }
+
+                if (b.status === "Completed") completed++;
+                else if (b.status === "In Progress") inProgress++;
+                else if (b.status === "Scheduled") scheduled++;
+                else reported++;
+            });
+
+            document.getElementById("statTotal").textContent = total;
+            document.getElementById("statReported").textContent = reported;
+            document.getElementById("statInProgress").textContent = inProgress;
+            document.getElementById("statScheduled").textContent = scheduled;
+            document.getElementById("statCompleted").textContent = completed;
+            document.getElementById("statOverdue").textContent = overdue;
+        }
+
+        /* COMBINED FILTERS & SEARCH SYSTEM */
+        function setupFilterListeners() {
+            document.getElementById("searchInput").addEventListener("input", applyFilters);
+            document.getElementById("roomFilter").addEventListener("change", applyFilters);
+            document.getElementById("damageTypeFilter").addEventListener("change", applyFilters);
+            document.getElementById("corridorFilter").addEventListener("change", applyFilters);
+            document.getElementById("statusFilter").addEventListener("change", applyFilters);
+
+            document.getElementById("resetFiltersBtn").addEventListener("click", () => {
+                document.getElementById("searchInput").value = "";
+                document.getElementById("roomFilter").value = "ALL";
+                document.getElementById("damageTypeFilter").value = "ALL";
+                document.getElementById("corridorFilter").value = "ALL";
+                document.getElementById("statusFilter").value = "ALL";
+                applyFilters();
+            });
+        }
+
+        function applyFilters() {
+            const search = document.getElementById("searchInput").value.trim().toLowerCase();
+            const roomVal = document.getElementById("roomFilter").value;
+            const damageVal = document.getElementById("damageTypeFilter").value;
+            const corridorVal = document.getElementById("corridorFilter").value;
+            const statusVal = document.getElementById("statusFilter").value;
+
+            activeFilteredBreakages = rawBreakages.filter(b => {
+                // Search match
+                if (search) {
+                    const matchName = b.residentName.toLowerCase().includes(search);
+                    const matchStudent = b.studentNumber.toLowerCase().includes(search);
+                    const matchRoom = b.roomNumber.toLowerCase().includes(search);
+                    const matchDesc = b.description.toLowerCase().includes(search);
+                    if (!matchName && !matchStudent && !matchRoom && !matchDesc) return false;
+                }
+
+                // Room match
+                if (roomVal !== "ALL" && b.roomNumber !== roomVal) return false;
+
+                // Damage Type match
+                if (damageVal !== "ALL" && b.damageType !== damageVal) return false;
+
+                // Corridor match
+                if (corridorVal !== "ALL" && b.corridor !== corridorVal) return false;
+
+                // Status match
+                if (statusVal !== "ALL") {
+                    if (statusVal === "OVERDUE") {
+                        if (!isReportOverdue(b)) return false;
+                    } else if (b.status !== statusVal) {
+                        return false;
+                    }
+                }
+
+                return true;
+            });
+
+            document.getElementById("filteredCountLabel").textContent = `Showing ${activeFilteredBreakages.length} of ${rawBreakages.length} records`;
+
+            renderTable(activeFilteredBreakages);
+        }
+
+        /* TABLE RENDERER */
+        function renderTable(breakages) {
+            const tbody = document.getElementById("breakagesTableBody");
+            tbody.innerHTML = "";
+
+            if (breakages.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="10">
+                            <div class="state-container">
+                                <h4>No breakages found</h4>
+                                <p>No reported items match your active filters or query.</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                updateSelectAllState();
+                return;
+            }
+
+            breakages.forEach(b => {
+                const tr = document.createElement("tr");
+                const isSelected = selectedIds.has(b.id);
+                if (isSelected) tr.classList.add("selected-row");
+
+                const overdue = isReportOverdue(b);
+                const badgeHtml = getStatusBadgeHtml(b.status, overdue);
+                const fixtureDateDisplay = formatFixtureDateDisplay(b.expectedFixtureDate, overdue);
+
+                tr.innerHTML = `
+                    <td class="checkbox-col">
+                        <input type="checkbox" class="custom-checkbox row-checkbox" data-id="${b.id}" ${isSelected ? 'checked' : ''}>
+                    </td>
+                    <td>
+                        <div class="resident-meta">
+                            <span class="resident-name">${escapeHtml(b.residentName)}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <span style="font-family: monospace; font-weight: 600;">${escapeHtml(b.studentNumber)}</span>
+                    </td>
+                    <td>
+                        <div class="resident-meta">
+                            <span style="font-weight:700;">Room ${escapeHtml(b.roomNumber)}</span>
+                            <span class="resident-sub">${escapeHtml(b.corridor.startsWith('Corridor') ? b.corridor : 'Corridor ' + b.corridor)}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="damage-tag">${escapeHtml(b.damageType)}</span>
+                    </td>
+                    <td>
+                        <div class="desc-preview" title="${escapeHtml(b.description)}">
+                            ${escapeHtml(b.description)}
+                        </div>
+                        <button class="btn-view-desc" data-id="${b.id}">View Details</button>
+                    </td>
+                    <td style="white-space: nowrap;">${formatDate(b.dateReported)}</td>
+                    <td>${fixtureDateDisplay}</td>
+                    <td>${badgeHtml}</td>
+                    <td>
+                        <button class="btn-action" data-id="${b.id}">Inspect</button>
+                    </td>
+                `;
+
+                // Item level event listeners
+                tr.querySelector(".row-checkbox").addEventListener("change", (e) => {
+                    toggleSelectRow(b.id, e.target.checked);
+                });
+
+                tr.querySelector(".btn-view-desc").addEventListener("click", () => openDetailModal(b.id));
+                tr.querySelector(".btn-action").addEventListener("click", () => openDetailModal(b.id));
+
+                tbody.appendChild(tr);
+            });
+
+            updateSelectAllState();
+        }
+
+        /* BULK SELECTION MANAGEMENT */
+        function setupSelectionListeners() {
+            const selectAll = document.getElementById("selectAllCheckbox");
+            selectAll.addEventListener("change", (e) => {
+                const checkState = e.target.checked;
+                activeFilteredBreakages.forEach(b => {
+                    if (checkState) selectedIds.add(b.id);
+                    else selectedIds.delete(b.id);
+                });
+                renderTable(activeFilteredBreakages);
+                updateBulkActionBar();
+            });
+
+            document.getElementById("btnClearSelection").addEventListener("click", () => {
+                selectedIds.clear();
+                renderTable(activeFilteredBreakages);
+                updateBulkActionBar();
+            });
+
+            document.getElementById("btnApplyBulk").addEventListener("click", openBulkConfirmModal);
+        }
+
+        function toggleSelectRow(id, isChecked) {
+            if (isChecked) selectedIds.add(id);
+            else selectedIds.delete(id);
+            
+            updateBulkActionBar();
+            updateSelectAllState();
+
+            // Toggle row class without re-rendering entire table
+            const rowCheckboxes = document.querySelectorAll(`.row-checkbox[data-id="${id}"]`);
+            rowCheckboxes.forEach(cb => {
+                const tr = cb.closest("tr");
+                if (tr) {
+                    if (isChecked) tr.classList.add("selected-row");
+                    else tr.classList.remove("selected-row");
+                }
+            });
+        }
+
+        function updateSelectAllState() {
+            const selectAll = document.getElementById("selectAllCheckbox");
+            if (activeFilteredBreakages.length === 0) {
+                selectAll.checked = false;
+                selectAll.disabled = true;
+                return;
+            }
+            selectAll.disabled = false;
+
+            const allFilteredSelected = activeFilteredBreakages.every(b => selectedIds.has(b.id));
+            selectAll.checked = allFilteredSelected;
+        }
+
+        function updateBulkActionBar() {
+            const bar = document.getElementById("bulkActionBar");
+            const label = document.getElementById("bulkCountLabel");
+
+            if (selectedIds.size > 0) {
+                bar.style.display = "flex";
+                label.textContent = `${selectedIds.size} Selected`;
+            } else {
+                bar.style.display = "none";
+            }
+        }
+
+        /* BULK CONFIRMATION MODAL & FIRESTORE BATCH EXECUTOR */
+        function openBulkConfirmModal() {
+            const newStatus = document.getElementById("bulkStatusSelect").value;
+            const newFixtureDate = document.getElementById("bulkFixtureDate").value;
+
+            if (!newStatus && !newFixtureDate) {
+                alert("Please select a status or an expected fixture date to apply in bulk.");
+                return;
+            }
+
+            const modal = document.getElementById("bulkConfirmModal");
+            const summaryText = document.getElementById("bulkModalSummaryText");
+            const changesList = document.getElementById("bulkChangesList");
+
+            summaryText.textContent = `You are about to update ${selectedIds.size} selected breakage report(s).`;
+            changesList.innerHTML = "";
+
+            if (newStatus) {
+                const li = document.createElement("li");
+                li.innerHTML = `<strong>Status Change:</strong> Updated to <span>${newStatus}</span>`;
+                changesList.appendChild(li);
+            }
+
+            if (newFixtureDate) {
+                const li = document.createElement("li");
+                li.innerHTML = `<strong>Expected Fixture Date:</strong> Set to <span>${formatDate(new Date(newFixtureDate))}</span>`;
+                changesList.appendChild(li);
+            }
+
+            modal.classList.add("active");
+        }
+
+        async function executeBulkUpdate() {
+            const btnConfirm = document.getElementById("btnConfirmBulkExecution");
+            btnConfirm.disabled = true;
+            btnConfirm.textContent = "Updating Database...";
+
+            const newStatus = document.getElementById("bulkStatusSelect").value;
+            const newFixtureDate = document.getElementById("bulkFixtureDate").value;
+
+            try {
+                const batch = writeBatch(db);
+                const updatePayload = {
+                    updatedAt: serverTimestamp(),
+                    updatedByAdminId: currentAdminUid
+                };
+
+                if (newStatus) updatePayload.status = newStatus;
+                if (newFixtureDate) {
+                    const parsedDate = new Date(newFixtureDate);
+                    updatePayload.expectedFixtureDate = Timestamp.fromDate(parsedDate);
+                }
+
+                selectedIds.forEach(id => {
+                    const ref = doc(db, BREAKAGES_COLLECTION, id);
+                    batch.update(ref, updatePayload);
+                });
+
+                await batch.commit();
+
+                document.getElementById("bulkConfirmModal").classList.remove("active");
+                alert(`Successfully updated ${selectedIds.size} breakage reports!`);
+
+                // Reset Bulk controls
+                selectedIds.clear();
+                document.getElementById("bulkStatusSelect").value = "";
+                document.getElementById("bulkFixtureDate").value = "";
+                updateBulkActionBar();
+
+                // Refresh Database Data
+                await fetchBreakages();
+
+            } catch (err) {
+                console.error("Bulk Update Execution Failed:", err);
+                alert("Failed to complete bulk update. Please verify Firestore security rules.");
+            } finally {
+                btnConfirm.disabled = false;
+                btnConfirm.textContent = "Confirm & Execute";
+            }
+        }
+
+        /* INDIVIDUAL DETAIL MODAL MANAGEMENT */
+        function openDetailModal(id) {
+            activeDetailId = id;
+            const b = rawBreakages.find(item => item.id === id);
+            if (!b) return;
+
+            const modalBody = document.getElementById("detailModalBody");
+            const modalStatus = document.getElementById("modalStatusContainer");
+            const overdue = isReportOverdue(b);
+
+            modalStatus.innerHTML = getStatusBadgeHtml(b.status, overdue);
+
+            const formattedFixtureInputVal = b.expectedFixtureDate 
+                ? b.expectedFixtureDate.toISOString().split("T")[0] 
+                : "";
+
+            modalBody.innerHTML = `
+                <div class="detail-group">
+                    <div class="detail-item">
+                        <span class="detail-label">Reporting Resident</span>
+                        <span class="detail-val">${escapeHtml(b.residentName)}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Student Number</span>
+                        <span class="detail-val">${escapeHtml(b.studentNumber)}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Room Number</span>
+                        <span class="detail-val">Room ${escapeHtml(b.roomNumber)}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Corridor</span>
+                        <span class="detail-val">${escapeHtml(b.corridor)}</span>
+                    </div>
+                </div>
+
+                <div>
+                    <span class="detail-label" style="display:block; margin-bottom:4px;">Damage Category & Full Description</span>
+                    <div style="margin-bottom:8px;">
+                        <span class="damage-tag">${escapeHtml(b.damageType)}</span>
+                    </div>
+                    <div class="description-box">${escapeHtml(b.description)}</div>
+                </div>
+
+                <div class="detail-group">
+                    <div class="detail-item">
+                        <span class="detail-label">Date Reported</span>
+                        <span class="detail-val">${formatDate(b.dateReported)}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Current Fixture Date</span>
+                        <span class="detail-val">${b.expectedFixtureDate ? formatDate(b.expectedFixtureDate) : 'Not Scheduled'}</span>
+                    </div>
+                </div>
+
+                <div class="edit-section">
+                    <span class="detail-label" style="color: var(--space-blue-primary);">Administrative Status & Scheduling</span>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div class="filter-group">
+                            <label for="detailStatusSelect" class="filter-label">Update Status</label>
+                            <select id="detailStatusSelect" class="form-control">
+                                <option value="Reported" ${b.status === "Reported" ? "selected" : ""}>Reported</option>
+                                <option value="In Progress" ${b.status === "In Progress" ? "selected" : ""}>In Progress</option>
+                                <option value="Scheduled" ${b.status === "Scheduled" ? "selected" : ""}>Scheduled</option>
+                                <option value="Completed" ${b.status === "Completed" ? "selected" : ""}>Completed</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="detailFixtureDate" class="filter-label">Expected Fixture Date</label>
+                            <input type="date" id="detailFixtureDate" class="form-control" value="${formattedFixtureInputVal}">
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById("detailModal").classList.add("active");
+        }
+
+        async function saveDetailChanges() {
+            if (!activeDetailId) return;
+
+            const btnSave = document.getElementById("btnSaveDetail");
+            btnSave.disabled = true;
+            btnSave.textContent = "Saving...";
+
+            const newStatus = document.getElementById("detailStatusSelect").value;
+            const newDateVal = document.getElementById("detailFixtureDate").value;
+
+            try {
+                const docRef = doc(db, BREAKAGES_COLLECTION, activeDetailId);
+                const updatePayload = {
+                    status: newStatus,
+                    updatedAt: serverTimestamp(),
+                    updatedByAdminId: currentAdminUid
+                };
+
+                if (newDateVal) {
+                    updatePayload.expectedFixtureDate = Timestamp.fromDate(new Date(newDateVal));
+                }
+
+                await updateDoc(docRef, updatePayload);
+
+                document.getElementById("detailModal").classList.remove("active");
+                activeDetailId = null;
+
+                await fetchBreakages(); // Refresh UI table & metrics
+
+            } catch (err) {
+                console.error("Individual Update Failure:", err);
+                alert("Failed to update breakage record. Check Firestore security permissions.");
+            } finally {
+                btnSave.disabled = false;
+                btnSave.textContent = "Save Changes";
+            }
+        }
+
+        /* MODAL SETUP EVENT LISTENERS */
+        function setupModalListeners() {
+            // Individual detail modal listeners
+            const detailModal = document.getElementById("detailModal");
+            const closeDetailBtn = document.getElementById("closeDetailModalBtn");
+            const cancelDetailBtn = document.getElementById("cancelDetailModalBtn");
+            const btnSaveDetail = document.getElementById("btnSaveDetail");
+
+            const closeDetail = () => {
+                detailModal.classList.remove("active");
+                activeDetailId = null;
+            };
+
+            closeDetailBtn.addEventListener("click", closeDetail);
+            cancelDetailBtn.addEventListener("click", closeDetail);
+            btnSaveDetail.addEventListener("click", saveDetailChanges);
+
+            // Bulk modal listeners
+            const bulkModal = document.getElementById("bulkConfirmModal");
+            const closeBulkBtn = document.getElementById("closeBulkModalBtn");
+            const cancelBulkBtn = document.getElementById("cancelBulkConfirmBtn");
+            const btnConfirmBulk = document.getElementById("btnConfirmBulkExecution");
+
+            const closeBulk = () => bulkModal.classList.remove("active");
+
+            closeBulkBtn.addEventListener("click", closeBulk);
+            cancelBulkBtn.addEventListener("click", closeBulk);
+            btnConfirmBulk.addEventListener("click", executeBulkUpdate);
+        }
+
+        /* LOGOUT HANDLER */
+        document.getElementById("logoutButton").addEventListener("click", async () => {
+            try {
+                await signOut(auth);
+                window.location.href = "index.html";
+            } catch (err) {
+                console.error("Logout Error:", err);
+            }
+        });
+
+        /* UTILITY & FORMATTING HELPERS */
+        function getStatusBadgeHtml(status, isOverdue) {
+            if (isOverdue) {
+                return `<span class="status-badge badge-overdue">Overdue</span>`;
+            }
+            switch (status) {
+                case "Completed":
+                    return `<span class="status-badge badge-completed">Completed</span>`;
+                case "In Progress":
+                    return `<span class="status-badge badge-in-progress">In Progress</span>`;
+                case "Scheduled":
+                    return `<span class="status-badge badge-scheduled">Scheduled</span>`;
+                case "Reported":
+                default:
+                    return `<span class="status-badge badge-reported">Reported</span>`;
+            }
+        }
+
+        function formatFixtureDateDisplay(dateObj, isOverdue) {
+            if (!dateObj) return '<span style="color:var(--text-subtle); font-size:12px;">Not Set</span>';
+            const formatted = formatDate(dateObj);
+            if (isOverdue) {
+                return `<span class="fixture-date-val is-overdue">${formatted}</span>`;
+            }
+            return `<span class="fixture-date-val">${formatted}</span>`;
+        }
+
+        function formatDate(dateObj) {
+            if (!dateObj || isNaN(dateObj.getTime())) return "N/A";
+            return dateObj.toLocaleDateString("en-GB", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric"
+            });
+        }
+
+        function renderErrorState(msg) {
+            const tbody = document.getElementById("breakagesTableBody");
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="10">
+                        <div class="state-container" style="color: var(--danger-red);">
+                            <h4>System Error</h4>
+                            <p>${escapeHtml(msg)}</p>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+
+        function escapeHtml(str) {
+            if (!str) return "";
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+
+</html>

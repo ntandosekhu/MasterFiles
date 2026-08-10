@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>House Beyers Naude - Venue Bookings</title>
+
+<style>
+/* =========================
+   GLOBAL & COLOUR SYSTEM
+========================= */
+:root {
+    --space-blue: #1D2951;
+    --space-blue-hover: #151f3d;
+    --space-blue-light: #263968;
+    --background: #f4f5f7;
+    --card-bg: #ffffff;
+    --border: #e2e8f0;
+    --text-primary: #1f2937;
+    --text-muted: #64748b;
+    
+    /* Calendar Status Colours */
+    --status-available-bg: #ffffff;
+    --status-available-border: #cbd5e1;
+    --status-available-text: #1e293b;
+    
+    --status-booked-bg: #fef2f2;
+    --status-booked-border: #fecaca;
+    --status-booked-text: #991b1b;
+    
+    --status-your-bg: #fffbe3;
+    --status-your-border: #fde68a;
+    --status-your-text: #92400e;
+    
+    --status-passed-bg: #f1f5f9;
+    --status-passed-border: #e2e8f0;
+    --status-passed-text: #94a3b8;
+
+    --status-selected-bg: #1D2951;
+    --status-selected-text: #ffffff;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--background);
+    color: var(--text-primary);
+    line-height: 1.5;
+    min-height: 100vh;
+}
+
+/* =========================
+   HEADER
+========================= */
+.header {
+    background: var(--space-blue);
+    color: white;
+    padding: 18px 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.header-branding h1 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+}
+
+.header-branding p {
+    color: #cbd5e1;
+    font-size: 13px;
+    margin-top: 2px;
+}
+
+.header-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.header-button {
+    border: none;
+    padding: 9px 16px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: background 0.15s ease;
+}
+
+.back-button {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+}
+
+.back-button:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.logout-button {
+    background: #dc2626;
+    color: white;
+}
+
+.logout-button:hover {
+    background: #b91c1c;
+}
+
+/* =========================
+   CONTAINER & LOADING
+========================= */
+.container {
+    max-width: 1280px;
+    margin: auto;
+    padding: 32px 20px 48px 20px;
+}
+
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    gap: 12px;
+    color: var(--text-muted);
+}
+
+.spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid var(--border);
+    border-top-color: var(--space-blue);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.message-banner {
+    display: none;
+    padding: 14px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    margin-bottom: 24px;
+}
+
+.message-banner.error {
+    display: block;
+    background: #fee2e2;
+    border: 1px solid #fca5a5;
+    color: #991b1b;
+}
+
+.message-banner.success {
+    display: block;
+    background: #dcfce7;
+    border: 1px solid #86efac;
+    color: #166534;
+}
+
+.page-content {
+    display: none;
+}
+
+/* =========================
+   PAGE TITLE & USER CARD
+========================= */
+.page-title {
+    margin-bottom: 24px;
+}
+
+.page-title h2 {
+    color: var(--space-blue);
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.page-title p {
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+.user-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 18px 24px;
+    margin-bottom: 28px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    border-left: 5px solid var(--space-blue);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.user-card-info h3 {
+    font-size: 18px;
+    color: var(--text-primary);
+}
+
+.user-card-badge {
+    background: #eff6ff;
+    color: #1d4ed8;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+/* =========================
+   VENUE SELECTOR & LEGEND
+========================= */
+.controls-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.venue-selector-label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+
+.venue-tabs {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.venue-tab {
+    background: var(--background);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.venue-tab:hover {
+    border-color: var(--space-blue);
+    color: var(--space-blue);
+}
+
+.venue-tab.active {
+    background: var(--space-blue);
+    color: white;
+    border-color: var(--space-blue);
+}
+
+.legend {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.legend-box {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    border: 1px solid;
+}
+
+.legend-box.available { background: var(--status-available-bg); border-color: var(--status-available-border); }
+.legend-box.booked { background: var(--status-booked-bg); border-color: var(--status-booked-border); }
+.legend-box.your-booking { background: var(--status-your-bg); border-color: var(--status-your-border); }
+.legend-box.passed { background: var(--status-passed-bg); border-color: var(--status-passed-border); }
+
+/* =========================
+   14-DAY CALENDAR GRID
+========================= */
+.calendar-section {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 32px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.calendar-scroll-wrapper {
+    overflow-x: auto;
+    width: 100%;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: 75px repeat(14, minmax(110px, 1fr));
+    gap: 6px;
+    min-width: 1600px;
+}
+
+.calendar-cell {
+    padding: 8px 6px;
+    border-radius: 6px;
+    font-size: 12px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 48px;
+    border: 1px solid var(--border);
+    transition: all 0.15s ease;
+}
+
+.calendar-cell.header-cell {
+    background: var(--space-blue);
+    color: white;
+    font-weight: 700;
+    border: none;
+    min-height: 44px;
+}
+
+.calendar-cell.header-cell span {
+    font-size: 11px;
+    font-weight: 400;
+    opacity: 0.85;
+}
+
+.calendar-cell.time-cell {
+    background: #f8fafc;
+    font-weight: 700;
+    color: var(--text-muted);
+    border-color: #e2e8f0;
+}
+
+/* Cell Visual States */
+.calendar-cell.status-available {
+    background: var(--status-available-bg);
+    border-color: var(--status-available-border);
+    color: var(--status-available-text);
+    cursor: pointer;
+}
+
+.calendar-cell.status-available:hover {
+    border-color: var(--space-blue);
+    background: #f0f4ff;
+}
+
+.calendar-cell.status-booked {
+    background: var(--status-booked-bg);
+    border-color: var(--status-booked-border);
+    color: var(--status-booked-text);
+    cursor: not-allowed;
+    font-weight: 600;
+}
+
+.calendar-cell.status-your-booking {
+    background: var(--status-your-bg);
+    border-color: var(--status-your-border);
+    color: var(--status-your-text);
+    font-weight: 700;
+}
+
+.calendar-cell.status-passed {
+    background: var(--status-passed-bg);
+    border-color: var(--status-passed-border);
+    color: var(--status-passed-text);
+    cursor: not-allowed;
+}
+
+.calendar-cell.status-selected {
+    background: var(--status-selected-bg) !important;
+    border-color: var(--status-selected-bg) !important;
+    color: var(--status-selected-text) !important;
+    font-weight: 700;
+    box-shadow: 0 0 0 2px var(--space-blue);
+}
+
+/* =========================
+   MAKE A BOOKING FORM
+========================= */
+.booking-form-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 32px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.booking-form-card h3 {
+    font-size: 18px;
+    color: var(--space-blue);
+    margin-bottom: 16px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    align-items: flex-end;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.form-input, .form-select {
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 14px;
+    background: var(--background);
+    color: var(--text-primary);
+    width: 100%;
+}
+
+.form-input:disabled {
+    opacity: 0.75;
+    cursor: not-allowed;
+}
+
+.submit-button {
+    background: var(--space-blue);
+    color: white;
+    border: none;
+    padding: 11px 20px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    width: 100%;
+}
+
+.submit-button:hover:not(:disabled) {
+    background: var(--space-blue-hover);
+}
+
+.submit-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* =========================
+   SECTIONS & CARDS
+========================= */
+.section-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--space-blue);
+    margin-bottom: 16px;
+}
+
+.list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 32px;
+}
+
+.item-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+
+.item-details h4 {
+    font-size: 16px;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.item-meta {
+    font-size: 13px;
+    color: var(--text-muted);
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.badge {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.badge.status-APPROVED { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+.badge.status-PENDING { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+.badge.status-CANCELLED { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+
+.cancel-button {
+    background: white;
+    color: #dc2626;
+    border: 1px solid #dc2626;
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.cancel-button:hover {
+    background: #dc2626;
+    color: white;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 28px 20px;
+    background: var(--card-bg);
+    border: 1px dashed var(--border);
+    border-radius: 10px;
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+/* =========================
+   RESPONSIVE DESIGN
+========================= */
+@media (max-width: 640px) {
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 16px 20px;
+    }
+
+    .header-actions {
+        width: 100%;
+    }
+
+    .header-button {
+        flex: 1;
+        text-align: center;
+    }
+
+    .user-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .item-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .cancel-button {
+        width: 100%;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- =========================
+     HEADER
+========================= -->
+<header class="header">
+    <div class="header-branding">
+        <h1>House Beyers Naude</h1>
+        <p>Venue Bookings</p>
+    </div>
+
+    <div class="header-actions">
+        <button class="header-button back-button" id="dashboardButton">← Dashboard</button>
+        <button class="header-button logout-button" id="logoutButton">Log Out</button>
+    </div>
+</header>
+
+<main class="container">
+
+    <!-- LOADING & MESSAGES -->
+    <div id="loadingState" class="loading-container">
+        <div class="spinner"></div>
+        <p>Loading venue calendar...</p>
+    </div>
+
+    <div id="messageBanner" class="message-banner"></div>
+
+    <!-- MAIN PAGE CONTENT -->
+    <div id="pageContent" class="page-content">
+
+        <!-- PAGE INTRO -->
+        <section class="page-title">
+            <h2>Venue Bookings</h2>
+            <p>View venue availability and make a booking for an available time slot.</p>
+        </section>
+
+        <!-- USER INFO CARD -->
+        <section class="user-card">
+            <div class="user-card-info">
+                <h3 id="userName">Loading...</h3>
+            </div>
+            <span class="user-card-badge" id="userAccountType">Resident</span>
+        </section>
+
+        <!-- CONTROLS & VENUE SELECTOR -->
+        <section class="controls-card">
+            <div>
+                <div class="venue-selector-label">Select Venue</div>
+                <div class="venue-tabs">
+                    <button class="venue-tab active" data-venue-id="bond" data-venue-name="Bond">Bond</button>
+                    <button class="venue-tab" data-venue-id="gazelle" data-venue-name="Gazelle">Gazelle</button>
+                    <button class="venue-tab" data-venue-id="piano_room" data-venue-name="Piano Room">Piano Room</button>
+                </div>
+            </div>
+
+            <div class="legend">
+                <div class="legend-item"><div class="legend-box available"></div> Available</div>
+                <div class="legend-item"><div class="legend-box booked"></div> Booked</div>
+                <div class="legend-item"><div class="legend-box your-booking"></div> Your Booking</div>
+                <div class="legend-item"><div class="legend-box passed"></div> Passed</div>
+            </div>
+        </section>
+
+        <!-- 14-DAY CALENDAR -->
+        <section class="calendar-section">
+            <div class="calendar-scroll-wrapper">
+                <div id="calendarGrid" class="calendar-grid">
+                    <!-- Dynamic rendering -->
+                </div>
+            </div>
+        </section>
+
+        <!-- BOOKING FORM -->
+        <section class="booking-form-card">
+            <h3>Make a Booking</h3>
+            <form id="bookingForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Selected Venue</label>
+                        <input type="text" id="formVenue" class="form-input" value="Bond" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>Start Time</label>
+                        <input type="text" id="formStart" class="form-input" placeholder="Click an available slot above" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>End Time (Max 3 hours)</label>
+                        <select id="formEnd" class="form-select" disabled>
+                            <option value="">Select start time first</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" id="submitBookingBtn" class="submit-button" disabled>Book Venue</button>
+                    </div>
+                </div>
+            </form>
+        </section>
+
+        <!-- MY BOOKINGS -->
+        <section>
+            <h3 class="section-title">My Bookings</h3>
+            <div id="myBookingsList" class="list-container">
+                <div class="empty-state">Loading your bookings...</div>
+            </div>
+        </section>
+
+        <!-- UPCOMING HOUSE EVENTS -->
+        <section>
+            <h3 class="section-title">Upcoming House Events</h3>
+            <div id="houseEventsList" class="list-container">
+                <div class="empty-state">Loading upcoming events...</div>
+            </div>
+        </section>
+
+    </div>
+
+</main>
+
+<script type="module">
+
+/* =========================
+   FIREBASE IMPORTS
+========================= */
+import {
+    initializeApp
+} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+
+import {
+    getAuth,
+    onAuthStateChanged,
+    signOut
+} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+
+import {
+    getFirestore,
+    doc,
+    getDoc,
+    collection,
+    getDocs,
+    addDoc,
+    updateDoc,
+    query,
+    orderBy
+} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+
+/* =========================
+   FIREBASE CONFIG
+========================= */
+const firebaseConfig = {
+    apiKey: "AIzaSyDW6IArj2dZiqbf00Ix3SPPSqvxTKG0GgE",
+    authDomain: "master-files-95f6b.firebaseapp.com",
+    projectId: "master-files-95f6b",
+    storageBucket: "master-files-95f6b.firebasestorage.app",
+    messagingSenderId: "537891510061",
+    appId: "1:537891510061:web:fb46c8d1abae02b9e725a4",
+    measurementId: "G-4GNVR5EBJX"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+/* =========================
+   STATE
+========================= */
+let currentUser = null;
+let currentUserRecord = null;
+let bookings = [];
+let houseEvents = [];
+
+let currentVenueId = "bond";
+let currentVenueName = "Bond";
+
+let selectedSlotStart = null;
+let validEndTimes = [];
+
+/* =========================
+   DOM ELEMENTS
+========================= */
+const loadingState = document.getElementById("loadingState");
+const pageContent = document.getElementById("pageContent");
+const messageBanner = document.getElementById("messageBanner");
+
+const userNameEl = document.getElementById("userName");
+const userAccountTypeEl = document.getElementById("userAccountType");
+
+const calendarGrid = document.getElementById("calendarGrid");
+const bookingForm = document.getElementById("bookingForm");
+const formVenue = document.getElementById("formVenue");
+const formStart = document.getElementById("formStart");
+const formEnd = document.getElementById("formEnd");
+const submitBookingBtn = document.getElementById("submitBookingBtn");
+
+const myBookingsList = document.getElementById("myBookingsList");
+const houseEventsList = document.getElementById("houseEventsList");
+
+/* =========================
+   UTILITIES
+========================= */
+function showMessage(text, isError = false) {
+    messageBanner.textContent = text;
+    messageBanner.className = "message-banner " + (isError ? "error" : "success");
+    setTimeout(() => {
+        messageBanner.className = "message-banner";
+    }, 6000);
+}
+
+function parseDate(val) {
+    if (!val) return null;
+    if (val.toDate && typeof val.toDate === "function") return val.toDate();
+    const d = new Date(val);
+    return isNaN(d.getTime()) ? null : d;
+}
+
+function formatDateShort(date) {
+    return date.toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short" });
+}
+
+function formatTime(date) {
+    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false });
+}
+
+function formatAccountType(type) {
+    if (!type) return "RESIDENT";
+    return type.replace(/_/g, " ").toUpperCase();
+}
+
+/* =========================
+   CALENDAR DATE COMPUTATIONS
+========================= */
+function getCalendarDays() {
+    const now = new Date();
+    const dayOfWeek = now.getDay();
+    // 0 is Sunday, 1 is Monday ... 6 is Saturday
+    const distToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+    const monday = new Date(now);
+    monday.setDate(now.getDate() + distToMonday);
+    monday.setHours(0, 0, 0, 0);
+
+    const days = [];
+    for (let i = 0; i < 14; i++) {
+        const d = new Date(monday);
+        d.setDate(monday.getDate() + i);
+        days.push(d);
+    }
+    return days;
+}
+
+function getHourlySlots() {
+    // 08:00 through 21:00 (1-hour slots covering up to 22:00)
+    const hours = [];
+    for (let h = 8; h <= 21; h++) {
+        hours.push(h);
+    }
+    return hours;
+}
+
+/* =========================
+   AVAILABILITY CHECKER
+========================= */
+function getSlotStatus(slotStart, slotEnd) {
+    const now = new Date();
+
+    // Past check
+    if (slotStart < now) {
+        return { type: "PASSED" };
+    }
+
+    // Check against ALL active venue bookings
+    for (const b of bookings) {
+        if ((b.status || "").toUpperCase() === "CANCELLED") continue;
+        if ((b.venueId || "").toLowerCase() !== currentVenueId.toLowerCase()) continue;
+
+        const bStart = parseDate(b.startTime);
+        const bEnd = parseDate(b.endTime);
+
+        if (!bStart || !bEnd) continue;
+
+        // Overlap condition: bStart < slotEnd && bEnd > slotStart
+        if (bStart < slotEnd && bEnd > slotStart) {
+            if (b.bookerId === currentUser.uid) {
+                return { type: "YOUR_BOOKING", booking: b };
+            } else {
+                return { type: "BOOKED" };
+            }
+        }
+    }
+
+    return { type: "AVAILABLE" };
+}
+
+/* =========================
+   RENDER CALENDAR
+========================= */
+function renderCalendar() {
+    const days = getCalendarDays();
+    const hours = getHourlySlots();
+
+    calendarGrid.innerHTML = "";
+
+    // 1. Header Row
+    const emptyCorner = document.createElement("div");
+    emptyCorner.className = "calendar-cell header-cell";
+    emptyCorner.textContent = "Time";
+    calendarGrid.appendChild(emptyCorner);
+
+    days.forEach(day => {
+        const headerCell = document.createElement("div");
+        headerCell.className = "calendar-cell header-cell";
+        headerCell.innerHTML = `${day.toLocaleDateString(undefined, { weekday: "short" })}<span>${day.getDate()} ${day.toLocaleDateString(undefined, { month: "short" })}</span>`;
+        calendarGrid.appendChild(headerCell);
+    });
+
+    // 2. Hourly Rows
+    hours.forEach(h => {
+        const timeCell = document.createElement("div");
+        timeCell.className = "calendar-cell time-cell";
+        timeCell.textContent = `${h.toString().padStart(2, "0")}:00`;
+        calendarGrid.appendChild(timeCell);
+
+        days.forEach(day => {
+            const slotStart = new Date(day.getFullYear(), day.getMonth(), day.getDate(), h, 0, 0, 0);
+            const slotEnd = new Date(day.getFullYear(), day.getMonth(), day.getDate(), h + 1, 0, 0, 0);
+
+            const statusInfo = getSlotStatus(slotStart, slotEnd);
+            const cell = document.createElement("div");
+
+            const isSelected = selectedSlotStart && selectedSlotStart.getTime() === slotStart.getTime();
+
+            if (isSelected) {
+                cell.className = "calendar-cell status-selected";
+                cell.innerHTML = `Selected<br><strong>${formatTime(slotStart)}</strong>`;
+            } else if (statusInfo.type === "PASSED") {
+                cell.className = "calendar-cell status-passed";
+                cell.textContent = "Passed";
+            } else if (statusInfo.type === "BOOKED") {
+                cell.className = "calendar-cell status-booked";
+                cell.textContent = "Booked";
+            } else if (statusInfo.type === "YOUR_BOOKING") {
+                cell.className = "calendar-cell status-your-booking";
+                cell.textContent = "Your Booking";
+            } else {
+                cell.className = "calendar-cell status-available";
+                cell.textContent = "Available";
+
+                cell.addEventListener("click", () => {
+                    handleSelectSlot(slotStart);
+                });
+            }
+
+            calendarGrid.appendChild(cell);
+        });
+    });
+}
+
+/* =========================
+   SLOT SELECTION & FORM
+========================= */
+function handleSelectSlot(slotStart) {
+    selectedSlotStart = slotStart;
+    renderCalendar();
+
+    formVenue.value = currentVenueName;
+    formStart.value = `${formatDateShort(slotStart)} @ ${formatTime(slotStart)}`;
+
+    // Dynamically calculate valid end times (1hr, 2hr, 3hr)
+    validEndTimes = [];
+    formEnd.innerHTML = "";
+
+    for (let durationHours = 1; durationHours <= 3; durationHours++) {
+        const checkEnd = new Date(slotStart.getTime() + durationHours * 60 * 60 * 1000);
+
+        // Max time limit is 22:00
+        if (checkEnd.getHours() > 22 || (checkEnd.getHours() === 22 && checkEnd.getMinutes() > 0) || (checkEnd.getDate() !== slotStart.getDate())) {
+            break;
+        }
+
+        // Check if full range [slotStart, checkEnd] is free of conflicts
+        let isRangeFree = true;
+
+        for (let subH = 0; subH < durationHours; subH++) {
+            const subStart = new Date(slotStart.getTime() + subH * 60 * 60 * 1000);
+            const subEnd = new Date(slotStart.getTime() + (subH + 1) * 60 * 60 * 1000);
+
+            const status = getSlotStatus(subStart, subEnd);
+            if (status.type !== "AVAILABLE") {
+                isRangeFree = false;
+                break;
+            }
+        }
+
+        if (isRangeFree) {
+            validEndTimes.push(checkEnd);
+            const opt = document.createElement("option");
+            opt.value = checkEnd.toISOString();
+            opt.textContent = `${formatTime(checkEnd)} (${durationHours} ${durationHours === 1 ? 'hour' : 'hours'})`;
+            formEnd.appendChild(opt);
+        } else {
+            break; // Stop checking larger ranges if smaller range hits a conflict
+        }
+    }
+
+    if (validEndTimes.length > 0) {
+        formEnd.disabled = false;
+        submitBookingBtn.disabled = false;
+    } else {
+        formEnd.innerHTML = `<option value="">No valid booking range</option>`;
+        formEnd.disabled = true;
+        submitBookingBtn.disabled = true;
+    }
+}
+
+/* =========================
+   SUBMIT BOOKING
+========================= */
+bookingForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    if (!selectedSlotStart || !formEnd.value) {
+        showMessage("Please select a valid time slot and duration.", true);
+        return;
+    }
+
+    const selectedEnd = new Date(formEnd.value);
+
+    // Re-verify availability prior to submission
+    for (let subStart = new Date(selectedSlotStart); subStart < selectedEnd; subStart.setHours(subStart.getHours() + 1)) {
+        const subEnd = new Date(subStart.getTime() + 60 * 60 * 1000);
+        const status = getSlotStatus(subStart, subEnd);
+        if (status.type !== "AVAILABLE") {
+            showMessage("Your booking could not be created. The selected time may no longer be available.", true);
+            await loadBookings();
+            return;
+        }
+    }
+
+    submitBookingBtn.disabled = true;
+    submitBookingBtn.textContent = "Booking...";
+
+    try {
+        const bookerType = currentUserRecord.accountType || "HOUSE_MEMBER";
+        const initialStatus = (bookerType === "ALUMNI") ? "PENDING" : "APPROVED";
+
+        await addDoc(collection(db, "bookings"), {
+            venueId: currentVenueId,
+            venueName: currentVenueName,
+            bookerId: currentUser.uid,
+            bookerType: bookerType,
+            startTime: selectedSlotStart.toISOString(),
+            endTime: selectedEnd.toISOString(),
+            status: initialStatus,
+            createdAt: new Date().toISOString()
+        });
+
+        showMessage(`Booking created successfully (${initialStatus}).`);
+        resetForm();
+        await loadBookings();
+
+    } catch (error) {
+        console.error("Booking error:", error);
+        showMessage("Your booking could not be created. " + error.message, true);
+    } finally {
+        submitBookingBtn.textContent = "Book Venue";
+    }
+});
+
+function resetForm() {
+    selectedSlotStart = null;
+    validEndTimes = [];
+    formStart.value = "";
+    formEnd.innerHTML = `<option value="">Select start time first</option>`;
+    formEnd.disabled = true;
+    submitBookingBtn.disabled = true;
+}
+
+/* =========================
+   MY BOOKINGS LIST
+========================= */
+function renderMyBookings() {
+    const myBookings = bookings.filter(b => b.bookerId === currentUser.uid);
+
+    // Sort newest first
+    myBookings.sort((a, b) => (parseDate(b.startTime) || 0) - (parseDate(a.startTime) || 0));
+
+    if (myBookings.length === 0) {
+        myBookingsList.innerHTML = `<div class="empty-state">You have no active or historical venue bookings.</div>`;
+        return;
+    }
+
+    myBookingsList.innerHTML = myBookings.map(b => {
+        const start = parseDate(b.startTime);
+        const end = parseDate(b.endTime);
+        const status = (b.status || "APPROVED").toUpperCase();
+        const isCancelled = status === "CANCELLED";
+
+        return `
+            <div class="item-card">
+                <div class="item-details">
+                    <h4>${b.venueName || b.venueId}</h4>
+                    <div class="item-meta">
+                        <span><strong>Date:</strong> ${start ? formatDateShort(start) : "N/A"}</span>
+                        <span><strong>Time:</strong> ${start ? formatTime(start) : "N/A"} → ${end ? formatTime(end) : "N/A"}</span>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span class="badge status-${status}">${status}</span>
+                    ${!isCancelled ? `<button class="cancel-button" data-id="${b.id}">Cancel</button>` : ''}
+                </div>
+            </div>
+        `;
+    }).join("");
+}
+
+/* =========================
+   CANCEL BOOKING HANDLER
+========================= */
+myBookingsList.addEventListener("click", async (e) => {
+    if (!e.target.classList.contains("cancel-button")) return;
+
+    const bookingId = e.target.getAttribute("data-id");
+    if (!bookingId) return;
+
+    const confirmCancel = window.confirm("Are you sure you want to cancel this booking?");
+    if (!confirmCancel) return;
+
+    try {
+        const bookingRef = doc(db, "bookings", bookingId);
+        await updateDoc(bookingRef, {
+            status: "CANCELLED"
+        });
+
+        showMessage("Booking cancelled successfully.");
+        await loadBookings();
+    } catch (error) {
+        console.error("Cancellation error:", error);
+        showMessage("Could not cancel booking: " + error.message, true);
+    }
+});
+
+/* =========================
+   UPCOMING HOUSE EVENTS
+========================= */
+async function loadHouseEvents() {
+    try {
+        const q = query(collection(db, "houseEvents"));
+        const snap = await getDocs(q);
+
+        houseEvents = [];
+        snap.forEach(docSnap => {
+            houseEvents.push({ id: docSnap.id, ...docSnap.data() });
+        });
+
+        renderHouseEvents();
+    } catch (error) {
+        console.error("House Events error:", error);
+        houseEventsList.innerHTML = `<div class="empty-state">Upcoming events are currently unavailable.</div>`;
+    }
+}
+
+function renderHouseEvents() {
+    const now = new Date();
+    
+    // Filter future events
+    const upcoming = houseEvents.filter(e => {
+        const eDate = parseDate(e.date || e.startTime);
+        return eDate && eDate >= now;
+    });
+
+    upcoming.sort((a, b) => parseDate(a.date || a.startTime) - parseDate(b.date || b.startTime));
+
+    if (upcoming.length === 0) {
+        houseEventsList.innerHTML = `<div class="empty-state">No upcoming house events scheduled.</div>`;
+        return;
+    }
+
+    houseEventsList.innerHTML = upcoming.map(e => {
+        const eDate = parseDate(e.date || e.startTime);
+        return `
+            <div class="item-card">
+                <div class="item-details">
+                    <h4>${e.title || "House Event"}</h4>
+                    <div class="item-meta">
+                        <span><strong>Date:</strong> ${eDate ? formatDateShort(eDate) : "TBA"}</span>
+                        <span><strong>Location:</strong> ${e.location || "House Common Room"}</span>
+                    </div>
+                    ${e.description ? `<p style="font-size: 13px; color: #64748b; margin-top: 6px;">${e.description}</p>` : ''}
+                </div>
+                <span class="badge" style="background: #eff6ff; color: #1d4ed8;">HOUSE EVENT</span>
+            </div>
+        `;
+    }).join("");
+}
+
+/* =========================
+   DATA LOADERS
+========================= */
+async function loadBookings() {
+    try {
+        const snap = await getDocs(collection(db, "bookings"));
+        bookings = [];
+        snap.forEach(docSnap => {
+            bookings.push({ id: docSnap.id, ...docSnap.data() });
+        });
+
+        renderCalendar();
+        renderMyBookings();
+    } catch (error) {
+        console.error("Error loading bookings:", error);
+        showMessage("Unable to load booking availability. Please try again.", true);
+    }
+}
+
+async function loadUserData(user) {
+    const userRef = doc(db, "users", user.uid);
+    const userSnap = await getDoc(userRef);
+
+    if (!userSnap.exists()) {
+        throw new Error("User record not found in database.");
+    }
+
+    currentUserRecord = userSnap.data();
+    userNameEl.textContent = currentUserRecord.name || user.displayName || "Resident";
+    userAccountTypeEl.textContent = formatAccountType(currentUserRecord.accountType);
+}
+
+/* =========================
+   VENUE SWITCHING LISTENERS
+========================= */
+document.querySelectorAll(".venue-tab").forEach(tab => {
+    tab.addEventListener("click", (e) => {
+        document.querySelectorAll(".venue-tab").forEach(t => t.classList.remove("active"));
+        e.target.classList.add("active");
+
+        currentVenueId = e.target.getAttribute("data-venue-id");
+        currentVenueName = e.target.getAttribute("data-venue-name");
+
+        resetForm();
+        renderCalendar();
+    });
+});
+
+/* =========================
+   AUTHENTICATION LISTENER
+========================= */
+onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+        window.location.href = "index.html";
+        return;
+    }
+
+    currentUser = user;
+
+    try {
+        await loadUserData(user);
+        await loadBookings();
+        await loadHouseEvents();
+
+        loadingState.style.display = "none";
+        pageContent.style.display = "block";
+    } catch (error) {
+        console.error("Initialization error:", error);
+        showMessage("Could not load account details: " + error.message, true);
+    }
+});
+
+/* =========================
+   NAVIGATION LISTENERS
+========================= */
+document.getElementById("dashboardButton").addEventListener("click", () => {
+    window.location.href = "clienthub.html";
+});
+
+document.getElementById("logoutButton").addEventListener("click", async () => {
+    try {
+        await signOut(auth);
+        window.location.href = "index.html";
+    } catch (error) {
+        console.error("Logout failed:", error);
+        showMessage("Could not log out.", true);
+    }
+});
+
+</script>
+
+</body>
+</html>

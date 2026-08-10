@@ -1,0 +1,1654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Beyers Naude - Residents Directory</title>
+
+    <style>
+        :root {
+            --primary: #1D2951;
+            --primary-hover: #151f3d;
+            --primary-light: #e2e8f0;
+            --accent-blue: #2563eb;
+            --bg-main: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            
+            --status-active-bg: #dcfce7;
+            --status-active-text: #166534;
+            --status-pending-bg: #fef3c7;
+            --status-pending-text: #92400e;
+            --status-inactive-bg: #fee2e2;
+            --status-inactive-text: #991b1b;
+
+            --badge-prime-bg: #fef3c7;
+            --badge-prime-text: #78350f;
+            --badge-prime-border: #fde68a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* =========================
+           HEADER
+        ========================= */
+        .site-header {
+            background-color: var(--primary);
+            color: #ffffff;
+            padding: 16px 28px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .brand-section {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .brand-titles h1 {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            line-height: 1.2;
+        }
+
+        .brand-titles p {
+            font-size: 12px;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-header {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-back {
+            background: rgba(255, 255, 255, 0.12);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-logout {
+            background: #dc2626;
+            color: #ffffff;
+        }
+
+        .btn-logout:hover {
+            background: #b91c1c;
+        }
+
+        /* =========================
+           MAIN LAYOUT
+        ========================= */
+        .main-container {
+            max-width: 1440px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 28px 24px;
+            flex: 1;
+        }
+
+        .page-intro {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 24px;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .intro-text h2 {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+
+        .intro-text p {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .admin-banner {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .admin-meta {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .admin-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+        }
+
+        .admin-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .admin-roles-list {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+
+        .admin-role-badge {
+            background: var(--primary-light);
+            color: var(--primary);
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+
+        /* STATISTICS CARDS */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+
+        .stat-subtext {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* CONTROLS & FILTERS */
+        .toolbar-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .toolbar-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            flex: 1;
+            min-width: 280px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+            min-width: 160px;
+        }
+
+        .filter-group label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+        }
+
+        .filter-control {
+            width: 100%;
+            padding: 9px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 13px;
+            background: #ffffff;
+            color: var(--text-main);
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .filter-control:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+        }
+
+        /* TABLE CONTAINER */
+        .table-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            overflow: hidden;
+        }
+
+        .table-card-header {
+            padding: 18px 24px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #ffffff;
+        }
+
+        .table-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .table-subtitle {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .residents-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        .residents-table th {
+            background: #f1f5f9;
+            color: var(--primary);
+            font-weight: 700;
+            padding: 12px 18px;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        .residents-table td {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        .residents-table tbody tr {
+            transition: background 0.15s ease;
+            cursor: pointer;
+        }
+
+        .residents-table tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        /* RESIDENT AVATAR & CELL COMPONENTS */
+        .resident-identity {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar-circle {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .avatar-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .identity-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .resident-name {
+            font-weight: 700;
+            color: var(--text-main);
+            font-size: 14px;
+        }
+
+        .student-number {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-family: monospace;
+        }
+
+        .academic-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .course-title {
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .faculty-tag {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .res-details {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .room-corridor {
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .key-info {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* BADGES */
+        .badge-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .role-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            background: #f1f5f9;
+            color: #334155;
+            border: 1px solid #cbd5e1;
+            white-space: nowrap;
+        }
+
+        .role-badge.corridor-prime {
+            background: var(--badge-prime-bg);
+            color: var(--badge-prime-text);
+            border-color: var(--badge-prime-border);
+            font-weight: 700;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .status-badge.active {
+            background: var(--status-active-bg);
+            color: var(--status-active-text);
+        }
+
+        .status-badge.pending {
+            background: var(--status-pending-bg);
+            color: var(--status-pending-text);
+        }
+
+        .status-badge.inactive {
+            background: var(--status-inactive-bg);
+            color: var(--status-inactive-text);
+        }
+
+        .reg-badge {
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .reg-badge.is-registered {
+            color: #166534;
+        }
+
+        .reg-badge.not-registered {
+            color: #991b1b;
+        }
+
+        /* BUTTONS */
+        .btn-action {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .btn-confirm {
+            background: var(--accent-blue);
+            color: #ffffff;
+        }
+
+        .btn-confirm:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-details {
+            background: #f1f5f9;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-details:hover {
+            background: #e2e8f0;
+        }
+
+        /* STATES & MESSAGES */
+        .state-container {
+            padding: 48px 24px;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        .state-container h3 {
+            font-size: 16px;
+            color: var(--text-main);
+            margin-bottom: 6px;
+        }
+
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--border-color);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* MODAL / DRAWER FOR RESIDENT DETAILS */
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+
+        .modal-backdrop.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-card {
+            background: #ffffff;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 640px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.3);
+            transform: translateY(20px);
+            transition: transform 0.25s ease;
+        }
+
+        .modal-backdrop.active .modal-card {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            background: var(--primary);
+            color: #ffffff;
+            padding: 24px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .modal-profile-header {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .modal-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 800;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .modal-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .modal-title-area h3 {
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .modal-title-area p {
+            font-size: 13px;
+            color: #94a3b8;
+        }
+
+        .btn-modal-close {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            color: #ffffff;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s ease;
+        }
+
+        .btn-modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .modal-body {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .detail-item.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .detail-item label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+        }
+
+        .detail-item span {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-main);
+            word-break: break-word;
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            background: #f8fafc;
+            border-bottom-left-radius: 16px;
+            border-bottom-right-radius: 16px;
+        }
+
+        /* RESPONSIVE DESIGN */
+        @media (max-width: 900px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .site-header {
+                padding: 14px 16px;
+            }
+
+            .main-container {
+                padding: 16px 12px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .toolbar-card {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .toolbar-filters {
+                flex-direction: column;
+            }
+
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-intro {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SITE HEADER -->
+    <header class="site-header">
+        <div class="header-container">
+            <div class="brand-section">
+                <div class="brand-titles">
+                    <h1>House Beyers Naude</h1>
+                    <p>Master Files Administrative Hub</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="btn-header btn-back" id="backButton">
+                    ← Dashboard
+                </button>
+                <button class="btn-header btn-logout" id="logoutButton">
+                    Log Out
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="main-container">
+
+        <!-- INTRO & ADMIN CONTEXT -->
+        <section class="page-intro">
+            <div class="intro-text">
+                <h2>Residents Management</h2>
+                <p>Comprehensive residence roster, academic mapping, and status tracking.</p>
+            </div>
+
+            <div class="admin-banner">
+                <div class="admin-meta">
+                    <span class="admin-label">Authenticated Admin</span>
+                    <span class="admin-name" id="adminName">Loading...</span>
+                </div>
+                <div class="admin-roles-list" id="adminRoles">
+                    <span class="admin-role-badge">...</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- STATISTICS OVERVIEW -->
+        <section class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-label">Total Residents</span>
+                </div>
+                <span class="stat-value" id="statTotal">—</span>
+                <span class="stat-subtext">House Members recorded</span>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-label">Active Residents</span>
+                </div>
+                <span class="stat-value" id="statActive" style="color: #166534;">—</span>
+                <span class="stat-subtext">Full system clearance</span>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-label">Pending Approval</span>
+                </div>
+                <span class="stat-value" id="statPending" style="color: #b45309;">—</span>
+                <span class="stat-subtext">Requires admin review</span>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-label">Corridors Represented</span>
+                </div>
+                <span class="stat-value" id="statCorridors">—</span>
+                <span class="stat-subtext">Active residence corridors</span>
+            </div>
+        </section>
+
+        <!-- TOOLBAR & FILTERS -->
+        <section class="toolbar-card">
+            <div class="toolbar-filters">
+                <div class="filter-group">
+                    <label for="searchInput">Search Residents</label>
+                    <input type="text" id="searchInput" class="filter-control" placeholder="Name, student #, room, corridor...">
+                </div>
+
+                <div class="filter-group">
+                    <label for="corridorSelect">Corridor</label>
+                    <select id="corridorSelect" class="filter-control">
+                        <option value="ALL">All Corridors</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="statusSelect">Account Status</label>
+                    <select id="statusSelect" class="filter-control">
+                        <option value="ALL">All Statuses</option>
+                        <option value="ACTIVE">Active</option>
+                        <option value="PENDING">Pending</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="sortSelect">Sort By</label>
+                    <select id="sortSelect" class="filter-control">
+                        <option value="NAME_ASC">Name (A–Z)</option>
+                        <option value="NAME_DESC">Name (Z–A)</option>
+                        <option value="ROOM_ASC">Room Number</option>
+                        <option value="CORRIDOR_ASC">Corridor</option>
+                        <option value="STUDENT_NUM">Student Number</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- RESIDENTS TABLE -->
+        <section class="table-card">
+            <div class="table-card-header">
+                <div>
+                    <h3 class="table-title">Residence Roster</h3>
+                    <p class="table-subtitle" id="tableSubtitle">Loading database records...</p>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="residents-table">
+                    <thead>
+                        <tr>
+                            <th>Resident</th>
+                            <th>Academic Info</th>
+                            <th>Residence Location</th>
+                            <th>House Roles</th>
+                            <th>Registration</th>
+                            <th>Status</th>
+                            <th style="text-align: right;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="residentTableBody">
+                        <tr>
+                            <td colspan="7">
+                                <div class="state-container">
+                                    <div class="spinner"></div>
+                                    <h3>Loading Resident Information</h3>
+                                    <p>Retrieving data from House Beyers Naude records...</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- RESIDENT DETAILS MODAL -->
+    <div class="modal-backdrop" id="residentModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div class="modal-profile-header">
+                    <div class="modal-avatar" id="modalAvatar">?</div>
+                    <div class="modal-title-area">
+                        <h3 id="modalName">Resident Details</h3>
+                        <p id="modalStudentNumber">Student Number</p>
+                    </div>
+                </div>
+                <button class="btn-modal-close" id="closeModalBtn">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <label>Full Name</label>
+                        <span id="modalFullName">—</span>
+                    </div>
+
+                    <div class="detail-item">
+                        <label>Student Number</label>
+                        <span id="modalStudNo">—</span>
+                    </div>
+
+                    <div class="detail-item">
+                        <label>Account Type</label>
+                        <span id="modalAccountType">—</span>
+                    </div>
+
+                    <div class="detail-item">
+                        <label>Cellphone Number</label>
+                        <span id="modalCellphone">—</span>
+                    </div>
+
+                    <div class="detail-item">
+                        <label>Room Number</label>
+                        <span id="modalRoom">—</span>
+                    </div>
+
+                    <div class="detail-item">
+                        <label>Corridor Number</label>
+                        <span id="modalCorridor">—</span>
+                    </div>
+
+                    <div class="detail-item">
+                        <label>Key Number</label>
+                        <span id="modalKey">—</span>
+                    </div>
+
+                    <div class="detail-item">
+                        <label>Smoke Detector #</label>
+                        <span id="modalSmoke">—</span>
+                    </div>
+
+                    <div class="detail-item">
+                        <label>Academic Course</label>
+                        <span id="modalCourse">—</span>
+                    </div>
+
+                    <div class="detail-item">
+                        <label>Faculty</label>
+                        <span id="modalFaculty">—</span>
+                    </div>
+
+                    <div class="detail-item">
+                        <label>University Student Reg.</label>
+                        <span id="modalIsReg">—</span>
+                    </div>
+
+                    <div class="detail-item">
+                        <label>Residence Status</label>
+                        <span id="modalStatus">—</span>
+                    </div>
+
+                    <div class="detail-item full-width">
+                        <label>House Roles</label>
+                        <div class="badge-list" id="modalRoles" style="margin-top: 4px;">—</div>
+                    </div>
+
+                    <div class="detail-item full-width">
+                        <label>Firebase Document UID</label>
+                        <span id="modalUid" style="font-family: monospace; font-size: 12px; color: var(--text-muted);">—</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <div id="modalActionArea"></div>
+                <button class="btn-action btn-details" id="closeModalFooterBtn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FIREBASE MODULE LOGIC -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+        import { 
+            getAuth, 
+            onAuthStateChanged, 
+            signOut 
+        } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+        import { 
+            getFirestore, 
+            collection, 
+            getDocs, 
+            doc, 
+            getDoc, 
+            updateDoc 
+        } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+
+        // FIREBASE CONFIGURATION
+        const firebaseConfig = {
+            apiKey: "AIzaSyDW6IArj2dZiqbf00Ix3SPPSqvxTKG0GgE",
+            authDomain: "master-files-95f6b.firebaseapp.com",
+            projectId: "master-files-95f6b",
+            storageBucket: "master-files-95f6b.firebasestorage.app",
+            messagingSenderId: "537891510061",
+            appId: "1:537891510061:web:fb46c8d1abae02b9e725a4",
+            measurementId: "G-4GNVR5EBJX"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // GLOBAL STATE
+        let currentUser = null;
+        let currentAdmin = null;
+        let houseMembers = [];
+        let facultyLookupMap = new Map(); // Course -> Faculty Name
+        let canConfirmResidents = false;
+        let selectedResidentForModal = null;
+
+        // DOM ELEMENTS
+        const residentTableBody = document.getElementById("residentTableBody");
+        const corridorSelect = document.getElementById("corridorSelect");
+        const statusSelect = document.getElementById("statusSelect");
+        const sortSelect = document.getElementById("sortSelect");
+        const searchInput = document.getElementById("searchInput");
+        const tableSubtitle = document.getElementById("tableSubtitle");
+
+        // MODAL ELEMENTS
+        const residentModal = document.getElementById("residentModal");
+        const closeModalBtn = document.getElementById("closeModalBtn");
+        const closeModalFooterBtn = document.getElementById("closeModalFooterBtn");
+
+        // AUTHENTICATION OBSERVER
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = "index.html";
+                return;
+            }
+
+            currentUser = user;
+
+            try {
+                await loadAdminProfile();
+                await loadFaculties();
+                await loadHouseMembers();
+            } catch (error) {
+                console.error("Error initializing Residents dashboard:", error);
+                renderErrorState("Unable to load resident data. Please check your connection or permissions.");
+            }
+        });
+
+        /* ==========================================================================
+           1. ADMIN PERMISSIONS & PROFILE
+           ========================================================================== */
+        async function loadAdminProfile() {
+            const adminRef = doc(db, "admins", currentUser.uid);
+            const adminSnap = await getDoc(adminRef);
+
+            if (!adminSnap.exists()) {
+                await signOut(auth);
+                window.location.href = "index.html";
+                return;
+            }
+
+            currentAdmin = adminSnap.data();
+
+            if (currentAdmin.status !== "ACTIVE") {
+                await signOut(auth);
+                window.location.href = "index.html";
+                return;
+            }
+
+            const roles = Array.isArray(currentAdmin.role) ? currentAdmin.role : [];
+
+            // Permission Verification
+            const canViewResidents = roles.includes("SECRETARY") || roles.includes("ACADEMICS") || roles.includes("PRIME");
+            if (!canViewResidents) {
+                alert("Access Denied: You do not have permission to access the Residents directory.");
+                window.location.href = "admin.html";
+                return;
+            }
+
+            // Confirmation Rights: SECRETARY and PRIME
+            canConfirmResidents = roles.includes("SECRETARY") || roles.includes("PRIME");
+
+            // Render Header Admin Info
+            document.getElementById("adminName").textContent = currentAdmin.name || currentUser.email || "Administrator";
+            renderAdminRoles(roles);
+        }
+
+        function renderAdminRoles(roles) {
+            const container = document.getElementById("adminRoles");
+            container.innerHTML = "";
+
+            if (roles.length === 0) {
+                container.innerHTML = `<span class="admin-role-badge">No Role Assigned</span>`;
+                return;
+            }
+
+            roles.forEach(role => {
+                const badge = document.createElement("span");
+                badge.className = "admin-role-badge";
+                badge.textContent = formatRoleText(role);
+                container.appendChild(badge);
+            });
+        }
+
+        /* ==========================================================================
+           2. FACULTY RESOLUTION (MAP FACULTIES TO COURSES)
+           ========================================================================== */
+        async function loadFaculties() {
+            try {
+                const facultiesRef = collection(db, "faculties");
+                const snapshot = await getDocs(facultiesRef);
+                facultyLookupMap.clear();
+
+                snapshot.forEach(docSnap => {
+                    const data = docSnap.data();
+                    const facultyName = docSnap.id || data.name || data.faculty;
+
+                    // Map courses/programmes if they exist in the faculty document
+                    const courses = data.courses || data.programmes || data.programs;
+                    if (Array.isArray(courses)) {
+                        courses.forEach(c => {
+                            if (c) facultyLookupMap.set(String(c).toLowerCase().trim(), facultyName);
+                        });
+                    }
+                });
+            } catch (err) {
+                console.warn("Could not pre-fetch faculties collection:", err);
+            }
+        }
+
+        function resolveFaculty(courseName) {
+            if (!courseName) return "General / Unspecified";
+            const key = String(courseName).toLowerCase().trim();
+            return facultyLookupMap.get(key) || "Faculty Unassigned";
+        }
+
+        /* ==========================================================================
+           3. LOAD RESIDENTS (USERS COLLECTION)
+           ========================================================================== */
+        async function loadHouseMembers() {
+            const usersRef = collection(db, "users");
+            const snapshot = await getDocs(usersRef);
+
+            houseMembers = [];
+
+            snapshot.forEach(userDoc => {
+                const data = userDoc.data();
+
+                // Standardize exact field extractions
+                if (data.accountType === "HOUSE_MEMBER" || !data.accountType) {
+                    houseMembers.push({
+                        documentId: userDoc.id,
+                        ...data
+                    });
+                }
+            });
+
+            updateStatistics();
+            populateCorridorFilter();
+            renderResidentTable();
+        }
+
+        /* ==========================================================================
+           4. STATISTICS COMPUTATION
+           ========================================================================== */
+        function updateStatistics() {
+            const total = houseMembers.length;
+            const active = houseMembers.filter(m => (m.status || "").toUpperCase() === "ACTIVE").length;
+            const pending = houseMembers.filter(m => (m.status || "").toUpperCase() === "PENDING").length;
+
+            // Distinct corridors count
+            const corridorSet = new Set();
+            houseMembers.forEach(m => {
+                const corr = getCorridorVal(m);
+                if (corr) corridorSet.add(corr);
+            });
+
+            document.getElementById("statTotal").textContent = total;
+            document.getElementById("statActive").textContent = active;
+            document.getElementById("statPending").textContent = pending;
+            document.getElementById("statCorridors").textContent = corridorSet.size;
+        }
+
+        /* ==========================================================================
+           5. CORRIDOR FILTER POPULATION
+           ========================================================================== */
+        function getCorridorVal(member) {
+            // Strictly preserved field requirement: "corridor number"
+            const raw = member["corridor number"] ?? member.corridorNumber;
+            if (raw !== undefined && raw !== null && String(raw).trim() !== "") {
+                return String(raw).trim();
+            }
+            return null;
+        }
+
+        function populateCorridorFilter() {
+            const corridorCounts = new Map();
+
+            houseMembers.forEach(m => {
+                const corr = getCorridorVal(m);
+                if (corr) {
+                    corridorCounts.set(corr, (corridorCounts.get(corr) || 0) + 1);
+                }
+            });
+
+            // Retain currently selected value if re-populating
+            const currentSelected = corridorSelect.value;
+            corridorSelect.innerHTML = `<option value="ALL">All Corridors (${houseMembers.length})</option>`;
+
+            const sortedCorridors = Array.from(corridorCounts.keys()).sort((a, b) => 
+                a.localeCompare(b, undefined, { numeric: true })
+            );
+
+            sortedCorridors.forEach(corr => {
+                const option = document.createElement("option");
+                option.value = corr;
+                option.textContent = `Corridor ${corr} — (${corridorCounts.get(corr)} Residents)`;
+                corridorSelect.appendChild(option);
+            });
+
+            if (sortedCorridors.includes(currentSelected)) {
+                corridorSelect.value = currentSelected;
+            }
+        }
+
+        /* ==========================================================================
+           6. FILTERING AND SORTING
+           ========================================================================== */
+        function getFilteredAndSortedResidents() {
+            const selectedCorridor = corridorSelect.value;
+            const selectedStatus = statusSelect.value;
+            const searchTerms = searchInput.value.trim().toLowerCase();
+            const sortBy = sortSelect.value;
+
+            let result = houseMembers.filter(m => {
+                // Corridor Filter
+                const corridorVal = getCorridorVal(m);
+                const matchesCorridor = (selectedCorridor === "ALL") || (corridorVal === selectedCorridor);
+
+                // Status Filter
+                const statusVal = String(m.status || "").toUpperCase();
+                const matchesStatus = (selectedStatus === "ALL") || (statusVal === selectedStatus);
+
+                // Multi-field Search
+                const name = String(m.name || "").toLowerCase();
+                const surname = String(m.surname || "").toLowerCase();
+                const fullName = `${name} ${surname}`;
+                const studentNum = String(m.studentnumber ?? m.studentNumber ?? "").toLowerCase();
+                const roomNum = String(m.roomNumber || "").toLowerCase();
+                const corridorStr = corridorVal ? `corridor ${corridorVal}` : "";
+
+                const matchesSearch = !searchTerms || 
+                    fullName.includes(searchTerms) ||
+                    studentNum.includes(searchTerms) ||
+                    roomNum.includes(searchTerms) ||
+                    corridorStr.includes(searchTerms) ||
+                    String(corridorVal || "").includes(searchTerms);
+
+                return matchesCorridor && matchesStatus && matchesSearch;
+            });
+
+            // Sorting Logic
+            result.sort((a, b) => {
+                if (sortBy === "NAME_ASC" || sortBy === "NAME_DESC") {
+                    const nameA = `${a.name || ""} ${a.surname || ""}`.trim().toLowerCase();
+                    const nameB = `${b.name || ""} ${b.surname || ""}`.trim().toLowerCase();
+                    return sortBy === "NAME_ASC" ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
+                }
+                if (sortBy === "ROOM_ASC") {
+                    const roomA = String(a.roomNumber || "");
+                    const roomB = String(b.roomNumber || "");
+                    return roomA.localeCompare(roomB, undefined, { numeric: true });
+                }
+                if (sortBy === "CORRIDOR_ASC") {
+                    const corrA = getCorridorVal(a) || "999";
+                    const corrB = getCorridorVal(b) || "999";
+                    return corrA.localeCompare(corrB, undefined, { numeric: true });
+                }
+                if (sortBy === "STUDENT_NUM") {
+                    const numA = String(a.studentnumber ?? a.studentNumber ?? "");
+                    const numB = String(b.studentnumber ?? b.studentNumber ?? "");
+                    return numA.localeCompare(numB);
+                }
+                return 0;
+            });
+
+            return result;
+        }
+
+        /* ==========================================================================
+           7. RENDER TABLE
+           ========================================================================== */
+        function renderResidentTable() {
+            const filteredList = getFilteredAndSortedResidents();
+
+            tableSubtitle.textContent = `Displaying ${filteredList.length} of ${houseMembers.length} house members`;
+            residentTableBody.innerHTML = "";
+
+            if (filteredList.length === 0) {
+                residentTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="7">
+                            <div class="state-container">
+                                <h3>No Residents Found</h3>
+                                <p>No house members match the currently applied search criteria or filters.</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            filteredList.forEach(member => {
+                const tr = document.createElement("tr");
+
+                // Exact Field Extractions
+                const fullName = `${member.name || "Unknown"} ${member.surname || ""}`.trim();
+                const studentNo = member.studentnumber ?? member.studentNumber ?? "—";
+                const roomNo = member.roomNumber || "—";
+                const corridorNo = getCorridorVal(member) || "—";
+                const keyNo = member["key number"] ?? member.keyNumber ?? "—";
+                const course = member.course || member.programme || "Unspecified Course";
+                const faculty = resolveFaculty(course);
+                const status = String(member.status || "UNKNOWN").toUpperCase();
+                const isRegistered = member.isStudentregistered === true;
+                const initials = getInitials(member.name, member.surname);
+
+                // Roles Badges
+                const roles = Array.isArray(member.houseRoles) ? member.houseRoles : [];
+                let rolesHtml = "—";
+                if (roles.length > 0) {
+                    rolesHtml = roles.map(role => {
+                        const isPrime = String(role).toUpperCase().includes("CORRIDOR_PRIME") || String(role).toUpperCase() === "PRIME";
+                        return `<span class="role-badge ${isPrime ? 'corridor-prime' : ''}">${escapeHtml(formatRoleText(role))}</span>`;
+                    }).join("");
+                }
+
+                // Action Column
+                let actionBtnHtml = `
+                    <button class="btn-action btn-details view-btn" data-id="${escapeHtml(member.documentId)}">
+                        View
+                    </button>
+                `;
+
+                if (canConfirmResidents && status === "PENDING") {
+                    actionBtnHtml = `
+                        <div style="display: flex; gap: 6px; justify-content: flex-end;">
+                            <button class="btn-action btn-confirm confirm-btn" data-id="${escapeHtml(member.documentId)}">
+                                Confirm
+                            </button>
+                            <button class="btn-action btn-details view-btn" data-id="${escapeHtml(member.documentId)}">
+                                View
+                            </button>
+                        </div>
+                    `;
+                }
+
+                tr.innerHTML = `
+                    <td>
+                        <div class="resident-identity">
+                            <div class="avatar-circle">
+                                ${member.photoURL || member.profilePicture 
+                                    ? `<img src="${escapeHtml(member.photoURL || member.profilePicture)}" alt="Avatar">`
+                                    : initials}
+                            </div>
+                            <div class="identity-text">
+                                <span class="resident-name">${escapeHtml(fullName)}</span>
+                                <span class="student-number">#${escapeHtml(studentNo)}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="academic-info">
+                            <span class="course-title">${escapeHtml(course)}</span>
+                            <span class="faculty-tag">${escapeHtml(faculty)}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="res-details">
+                            <span class="room-corridor">Room ${escapeHtml(roomNo)} • Corridor ${escapeHtml(corridorNo)}</span>
+                            <span class="key-info">Key: ${escapeHtml(keyNo)}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="badge-list">${rolesHtml}</div>
+                    </td>
+                    <td>
+                        <span class="reg-badge ${isRegistered ? 'is-registered' : 'not-registered'}">
+                            ${isRegistered ? 'Registered Student' : 'Not Registered'}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="status-badge ${getStatusBadgeClass(status)}">
+                            ${escapeHtml(status)}
+                        </span>
+                    </td>
+                    <td style="text-align: right;" onclick="event.stopPropagation();">
+                        ${actionBtnHtml}
+                    </td>
+                `;
+
+                // Row Click Opens Modal
+                tr.addEventListener("click", () => {
+                    openResidentModal(member);
+                });
+
+                residentTableBody.appendChild(tr);
+            });
+
+            // Attach explicit button event handlers
+            document.querySelectorAll(".confirm-btn").forEach(btn => {
+                btn.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    const docId = btn.dataset.id;
+                    confirmResident(docId);
+                });
+            });
+
+            document.querySelectorAll(".view-btn").forEach(btn => {
+                btn.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    const docId = btn.dataset.id;
+                    const res = houseMembers.find(m => m.documentId === docId);
+                    if (res) openResidentModal(res);
+                });
+            });
+        }
+
+        /* ==========================================================================
+           8. CONFIRM RESIDENT ACTION
+           ========================================================================== */
+        async function confirmResident(documentId) {
+            if (!canConfirmResidents) return;
+
+            const resident = houseMembers.find(m => m.documentId === documentId);
+            if (!resident || String(resident.status).toUpperCase() !== "PENDING") return;
+
+            const confirmed = confirm(`Are you sure you want to approve and confirm ${resident.name || "this resident"}?`);
+            if (!confirmed) return;
+
+            try {
+                const userRef = doc(db, "users", documentId);
+
+                // STRICT SAFETY: Update ONLY status field
+                await updateDoc(userRef, {
+                    status: "ACTIVE"
+                });
+
+                resident.status = "ACTIVE";
+                updateStatistics();
+                renderResidentTable();
+
+                if (selectedResidentForModal && selectedResidentForModal.documentId === documentId) {
+                    openResidentModal(resident);
+                }
+
+                alert(`Resident ${resident.name || ""} successfully activated.`);
+            } catch (err) {
+                console.error("Failed to confirm resident:", err);
+                alert("Error updating resident status: " + err.message);
+            }
+        }
+
+        /* ==========================================================================
+           9. RESIDENT DETAILS MODAL
+           ========================================================================== */
+        function openResidentModal(resident) {
+            selectedResidentForModal = resident;
+
+            const fullName = `${resident.name || "Unknown"} ${resident.surname || ""}`.trim();
+            const studentNo = resident.studentnumber ?? resident.studentNumber ?? "—";
+            const initials = getInitials(resident.name, resident.surname);
+
+            const avatarEl = document.getElementById("modalAvatar");
+            if (resident.photoURL || resident.profilePicture) {
+                avatarEl.innerHTML = `<img src="${escapeHtml(resident.photoURL || resident.profilePicture)}" alt="Avatar">`;
+            } else {
+                avatarEl.textContent = initials;
+            }
+
+            document.getElementById("modalName").textContent = fullName;
+            document.getElementById("modalStudentNumber").textContent = `Student Number: ${studentNo}`;
+
+            document.getElementById("modalFullName").textContent = fullName;
+            document.getElementById("modalStudNo").textContent = studentNo;
+            document.getElementById("modalAccountType").textContent = resident.accountType || "HOUSE_MEMBER";
+            document.getElementById("modalCellphone").textContent = resident.cellphoneNumber || "—";
+            document.getElementById("modalRoom").textContent = resident.roomNumber || "—";
+            document.getElementById("modalCorridor").textContent = getCorridorVal(resident) || "—";
+            document.getElementById("modalKey").textContent = resident["key number"] ?? resident.keyNumber ?? "—";
+            document.getElementById("modalSmoke").textContent = resident.smokeDetectorNumber || "—";
+            
+            const course = resident.course || resident.programme || "Unspecified Course";
+            document.getElementById("modalCourse").textContent = course;
+            document.getElementById("modalFaculty").textContent = resolveFaculty(course);
+
+            document.getElementById("modalIsReg").textContent = resident.isStudentregistered === true 
+                ? "Yes (Registered Student)" 
+                : "No / Unconfirmed";
+
+            document.getElementById("modalStatus").textContent = String(resident.status || "PENDING").toUpperCase();
+            document.getElementById("modalUid").textContent = resident.documentId;
+
+            // Render Roles in Modal
+            const rolesContainer = document.getElementById("modalRoles");
+            const roles = Array.isArray(resident.houseRoles) ? resident.houseRoles : [];
+            if (roles.length > 0) {
+                rolesContainer.innerHTML = roles.map(role => {
+                    const isPrime = String(role).toUpperCase().includes("CORRIDOR_PRIME") || String(role).toUpperCase() === "PRIME";
+                    return `<span class="role-badge ${isPrime ? 'corridor-prime' : ''}">${escapeHtml(formatRoleText(role))}</span>`;
+                }).join("");
+            } else {
+                rolesContainer.textContent = "No specific roles assigned";
+            }
+
+            // Modal Confirm Action Button if pending
+            const actionArea = document.getElementById("modalActionArea");
+            actionArea.innerHTML = "";
+            if (canConfirmResidents && String(resident.status).toUpperCase() === "PENDING") {
+                const modalConfirmBtn = document.createElement("button");
+                modalConfirmBtn.className = "btn-action btn-confirm";
+                modalConfirmBtn.textContent = "Confirm Resident Account";
+                modalConfirmBtn.addEventListener("click", () => {
+                    confirmResident(resident.documentId);
+                });
+                actionArea.appendChild(modalConfirmBtn);
+            }
+
+            residentModal.classList.add("active");
+        }
+
+        function closeModal() {
+            residentModal.classList.remove("active");
+            selectedResidentForModal = null;
+        }
+
+        /* ==========================================================================
+           10. HELPER UTILITIES
+           ========================================================================== */
+        function getInitials(name, surname) {
+            let str = (name || "").trim();
+            if (surname) str += " " + surname.trim();
+            if (!str) return "??";
+            const parts = str.split(/\s+/);
+            if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+            return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+        }
+
+        function formatRoleText(role) {
+            return String(role)
+                .replaceAll("_", " ")
+                .toLowerCase()
+                .replace(/\b\w/g, l => l.toUpperCase());
+        }
+
+        function getStatusBadgeClass(status) {
+            if (status === "ACTIVE") return "active";
+            if (status === "PENDING") return "pending";
+            return "inactive";
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? "")
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#039;");
+        }
+
+        function renderErrorState(message) {
+            residentTableBody.innerHTML = `
+                <tr>
+                    <td colspan="7">
+                        <div class="state-container">
+                            <h3 style="color: #dc2626;">Error Loading Roster</h3>
+                            <p>${escapeHtml(message)}</p>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+
+        /* ==========================================================================
+           11. EVENT LISTENERS
+           ========================================================================== */
+        corridorSelect.addEventListener("change", renderResidentTable);
+        statusSelect.addEventListener("change", renderResidentTable);
+        sortSelect.addEventListener("change", renderResidentTable);
+        searchInput.addEventListener("input", renderResidentTable);
+
+        closeModalBtn.addEventListener("click", closeModal);
+        closeModalFooterBtn.addEventListener("click", closeModal);
+        residentModal.addEventListener("click", (e) => {
+            if (e.target === residentModal) closeModal();
+        });
+
+        document.getElementById("backButton").addEventListener("click", () => {
+            window.location.href = "admin.html";
+        });
+
+        document.getElementById("logoutButton").addEventListener("click", async () => {
+            try {
+                await signOut(auth);
+                window.location.href = "index.html";
+            } catch (err) {
+                console.error("Logout failed:", err);
+            }
+        });
+    </script>
+</body>
+</html>

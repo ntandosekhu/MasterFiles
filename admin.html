@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Beyers Naude - Administration</title>
+    <style>
+        :root {
+            --space-blue-primary: #1D2951;
+            --space-blue-hover: #141C38;
+            --space-blue-light: #EFF3F9;
+            --space-blue-border: #D0DCED;
+            --space-blue-accent: #3B5295;
+            --bg-page: #F4F6F9;
+            --bg-card: #FFFFFF;
+            --text-main: #0F172A;
+            --text-muted: #475569;
+            --text-subtle: #64748B;
+            --danger-red: #DC2626;
+            --danger-red-hover: #B91C1C;
+            --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+            --shadow-md: 0 4px 12px rgba(29, 41, 81, 0.08);
+            --shadow-lg: 0 10px 25px rgba(29, 41, 81, 0.12);
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* HEADER */
+        .header {
+            background-color: var(--space-blue-primary);
+            color: #FFFFFF;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand h1 {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+
+        .brand p {
+            color: #A0B2D6;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 0.01em;
+            margin-top: 2px;
+        }
+
+        .logout-button {
+            border: none;
+            background-color: var(--danger-red);
+            color: #FFFFFF;
+            padding: 9px 18px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: background-color 0.15s ease, transform 0.1s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .logout-button:hover {
+            background-color: var(--danger-red-hover);
+        }
+
+        .logout-button:active {
+            transform: scale(0.98);
+        }
+
+        /* MAIN CONTAINER */
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 32px 24px 60px;
+            flex: 1;
+        }
+
+        /* DASHBOARD WELCOME INTRO */
+        .dashboard-welcome {
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--space-blue-border);
+        }
+
+        .dashboard-welcome h2 {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--space-blue-primary);
+            letter-spacing: -0.02em;
+            margin-bottom: 6px;
+        }
+
+        .dashboard-welcome p {
+            color: var(--text-muted);
+            font-size: 15px;
+            max-width: 800px;
+        }
+
+        /* ADMIN PROFILE CARD */
+        .admin-card {
+            background-color: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: 20px 24px;
+            margin-bottom: 36px;
+            border: 1px solid var(--space-blue-border);
+            border-left: 5px solid var(--space-blue-primary);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .admin-header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .admin-title-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .admin-avatar-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--space-blue-light);
+            color: var(--space-blue-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .admin-name {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .admin-label {
+            color: var(--text-subtle);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+
+        .role-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .role-badge {
+            display: inline-flex;
+            align-items: center;
+            background-color: var(--space-blue-light);
+            color: var(--space-blue-primary);
+            border: 1px solid var(--space-blue-border);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.01em;
+        }
+
+        /* PORTFOLIO SECTION */
+        .portfolio-section-header {
+            margin-bottom: 20px;
+        }
+
+        .portfolio-section-header h3 {
+            font-size: 19px;
+            font-weight: 700;
+            color: var(--space-blue-primary);
+            letter-spacing: -0.01em;
+            margin-bottom: 4px;
+        }
+
+        .portfolio-section-header p {
+            color: var(--text-subtle);
+            font-size: 14px;
+        }
+
+        /* CARDS GRID */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        .portfolio-card {
+            background-color: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            border: 1px solid #E2E8F0;
+            box-shadow: var(--shadow-sm);
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .portfolio-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background-color: var(--space-blue-primary);
+            opacity: 0.85;
+            transition: opacity 0.2s ease;
+        }
+
+        .portfolio-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--space-blue-border);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .portfolio-card:hover::before {
+            opacity: 1;
+            height: 5px;
+        }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .card-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: var(--radius-md);
+            background-color: var(--space-blue-light);
+            color: var(--space-blue-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .portfolio-card:hover .card-icon {
+            background-color: var(--space-blue-primary);
+            color: #FFFFFF;
+        }
+
+        .card-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+        }
+
+        .card-arrow {
+            color: var(--space-blue-accent);
+            font-size: 18px;
+            font-weight: 700;
+            transition: transform 0.2s ease, color 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background-color: transparent;
+        }
+
+        .portfolio-card:hover .card-arrow {
+            transform: translateX(3px);
+            color: var(--space-blue-primary);
+            background-color: var(--space-blue-light);
+        }
+
+        .card-body h4 {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 8px;
+            letter-spacing: -0.01em;
+        }
+
+        .card-body p {
+            color: var(--text-muted);
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .card-footer-action {
+            margin-top: 20px;
+            padding-top: 14px;
+            border-top: 1px solid #F1F5F9;
+            color: var(--space-blue-accent);
+            font-size: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .portfolio-card:hover .card-footer-action {
+            color: var(--space-blue-primary);
+        }
+
+        /* FOOTER */
+        .footer {
+            text-align: center;
+            color: var(--text-subtle);
+            font-size: 13px;
+            font-weight: 500;
+            padding: 24px 16px;
+            border-top: 1px solid var(--space-blue-border);
+            background-color: #FFFFFF;
+            margin-top: auto;
+        }
+
+        /* RESPONSIVE BREAKPOINTS */
+        @media (max-width: 1024px) {
+            .card-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 640px) {
+            .header {
+                padding: 16px 20px;
+                flex-direction: row;
+            }
+
+            .brand h1 {
+                font-size: 18px;
+            }
+
+            .brand p {
+                font-size: 12px;
+            }
+
+            .container {
+                padding: 20px 16px 40px;
+            }
+
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .dashboard-welcome h2 {
+                font-size: 22px;
+            }
+
+            .dashboard-welcome p {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="brand">
+            <h1>House Beyers Naude</h1>
+            <p>House of Masters • Administration</p>
+        </div>
+        <div class="header-actions">
+            <button class="logout-button" id="logoutButton">
+                Log Out
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN DASHBOARD CONTENT -->
+    <main class="container">
+
+        <!-- DASHBOARD INTRODUCTION -->
+        <section class="dashboard-welcome">
+            <h2>Administration</h2>
+            <p>Manage House operations, resident records, bookings, breakages, fines and House structures from one central system.</p>
+        </section>
+
+        <!-- ADMINISTRATOR PROFILE & ACCESS ROLES -->
+        <section class="admin-card">
+            <div class="admin-header-row">
+                <div class="admin-title-group">
+                    <div class="admin-avatar-icon">A</div>
+                    <div>
+                        <div class="admin-label">Authenticated Administrator</div>
+                        <div id="adminName" class="admin-name">Loading administrator...</div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <span class="admin-label" style="display: block; margin-bottom: 6px;">Assigned Portfolios / Roles</span>
+                <div id="adminRoles" class="role-container">
+                    <span class="role-badge">Loading...</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- PORTFOLIOS GRID -->
+        <section>
+            <div class="portfolio-section-header">
+                <h3>RC Portfolios</h3>
+                <p>Select the area you want to manage.</p>
+            </div>
+
+            <div class="card-grid">
+
+                <!-- 1. RESIDENTS -->
+                <div class="portfolio-card" data-page="residents.html">
+                    <div>
+                        <div class="card-top">
+                            <div class="card-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+                                </svg>
+                            </div>
+                            <div class="card-arrow">&rarr;</div>
+                        </div>
+                        <div class="card-body">
+                            <h4>Residents</h4>
+                            <p>Manage resident records, confirmations, house membership and resident information.</p>
+                        </div>
+                    </div>
+                    <div class="card-footer-action">Open Residents &rarr;</div>
+                </div>
+
+                <!-- 2. BOOKINGS -->
+                <div class="portfolio-card" data-page="adminbookings.html">
+                    <div>
+                        <div class="card-top">
+                            <div class="card-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2zm-7 5h5v5h-5z"/>
+                                </svg>
+                            </div>
+                            <div class="card-arrow">&rarr;</div>
+                        </div>
+                        <div class="card-body">
+                            <h4>Bookings</h4>
+                            <p>Manage venue bookings, availability, House events and booking administration.</p>
+                        </div>
+                    </div>
+                    <div class="card-footer-action">Open Bookings &rarr;</div>
+                </div>
+
+                <!-- 3. BREAKAGES -->
+                <div class="portfolio-card" data-page="breakages.html">
+                    <div>
+                        <div class="card-top">
+                            <div class="card-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M22.7 19l-9.1-9.1c.9-2.23.5-4.88-1.2-6.58-1.88-1.88-4.62-2.22-6.84-1.03l3.6 3.6-1.42 1.42-3.6-3.6C3.01 5.92 3.35 8.66 5.23 10.54c1.7 1.7 4.35 2.1 6.58 1.2l9.1 9.1c.39.39 1.02.39 1.41 0l.38-.38c.39-.39.39-1.02 0-1.41z"/>
+                                </svg>
+                            </div>
+                            <div class="card-arrow">&rarr;</div>
+                        </div>
+                        <div class="card-body">
+                            <h4>Breakages</h4>
+                            <p>Review reported breakages, track repairs and monitor resolution progress.</p>
+                        </div>
+                    </div>
+                    <div class="card-footer-action">Open Breakages &rarr;</div>
+                </div>
+
+                <!-- 4. FINES -->
+                <div class="portfolio-card" data-page="fines.html">
+                    <div>
+                        <div class="card-top">
+                            <div class="card-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/>
+                                </svg>
+                            </div>
+                            <div class="card-arrow">&rarr;</div>
+                        </div>
+                        <div class="card-body">
+                            <h4>Fines</h4>
+                            <p>Manage resident fines, disputes, payments and outstanding amounts.</p>
+                        </div>
+                    </div>
+                    <div class="card-footer-action">Open Fines &rarr;</div>
+                </div>
+
+                <!-- 5. SUBCOM MANAGEMENT -->
+                <div class="portfolio-card" data-page="subcom.html">
+                    <div>
+                        <div class="card-top">
+                            <div class="card-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z"/>
+                                </svg>
+                            </div>
+                            <div class="card-arrow">&rarr;</div>
+                        </div>
+                        <div class="card-body">
+                            <h4>Subcom Management</h4>
+                            <p>Manage House subcommittees, structures and their activities.</p>
+                        </div>
+                    </div>
+                    <div class="card-footer-action">Open Subcom Management &rarr;</div>
+                </div>
+
+                <!-- 6. SPORT / MEDICAL STOCK TAKE -->
+                <div class="portfolio-card" data-page="stocktake.html">
+                    <div>
+                        <div class="card-top">
+                            <div class="card-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M20 13c0 5.25-5.69 8.2-7.15 8.88a.998.998 0 0 1-.81 0C10.59 21.2 4 18.25 4 13V6l8-3 8 3v7zm-9 3l5-5-1.41-1.41L11 13.17l-2.59-2.58L7 12l4 4z"/>
+                                </svg>
+                            </div>
+                            <div class="card-arrow">&rarr;</div>
+                        </div>
+                        <div class="card-body">
+                            <h4>Sport / Medical Stock Take</h4>
+                            <p>Monitor sporting equipment, medical supplies and House stock levels.</p>
+                        </div>
+                    </div>
+                    <div class="card-footer-action">Open Stock Take &rarr;</div>
+                </div>
+
+                <!-- 7. ACTIVITY LOGS -->
+                <div class="portfolio-card" data-page="activitylogs.html">
+                    <div>
+                        <div class="card-top">
+                            <div class="card-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/>
+                                </svg>
+                            </div>
+                            <div class="card-arrow">&rarr;</div>
+                        </div>
+                        <div class="card-body">
+                            <h4>Activity Logs</h4>
+                            <p>Review important actions performed throughout the House management system.</p>
+                        </div>
+                    </div>
+                    <div class="card-footer-action">Open Activity Logs &rarr;</div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        House Beyers Naude • House of Masters
+    </footer>
+
+    <!-- FIREBASE MODULE LOGIC -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDW6IArj2dZiqbf00Ix3SPPSqvxTKG0GgE",
+            authDomain: "master-files-95f6b.firebaseapp.com",
+            projectId: "master-files-95f6b",
+            storageBucket: "master-files-95f6b.firebasestorage.app",
+            messagingSenderId: "537891510061",
+            appId: "1:537891510061:web:fb46c8d1abae02b9e725a4",
+            measurementId: "G-4GNVR5EBJX"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        /* AUTHENTICATION & ROLE RETRIEVAL */
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = "index.html";
+                return;
+            }
+
+            try {
+                // Retrieve administrator document from admins/{auth.uid}
+                const adminRef = doc(db, "admins", user.uid);
+                const adminSnap = await getDoc(adminRef);
+
+                if (!adminSnap.exists()) {
+                    await signOut(auth);
+                    window.location.href = "index.html";
+                    return;
+                }
+
+                const admin = adminSnap.data();
+
+                // Display Administrator Name
+                const adminNameElem = document.getElementById("adminName");
+                if (adminNameElem) {
+                    adminNameElem.textContent = admin.name || "Administrator";
+                }
+
+                // Read administrator roles stored in `role` array
+                const roles = Array.isArray(admin.role) ? admin.role : (admin.role ? [admin.role] : []);
+                const roleContainer = document.getElementById("adminRoles");
+
+                if (roleContainer) {
+                    roleContainer.innerHTML = "";
+
+                    if (roles.length === 0) {
+                        const badge = document.createElement("span");
+                        badge.className = "role-badge";
+                        badge.textContent = "No Portfolio Assigned";
+                        roleContainer.appendChild(badge);
+                    } else {
+                        roles.forEach(role => {
+                            const badge = document.createElement("span");
+                            badge.className = "role-badge";
+                            badge.textContent = formatRole(role);
+                            roleContainer.appendChild(badge);
+                        });
+                    }
+                }
+
+            } catch (error) {
+                console.error("Admin Authentication Error:", error);
+                await signOut(auth);
+                window.location.href = "index.html";
+            }
+        });
+
+        /* ROLE STRING FORMATTER */
+        function formatRole(roleStr) {
+            if (!roleStr) return "";
+            return String(roleStr)
+                .split("_")
+                .map(word => {
+                    const upperWord = word.toUpperCase();
+                    if (upperWord === "RC" || upperWord === "HC") {
+                        return upperWord;
+                    }
+                    return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+                })
+                .join(" ");
+        }
+
+        /* CARD NAVIGATION */
+        document.querySelectorAll(".portfolio-card").forEach(card => {
+            card.addEventListener("click", () => {
+                const page = card.dataset.page;
+                if (page) {
+                    window.location.href = page;
+                }
+            });
+        });
+
+        /* LOGOUT HANDLER */
+        const logoutBtn = document.getElementById("logoutButton");
+        if (logoutBtn) {
+            logoutBtn.addEventListener("click", async () => {
+                try {
+                    await signOut(auth);
+                    window.location.href = "index.html";
+                } catch (error) {
+                    console.error("Logout Error:", error);
+                    alert("Unable to log out. Please check your network connection.");
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>House Beyers Naude - Client Hub</title>
+
+<style>
+/* =========================
+   GLOBAL & COLOUR SYSTEM
+========================= */
+:root {
+    --space-blue: #1D2951;
+    --space-blue-hover: #151f3d;
+    --space-blue-light: #263968;
+    --background: #f4f5f7;
+    --card-bg: #ffffff;
+    --border: #e2e8f0;
+    --text-primary: #1f2937;
+    --text-muted: #64748b;
+    --badge-bg: #eff6ff;
+    --badge-text: #1d4ed8;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--background);
+    color: var(--text-primary);
+    line-height: 1.5;
+    min-height: 100vh;
+}
+
+/* =========================
+   HEADER
+========================= */
+.header {
+    background: var(--space-blue);
+    color: white;
+    padding: 18px 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.header-branding h1 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+}
+
+.header-branding p {
+    color: #cbd5e1;
+    font-size: 13px;
+    margin-top: 2px;
+}
+
+.logout-button {
+    background: #dc2626;
+    color: white;
+    border: none;
+    padding: 9px 18px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13px;
+    transition: background 0.15s ease;
+}
+
+.logout-button:hover {
+    background: #b91c1c;
+}
+
+/* =========================
+   MAIN LAYOUT & LOADING
+========================= */
+.container {
+    max-width: 1040px;
+    margin: auto;
+    padding: 32px 20px 48px 20px;
+}
+
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    gap: 12px;
+    color: var(--text-muted);
+}
+
+.spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid var(--border);
+    border-top-color: var(--space-blue);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.error-banner {
+    display: none;
+    background: #fee2e2;
+    border: 1px solid #fca5a5;
+    color: #991b1b;
+    padding: 14px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    margin-bottom: 24px;
+}
+
+.dashboard-content {
+    display: none;
+}
+
+/* =========================
+   PAGE TITLE & WELCOME CARD
+========================= */
+.page-title {
+    margin-bottom: 24px;
+}
+
+.page-title h2 {
+    color: var(--space-blue);
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.page-title p {
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+.welcome-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 22px 26px;
+    margin-bottom: 32px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    border-left: 5px solid var(--space-blue);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.welcome-info h3 {
+    font-size: 20px;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.welcome-subtext {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.user-badges {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.badge {
+    background: var(--badge-bg);
+    color: var(--badge-text);
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.badge-room {
+    background: #f1f5f9;
+    color: #334155;
+}
+
+.badge-role {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+/* =========================
+   SECTION TITLES & GRID
+========================= */
+.section-heading {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+}
+
+.services-group {
+    margin-bottom: 32px;
+}
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+/* =========================
+   SERVICE CARDS
+========================= */
+.service-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.service-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+    border-color: #cbd5e1;
+}
+
+.card-top {
+    margin-bottom: 20px;
+}
+
+.card-icon {
+    font-size: 26px;
+    margin-bottom: 12px;
+    display: inline-block;
+    line-height: 1;
+}
+
+.card-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--space-blue);
+    margin-bottom: 6px;
+}
+
+.card-description {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.4;
+}
+
+.card-button {
+    width: 100%;
+    background: var(--space-blue);
+    color: white;
+    border: none;
+    padding: 11px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: center;
+    transition: background 0.15s ease;
+    text-decoration: none;
+    display: block;
+}
+
+.card-button:hover {
+    background: var(--space-blue-hover);
+}
+
+/* =========================
+   BREAKAGE BUTTON WATERMARK
+========================= */
+.card-button.btn-breakage {
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.card-button.btn-breakage::before {
+    content: "";
+    position: absolute;
+    right: -6px;
+    bottom: -10px;
+    width: 65px;
+    height: 65px;
+    z-index: -1;
+    pointer-events: none;
+
+    /* Opaque lighter shade of Space Blue */
+    background-color: #384C80;
+
+    /* Relative path handles 'C:/Users/HP/Documents/Master Files/images/breakageswrench.png' when hosted or run locally in Master Files folder */
+    -webkit-mask-image: url('images/breakageswrench.png');
+    mask-image: url('images/breakageswrench.png');
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+
+    /* Thickening line effect using multi-directional drop shadows */
+    filter: 
+        drop-shadow(0.8px 0 0 #384C80) 
+        drop-shadow(-0.8px 0 0 #384C80) 
+        drop-shadow(0 0.8px 0 #384C80) 
+        drop-shadow(0 -0.8px 0 #384C80);
+
+    transition: background-color 0.15s ease, filter 0.15s ease;
+}
+
+.card-button.btn-breakage:hover::before {
+    background-color: #4A63A4;
+    filter: 
+        drop-shadow(0.8px 0 0 #4A63A4) 
+        drop-shadow(-0.8px 0 0 #4A63A4) 
+        drop-shadow(0 0.8px 0 #4A63A4) 
+        drop-shadow(0 -0.8px 0 #4A63A4);
+}
+
+/* Hide Corridor Leadership section by default */
+#leadershipSection {
+    display: none;
+}
+
+/* =========================
+   RESPONSIVE DESIGN
+========================= */
+@media (max-width: 640px) {
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 16px 20px;
+    }
+
+    .logout-button {
+        width: 100%;
+        text-align: center;
+    }
+
+    .welcome-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .card-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- =========================
+     HEADER
+========================= -->
+<header class="header">
+    <div class="header-branding">
+        <h1>House Beyers Naude</h1>
+        <p>Master Files</p>
+    </div>
+    <button class="logout-button" id="logoutButton">Log Out</button>
+</header>
+
+<main class="container">
+
+    <!-- =========================
+         LOADING & ERROR STATES
+    ========================= -->
+    <div id="loadingState" class="loading-container">
+        <div class="spinner"></div>
+        <p>Loading your Client Hub...</p>
+    </div>
+
+    <div id="errorBanner" class="error-banner"></div>
+
+    <!-- =========================
+         DASHBOARD CONTENT
+    ========================= -->
+    <div id="dashboardContent" class="dashboard-content">
+
+        <!-- TITLE SECTION -->
+        <section class="page-title">
+            <h2>Client Hub</h2>
+            <p>Your central hub for residence services, bookings and personal information.</p>
+        </section>
+
+        <!-- WELCOME CARD -->
+        <section class="welcome-card">
+            <div class="welcome-info">
+                <h3 id="userName">Loading...</h3>
+                <p class="welcome-subtext" id="userEmail"></p>
+            </div>
+            <div class="user-badges" id="userBadges">
+                <span class="badge" id="accountTypeBadge">HOUSE MEMBER</span>
+                <span class="badge badge-room" id="roomNumberBadge" style="display: none;"></span>
+                <span class="badge badge-role" id="roleBadge" style="display: none;"></span>
+            </div>
+        </section>
+
+        <!-- PERSONAL SECTION -->
+        <div class="services-group">
+            <h4 class="section-heading">Personal</h4>
+            <div class="card-grid">
+                <div class="service-card">
+                    <div class="card-top">
+                        <span class="card-icon">🛠️</span>
+                        <h3 class="card-title">My Info</h3>
+                        <p class="card-description">View your residence and personal information.</p>
+                    </div>
+                    <button class="card-button" data-link="myinfo.html">View My Info</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RESIDENCE SERVICES SECTION -->
+        <div class="services-group">
+            <h4 class="section-heading">Residence Services</h4>
+            <div class="card-grid">
+                
+                <div class="service-card">
+                    <div class="card-top">
+                        <span class="card-icon">📅</span>
+                        <h3 class="card-title">Venue Bookings</h3>
+                        <p class="card-description">View venue availability and make or manage bookings.</p>
+                    </div>
+                    <button class="card-button" data-link="bookings.html">Manage Bookings</button>
+                </div>
+
+                <div class="service-card">
+                    <div class="card-top">
+                        <span class="card-icon">📋</span>
+                        <h3 class="card-title">My Fines</h3>
+                        <p class="card-description">View current, disputed and paid fines.</p>
+                    </div>
+                    <button class="card-button" data-link="myfines.html">View My Fines</button>
+                </div>
+
+                <div class="service-card">
+                    <div class="card-top">
+                        <span class="card-icon">🔧</span>
+                        <h3 class="card-title">Report a Breakage</h3>
+                        <p class="card-description">Report damage or a maintenance-related breakage in your room.</p>
+                    </div>
+                    <button class="card-button btn-breakage" data-link="mybreakages.html">Report Breakage</button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- LEADERSHIP SECTION (CONDITIONAL FOR CORRIDOR_PRIME) -->
+        <div class="services-group" id="leadershipSection">
+            <h4 class="section-heading">Leadership</h4>
+            <div class="card-grid">
+                
+                <div class="service-card" id="corridorCard">
+                    <div class="card-top">
+                        <span class="card-icon">👑</span>
+                        <h3 class="card-title">Manage My Corridor</h3>
+                        <p class="card-description">Manage corridor-related residence matters and view corridor information.</p>
+                    </div>
+                    <button class="card-button" data-link="corridor.html">Manage Corridor</button>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</main>
+
+<script type="module">
+
+/* =========================
+   FIREBASE IMPORTS
+========================= */
+import {
+    initializeApp
+} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+
+import {
+    getAuth,
+    onAuthStateChanged,
+    signOut
+} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+
+import {
+    getFirestore,
+    doc,
+    getDoc
+} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+
+/* =========================
+   FIREBASE CONFIGURATION
+========================= */
+const firebaseConfig = {
+    apiKey: "AIzaSyDW6IArj2dZiqbf00Ix3SPPSqvxTKG0GgE",
+    authDomain: "master-files-95f6b.firebaseapp.com",
+    projectId: "master-files-95f6b",
+    storageBucket: "master-files-95f6b.firebasestorage.app",
+    messagingSenderId: "537891510061",
+    appId: "1:537891510061:web:fb46c8d1abae02b9e725a4",
+    measurementId: "G-4GNVR5EBJX"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+/* =========================
+   DOM REFERENCES
+========================= */
+const loadingState = document.getElementById("loadingState");
+const dashboardContent = document.getElementById("dashboardContent");
+const errorBanner = document.getElementById("errorBanner");
+
+const userNameEl = document.getElementById("userName");
+const userEmailEl = document.getElementById("userEmail");
+const accountTypeBadge = document.getElementById("accountTypeBadge");
+const roomNumberBadge = document.getElementById("roomNumberBadge");
+const roleBadge = document.getElementById("roleBadge");
+
+const leadershipSection = document.getElementById("leadershipSection");
+const logoutButton = document.getElementById("logoutButton");
+
+/* =========================
+   HELPERS & ERROR HANDLING
+========================= */
+function showError(message) {
+    loadingState.style.display = "none";
+    errorBanner.textContent = message;
+    errorBanner.style.display = "block";
+}
+
+function formatAccountType(type) {
+    if (!type) return "HOUSE MEMBER";
+    return type.replace(/_/g, " ").toUpperCase();
+}
+
+/* =========================
+   NAVIGATION LISTENERS
+========================= */
+document.querySelectorAll(".card-button").forEach(button => {
+    button.addEventListener("click", (e) => {
+        const targetPage = e.target.getAttribute("data-link");
+        if (targetPage) {
+            window.location.href = targetPage;
+        }
+    });
+});
+
+/* =========================
+   LOGOUT HANDLER
+========================= */
+logoutButton.addEventListener("click", async () => {
+    try {
+        await signOut(auth);
+        window.location.href = "index.html";
+    } catch (error) {
+        console.error("Logout error:", error);
+        alert("Failed to log out. Please try again.");
+    }
+});
+
+/* =========================
+   AUTHENTICATION & DATA LOADING
+========================= */
+onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+        window.location.href = "index.html";
+        return;
+    }
+
+    try {
+        // Direct lookup using Firebase Auth UID
+        const userRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userRef);
+
+        if (!userSnap.exists()) {
+            showError("We could not load your residence profile. Please contact an administrator.");
+            return;
+        }
+
+        const userData = userSnap.data();
+
+        // Populate User Info
+        userNameEl.textContent = userData.name || user.displayName || "Resident";
+        userEmailEl.textContent = user.email || "";
+
+        accountTypeBadge.textContent = formatAccountType(userData.accountType);
+
+        if (userData.roomNumber) {
+            roomNumberBadge.textContent = `Room ${userData.roomNumber}`;
+            roomNumberBadge.style.display = "inline-block";
+        }
+
+        // Safely extract houseRoles array
+        const houseRoles = Array.isArray(userData.houseRoles) ? userData.houseRoles : [];
+
+        // Check for CORRIDOR_PRIME role
+        const isCorridorPrime = houseRoles.includes("CORRIDOR_PRIME");
+
+        if (isCorridorPrime) {
+            leadershipSection.style.display = "block";
+            roleBadge.textContent = "Corridor Prime";
+            roleBadge.style.display = "inline-block";
+        } else if (houseRoles.length > 0) {
+            roleBadge.textContent = houseRoles[0].replace(/_/g, " ");
+            roleBadge.style.display = "inline-block";
+        }
+
+        // Reveal dashboard only after all security checks & data loading complete
+        loadingState.style.display = "none";
+        dashboardContent.style.display = "block";
+
+    } catch (error) {
+        console.error("Error retrieving user document:", error);
+        showError("We could not load your residence profile. Please try again.");
+    }
+});
+
+</script>
+
+</body>
+</html>

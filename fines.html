@@ -1,0 +1,1780 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Beyers Naude - Fines Management Dashboard</title>
+    <style>
+        :root {
+            --space-blue-primary: #1D2951;
+            --space-blue-hover: #141C38;
+            --space-blue-light: #EFF3F9;
+            --space-blue-border: #D0DCED;
+            --space-blue-accent: #3B5295;
+            --bg-page: #F4F6F9;
+            --bg-card: #FFFFFF;
+            --text-main: #0F172A;
+            --text-muted: #475569;
+            --text-subtle: #64748B;
+            --danger-red: #DC2626;
+            --danger-red-hover: #B91C1C;
+            --danger-light: #FEF2F2;
+            --danger-border: #FCA5A5;
+            --success-green: #16A34A;
+            --success-light: #F0FDF4;
+            --success-border: #86EFAC;
+            --warning-amber: #D97706;
+            --warning-light: #FFFBEB;
+            --warning-border: #FDE68A;
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+            --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+            --shadow-md: 0 4px 12px rgba(29, 41, 81, 0.08);
+            --shadow-lg: 0 10px 25px rgba(29, 41, 81, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* HEADER */
+        .header {
+            background-color: var(--space-blue-primary);
+            color: #FFFFFF;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand h1 {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+
+        .brand p {
+            color: #A0B2D6;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 0.01em;
+            margin-top: 2px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-nav {
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #FFFFFF;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-nav:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .btn-primary-action {
+            background-color: var(--space-blue-accent);
+            color: #FFFFFF;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 18px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 700;
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary-action:hover {
+            background-color: #2F437D;
+            border-color: #FFFFFF;
+        }
+
+        .logout-button {
+            border: none;
+            background-color: var(--danger-red);
+            color: #FFFFFF;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: background-color 0.15s ease;
+        }
+
+        .logout-button:hover {
+            background-color: var(--danger-red-hover);
+        }
+
+        /* MAIN CONTAINER */
+        .container {
+            max-width: 1280px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 32px 24px 60px;
+            flex: 1;
+        }
+
+        /* PAGE INTRO */
+        .page-intro {
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--space-blue-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .page-intro h2 {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--space-blue-primary);
+            letter-spacing: -0.02em;
+            margin-bottom: 4px;
+        }
+
+        .page-intro p {
+            color: var(--text-muted);
+            font-size: 15px;
+        }
+
+        /* SUMMARY CARDS DASHBOARD */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .summary-card {
+            background-color: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: 18px 20px;
+            border: 1px solid var(--space-blue-border);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .summary-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background-color: var(--space-blue-primary);
+        }
+
+        .summary-card.active::before { background-color: var(--space-blue-accent); }
+        .summary-card.disputed::before { background-color: var(--warning-amber); }
+        .summary-card.paid::before { background-color: var(--success-green); }
+        .summary-card.overdue::before { background-color: var(--danger-red); }
+
+        .summary-title {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-subtle);
+            margin-bottom: 8px;
+        }
+
+        .summary-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--space-blue-primary);
+            line-height: 1.1;
+        }
+
+        .summary-subtext {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+
+        /* FILTERS SECTION */
+        .filter-panel {
+            background-color: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            border: 1px solid var(--space-blue-border);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr auto;
+            gap: 12px;
+            align-items: end;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .filter-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-main);
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 9px 12px;
+            font-size: 14px;
+            border: 1px solid var(--space-blue-border);
+            border-radius: var(--radius-sm);
+            background-color: #FFFFFF;
+            color: var(--text-main);
+            outline: none;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--space-blue-accent);
+            box-shadow: 0 0 0 3px rgba(59, 82, 149, 0.15);
+        }
+
+        .btn-reset {
+            background-color: var(--space-blue-light);
+            color: var(--space-blue-primary);
+            border: 1px solid var(--space-blue-border);
+            padding: 9px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+            height: 38px;
+        }
+
+        .btn-reset:hover {
+            background-color: var(--space-blue-border);
+        }
+
+        .active-filter-indicator {
+            font-size: 13px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 8px;
+            border-top: 1px dashed var(--space-blue-border);
+        }
+
+        /* TABLE SECTION */
+        .table-card {
+            background-color: var(--bg-card);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--space-blue-border);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        thead {
+            background-color: var(--space-blue-light);
+            border-bottom: 2px solid var(--space-blue-border);
+        }
+
+        th {
+            padding: 14px 16px;
+            font-weight: 700;
+            color: var(--space-blue-primary);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #E2E8F0;
+            color: var(--text-main);
+            vertical-align: middle;
+        }
+
+        tbody tr:hover {
+            background-color: #F8FAFC;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .resident-meta {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .resident-name {
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .resident-sub {
+            font-size: 12px;
+            color: var(--text-subtle);
+        }
+
+        .amount-tag {
+            font-family: monospace, monospace;
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--space-blue-primary);
+        }
+
+        /* BADGES */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+            line-height: 1;
+            width: fit-content;
+        }
+
+        .badge-active {
+            background-color: var(--space-blue-light);
+            color: var(--space-blue-primary);
+            border: 1px solid var(--space-blue-border);
+        }
+
+        .badge-paid {
+            background-color: var(--success-light);
+            color: var(--success-green);
+            border: 1px solid var(--success-border);
+        }
+
+        .badge-disputed {
+            background-color: var(--warning-light);
+            color: var(--warning-amber);
+            border: 1px solid var(--warning-border);
+        }
+
+        .badge-overdue {
+            background-color: var(--danger-light);
+            color: var(--danger-red);
+            border: 1px solid var(--danger-border);
+        }
+
+        .badge-cancelled {
+            background-color: #F1F5F9;
+            color: var(--text-subtle);
+            border: 1px solid #CBD5E1;
+        }
+
+        .badge-warning-record {
+            background-color: #FAF5FF;
+            color: #7E22CE;
+            border: 1px solid #E9D5FF;
+        }
+
+        .badge-level {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            background-color: #E2E8F0;
+            color: #334155;
+            margin-left: 6px;
+        }
+
+        /* ACTION BUTTON */
+        .btn-action {
+            background-color: #FFFFFF;
+            border: 1px solid var(--space-blue-border);
+            color: var(--space-blue-primary);
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+        }
+
+        .btn-action:hover {
+            background-color: var(--space-blue-primary);
+            color: #FFFFFF;
+            border-color: var(--space-blue-primary);
+        }
+
+        /* STATE MESSAGES */
+        .state-container {
+            padding: 48px 24px;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        .state-container h4 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 6px;
+        }
+
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--space-blue-light);
+            border-top: 3px solid var(--space-blue-primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* MODAL */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(2px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-card {
+            background-color: var(--bg-card);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 600px;
+            border: 1px solid var(--space-blue-border);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            transform: translateY(10px);
+            transition: transform 0.2s ease;
+        }
+
+        .modal-overlay.active .modal-card {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            background-color: var(--space-blue-primary);
+            color: #FFFFFF;
+            padding: 18px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: #A0B2D6;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 4px;
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            color: #FFFFFF;
+        }
+
+        .modal-body {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            max-height: 75vh;
+            overflow-y: auto;
+        }
+
+        .detail-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            background-color: var(--bg-page);
+            padding: 16px;
+            border-radius: var(--radius-md);
+            border: 1px solid #E2E8F0;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .detail-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-subtle);
+            letter-spacing: 0.03em;
+        }
+
+        .detail-val {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-top: 2px;
+        }
+
+        .description-box {
+            background-color: #FFFFFF;
+            border: 1px solid var(--space-blue-border);
+            border-radius: var(--radius-sm);
+            padding: 12px;
+            font-size: 14px;
+            color: var(--text-main);
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            background-color: var(--space-blue-light);
+            border-top: 1px solid var(--space-blue-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-submit-fine {
+            background-color: var(--space-blue-primary);
+            color: #FFFFFF;
+            border: none;
+            padding: 10px 20px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.15s ease;
+        }
+
+        .btn-submit-fine:hover {
+            background-color: var(--space-blue-hover);
+        }
+
+        .btn-pay-confirm {
+            background-color: var(--success-green);
+            color: #FFFFFF;
+            border: none;
+            padding: 10px 20px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.15s ease;
+        }
+
+        .btn-pay-confirm:hover {
+            background-color: #15803D;
+        }
+
+        .btn-reinstate {
+            background-color: var(--space-blue-accent);
+            color: #FFFFFF;
+            border: none;
+            padding: 10px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.15s ease;
+        }
+
+        .btn-reinstate:hover {
+            background-color: var(--space-blue-primary);
+        }
+
+        .btn-danger {
+            background-color: var(--danger-red);
+            color: #FFFFFF;
+            border: none;
+            padding: 10px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.15s ease;
+        }
+
+        .btn-danger:hover {
+            background-color: var(--danger-red-hover);
+        }
+
+        .btn-pay-confirm:disabled, .btn-submit-fine:disabled, .btn-reinstate:disabled, .btn-danger:disabled {
+            background-color: #9CA3AF;
+            cursor: not-allowed;
+        }
+
+        /* TYPE TOGGLE RADIO GROUP */
+        .type-toggle-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 4px;
+        }
+
+        .type-toggle-card {
+            border: 2px solid var(--space-blue-border);
+            border-radius: var(--radius-md);
+            padding: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            transition: all 0.15s ease;
+            background-color: #FFFFFF;
+        }
+
+        .type-toggle-card:hover {
+            border-color: var(--space-blue-accent);
+        }
+
+        .type-toggle-card input[type="radio"] {
+            margin-top: 3px;
+            accent-color: var(--space-blue-primary);
+        }
+
+        .type-toggle-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .type-toggle-desc {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* FOOTER */
+        .footer {
+            text-align: center;
+            color: var(--text-subtle);
+            font-size: 13px;
+            font-weight: 500;
+            padding: 24px 16px;
+            border-top: 1px solid var(--space-blue-border);
+            background-color: #FFFFFF;
+            margin-top: auto;
+        }
+
+        /* RESPONSIVE BREAKPOINTS */
+        @media (max-width: 1100px) {
+            .summary-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+            .filter-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 680px) {
+            .header {
+                padding: 16px 20px;
+            }
+
+            .container {
+                padding: 20px 16px 40px;
+            }
+
+            .page-intro {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .summary-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .filter-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .detail-group {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-footer {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .type-toggle-group {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="brand">
+            <h1>House Beyers Naude</h1>
+            <p>Master Files • Fines Management</p>
+        </div>
+        <div class="header-actions">
+            <a href="admin.html" class="btn-nav">
+                &larr; Dashboard
+            </a>
+            <button class="logout-button" id="logoutButton">Log Out</button>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="container">
+
+        <!-- PAGE INTRO -->
+        <section class="page-intro">
+            <div>
+                <h2>Fines Management</h2>
+                <p>House-wide administrative monitoring, filtering, and payment tracking for resident fines.</p>
+            </div>
+            <div>
+                <button class="btn-primary-action" id="openIssueModalBtn">
+                    + Issue Fine / Warning
+                </button>
+            </div>
+        </section>
+
+        <!-- HOUSE-WIDE SUMMARY METRICS -->
+        <section class="summary-grid">
+            <div class="summary-card">
+                <div>
+                    <div class="summary-title">Total Records</div>
+                    <div class="summary-value" id="statTotal">--</div>
+                </div>
+                <div class="summary-subtext">All fines & warnings</div>
+            </div>
+
+            <div class="summary-card active">
+                <div>
+                    <div class="summary-title">Active Fines</div>
+                    <div class="summary-value" id="statActive">--</div>
+                </div>
+                <div class="summary-subtext">Unpaid & within 30 days</div>
+            </div>
+
+            <div class="summary-card overdue">
+                <div>
+                    <div class="summary-title">Overdue Fines</div>
+                    <div class="summary-value" id="statOverdue">--</div>
+                </div>
+                <div class="summary-subtext">Passed 30-day window</div>
+            </div>
+
+            <div class="summary-card disputed">
+                <div>
+                    <div class="summary-title">Disputed</div>
+                    <div class="summary-value" id="statDisputed">--</div>
+                </div>
+                <div class="summary-subtext">Under external review</div>
+            </div>
+
+            <div class="summary-card paid">
+                <div>
+                    <div class="summary-title">Paid Fines</div>
+                    <div class="summary-value" id="statPaid">--</div>
+                </div>
+                <div class="summary-subtext">Successfully settled</div>
+            </div>
+        </section>
+
+        <!-- SEARCH & COMBINED FILTERS -->
+        <section class="filter-panel">
+            <div class="filter-grid">
+                <div class="filter-group">
+                    <label for="searchInput" class="filter-label">Search Resident</label>
+                    <input type="text" id="searchInput" class="form-control" placeholder="Search by name, surname, or student number...">
+                </div>
+
+                <div class="filter-group">
+                    <label for="corridorFilter" class="filter-label">Corridor</label>
+                    <select id="corridorFilter" class="form-control">
+                        <option value="ALL">All Corridors</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="statusFilter" class="filter-label">Record Type / Status</label>
+                    <select id="statusFilter" class="form-control">
+                        <option value="ALL">All Records</option>
+                        <option value="ACTIVE">Active Fines (Unpaid)</option>
+                        <option value="OVERDUE">Overdue Fines</option>
+                        <option value="DISPUTED">Disputed Fines</option>
+                        <option value="PAID">Paid Fines</option>
+                        <option value="WARNING">Warnings (Confidential)</option>
+                        <option value="CANCELLED">Cancelled / Resolved</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="dateFilter" class="filter-label">Issued Period</label>
+                    <select id="dateFilter" class="form-control">
+                        <option value="ALL">All Dates</option>
+                        <option value="TODAY">Today</option>
+                        <option value="THIS_WEEK">This Week</option>
+                        <option value="THIS_MONTH">This Month</option>
+                    </select>
+                </div>
+
+                <div>
+                    <button id="resetFiltersBtn" class="btn-reset">Clear Filters</button>
+                </div>
+            </div>
+
+            <div class="active-filter-indicator">
+                <span id="filteredCountLabel">Showing 0 of 0 records</span>
+                <span id="activeFilterTags" style="font-weight: 600; color: var(--space-blue-primary);"></span>
+            </div>
+        </section>
+
+        <!-- FINES TABLE -->
+        <section class="table-card">
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Resident</th>
+                            <th>Student No.</th>
+                            <th>Room / Corridor</th>
+                            <th>Offence Description</th>
+                            <th>Level</th>
+                            <th>Amount</th>
+                            <th>Date Issued</th>
+                            <th>Status / Type</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="finesTableBody">
+                        <tr>
+                            <td colspan="9">
+                                <div class="state-container">
+                                    <div class="spinner"></div>
+                                    <h4>Loading house-wide fine records...</h4>
+                                    <p>Connecting to database records.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ISSUE FINE / WARNING MODAL -->
+    <div class="modal-overlay" id="issueFineModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Issue Fine or Warning</h3>
+                <button class="modal-close" id="closeIssueModalBtn">&times;</button>
+            </div>
+            <form id="issueFineForm">
+                <div class="modal-body">
+                    
+                    <!-- Record Type Selection -->
+                    <div class="filter-group">
+                        <label class="filter-label">Record Type</label>
+                        <div class="type-toggle-group">
+                            <label class="type-toggle-card">
+                                <input type="radio" name="recordType" value="FINE" checked id="typeFineRadio">
+                                <div>
+                                    <div class="type-toggle-title">Monetary Fine</div>
+                                    <div class="type-toggle-desc">Visible to resident on myfines.html</div>
+                                </div>
+                            </label>
+                            <label class="type-toggle-card">
+                                <input type="radio" name="recordType" value="WARNING" id="typeWarningRadio">
+                                <div>
+                                    <div class="type-toggle-title">Warning Notice</div>
+                                    <div class="type-toggle-desc">Admin-only view (hidden from resident)</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Target Resident Dropdown -->
+                    <div class="filter-group">
+                        <label for="issueResidentSelect" class="filter-label">Select Resident *</label>
+                        <select id="issueResidentSelect" class="form-control" required>
+                            <option value="">-- Choose Resident --</option>
+                        </select>
+                    </div>
+
+                    <!-- Infringement Level & Amount Grid -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div class="filter-group">
+                            <label for="issueInfringementLevel" class="filter-label">Level of Infringement *</label>
+                            <select id="issueInfringementLevel" class="form-control" required>
+                                <option value="LEVEL_1">Level 1 (Minor Offence)</option>
+                                <option value="LEVEL_2">Level 2 (Moderate Offence)</option>
+                                <option value="LEVEL_3">Level 3 (Severe Offence)</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group" id="amountContainer">
+                            <label for="issueAmount" class="filter-label">Fine Amount (ZAR R) *</label>
+                            <input type="number" id="issueAmount" class="form-control" min="0" step="10" placeholder="e.g. 150" required>
+                        </div>
+                    </div>
+
+                    <!-- Reason / Offence Description -->
+                    <div class="filter-group">
+                        <label for="issueReason" class="filter-label">Reason / Infringement Details *</label>
+                        <textarea id="issueReason" class="form-control" rows="4" placeholder="Detailed explanation of the rule breach or incident..." required></textarea>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-reset" id="cancelIssueModalBtn">Cancel</button>
+                    <button type="submit" class="btn-submit-fine" id="submitFineBtn">Issue Record</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- FINE DETAIL & PAYMENT MODAL -->
+    <div class="modal-overlay" id="fineModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Fine Record Details</h3>
+                <button class="modal-close" id="closeModalBtn">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Modal content rendered via JS -->
+            </div>
+            <div class="modal-footer">
+                <div id="modalStatusContainer"></div>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button class="btn-reset" id="cancelModalBtn">Close</button>
+                    <button class="btn-pay-confirm" id="markPaidBtn" style="display: none;">Record Payment</button>
+                    <button class="btn-reinstate" id="reinstateBtn" style="display: none;">Reinstate Fine</button>
+                    <button class="btn-danger" id="cancelDeleteBtn" style="display: none;">Cancel (Delete Fine)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        House Beyers Naude • House of Masters
+    </footer>
+
+    <!-- FIREBASE & APPLICATION LOGIC -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, collection, getDocs, updateDoc, addDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDW6IArj2dZiqbf00Ix3SPPSqvxTKG0GgE",
+            authDomain: "master-files-95f6b.firebaseapp.com",
+            projectId: "master-files-95f6b",
+            storageBucket: "master-files-95f6b.firebasestorage.app",
+            messagingSenderId: "537891510061",
+            appId: "1:537891510061:web:fb46c8d1abae02b9e725a4",
+            measurementId: "G-4GNVR5EBJX"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // State Store
+        let rawFines = [];
+        let residentList = []; 
+        let residentMap = new Map(); // Key: studentNumber or user UID -> Resident Info Object
+        let selectedFineId = null;
+        let currentAdminUid = null;
+
+        /* AUTHENTICATION & ACCESS CONTROL */
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = "index.html";
+                return;
+            }
+
+            currentAdminUid = user.uid;
+
+            try {
+                // Verify admin privileges using standard admins/{auth.uid} lookup
+                const adminRef = doc(db, "admins", user.uid);
+                const adminSnap = await getDoc(adminRef);
+
+                if (!adminSnap.exists()) {
+                    console.warn("Unauthorised access attempt by non-admin user.");
+                    await signOut(auth);
+                    window.location.href = "index.html";
+                    return;
+                }
+
+                // Authorised -> Load data
+                await initDashboard();
+
+            } catch (error) {
+                console.error("Admin Authentication Error:", error);
+                await signOut(auth);
+                window.location.href = "index.html";
+            }
+        });
+
+        /* DATA FETCHING & INITIALISATION */
+        async function initDashboard() {
+            try {
+                // 1. Load Residents database for cross-referencing names, rooms, corridors
+                await fetchResidents();
+
+                // 2. Load Fines database
+                await fetchFines();
+
+                // 3. Setup Filter Listeners
+                setupFilterListeners();
+
+                // 4. Setup Issue Fine Modal Logic
+                setupIssueFineModal();
+
+            } catch (err) {
+                console.error("Dashboard Init Failure:", err);
+                renderErrorState("Failed to retrieve system fine records. Please refresh or check Firestore permissions.");
+            }
+        }
+
+        async function fetchResidents() {
+            residentMap.clear();
+            residentList = [];
+            const corridorSet = new Set();
+
+            try {
+                const usersSnap = await getDocs(collection(db, "users"));
+                usersSnap.forEach(docSnap => {
+                    const data = docSnap.data();
+                    const studentNum = (data.studentNumber || data.studentNo || "").toString().trim();
+                    const corridor = data.corridor || data.corridorNumber || "Unassigned";
+
+                    if (corridor && corridor !== "Unassigned") {
+                        corridorSet.add(corridor);
+                    }
+
+                    const resObj = {
+                        uid: docSnap.id,
+                        name: data.name || "",
+                        surname: data.surname || "",
+                        fullName: `${data.name || ''} ${data.surname || ''}`.trim() || "Unknown Resident",
+                        studentNumber: studentNum || "N/A",
+                        roomNumber: data.roomNumber || data.room || "N/A",
+                        corridor: corridor
+                    };
+
+                    if (studentNum) {
+                        residentMap.set(studentNum, resObj);
+                    }
+                    residentMap.set(docSnap.id, resObj);
+                    residentList.push(resObj);
+                });
+
+                // Populate dynamic corridor filter dropdown
+                const corridorSelect = document.getElementById("corridorFilter");
+                corridorSelect.innerHTML = '<option value="ALL">All Corridors</option>';
+                Array.from(corridorSet).sort().forEach(c => {
+                    const opt = document.createElement("option");
+                    opt.value = c;
+                    opt.textContent = c.startsWith("Corridor") ? c : `Corridor ${c}`;
+                    corridorSelect.appendChild(opt);
+                });
+
+                // Populate issue fine resident selection dropdown
+                const issueResSelect = document.getElementById("issueResidentSelect");
+                issueResSelect.innerHTML = '<option value="">-- Choose Resident --</option>';
+                residentList.sort((a, b) => a.fullName.localeCompare(b.fullName)).forEach(res => {
+                    const opt = document.createElement("option");
+                    opt.value = res.uid;
+                    opt.textContent = `${res.fullName} (${res.studentNumber}) - Room ${res.roomNumber}`;
+                    issueResSelect.appendChild(opt);
+                });
+
+            } catch (e) {
+                console.warn("Could not pre-fetch user records, falling back to embedded fine metadata:", e);
+            }
+        }
+
+        async function fetchFines() {
+            const finesSnap = await getDocs(collection(db, "fines"));
+            rawFines = [];
+
+            finesSnap.forEach(docSnap => {
+                const data = docSnap.data();
+                const id = docSnap.id;
+
+                // Match with resident database if possible
+                const studentNum = (data.studentNumber || data.studentNo || "").toString().trim();
+                const matchedRes = residentMap.get(studentNum) || residentMap.get(data.userId || data.userUid) || {};
+
+                // Parse Issue Date
+                let dateIssued = new Date();
+                if (data.dateIssued && typeof data.dateIssued.toDate === 'function') {
+                    dateIssued = data.dateIssued.toDate();
+                } else if (data.dateIssued) {
+                    dateIssued = new Date(data.dateIssued);
+                } else if (data.createdAt && typeof data.createdAt.toDate === 'function') {
+                    dateIssued = data.createdAt.toDate();
+                }
+
+                // Expected Payment Date = 30 days after issue date
+                const expectedPaymentDate = new Date(dateIssued);
+                expectedPaymentDate.setDate(expectedPaymentDate.getDate() + 30);
+
+                // Date Paid
+                let datePaid = null;
+                if (data.datePaid && typeof data.datePaid.toDate === 'function') {
+                    datePaid = data.datePaid.toDate();
+                } else if (data.datePaid) {
+                    datePaid = new Date(data.datePaid);
+                }
+
+                const recordType = (data.type || "FINE").toUpperCase();
+                let rawStatus = (data.status || (data.paid ? "Paid" : "Active")).toUpperCase();
+                const now = new Date();
+                let computedStatus = rawStatus;
+
+                if (recordType === "WARNING") {
+                    computedStatus = "WARNING";
+                } else if (rawStatus !== "PAID" && rawStatus !== "CANCELLED" && rawStatus !== "RESOLVED" && rawStatus !== "DISPUTED") {
+                    if (now > expectedPaymentDate) {
+                        computedStatus = "OVERDUE";
+                    } else {
+                        computedStatus = "ACTIVE";
+                    }
+                }
+
+                rawFines.push({
+                    id: id,
+                    type: recordType,
+                    infringementLevel: data.infringementLevel || data.level || "LEVEL_1",
+                    residentName: matchedRes.fullName || data.residentName || `${data.name || ''} ${data.surname || ''}`.trim() || "Resident",
+                    studentNumber: studentNum || matchedRes.studentNumber || "N/A",
+                    roomNumber: matchedRes.roomNumber || data.roomNumber || data.room || "N/A",
+                    corridor: matchedRes.corridor || data.corridor || "N/A",
+                    reason: data.reason || data.description || "No description provided",
+                    amount: parseFloat(data.amount || 0),
+                    dateIssued: dateIssued,
+                    expectedPaymentDate: expectedPaymentDate,
+                    status: computedStatus,
+                    rawStatus: rawStatus,
+                    datePaid: datePaid,
+                    disputeDetails: data.disputeReason || data.disputeDetails || null,
+                    originalData: data
+                });
+            });
+
+            // Calculate Dashboard Metrics & Render Table
+            calculateMetrics(rawFines);
+            applyFilters();
+        }
+
+        /* METRICS CALCULATOR */
+        function calculateMetrics(fines) {
+            let total = fines.length;
+            let active = 0;
+            let overdue = 0;
+            let disputed = 0;
+            let paid = 0;
+
+            fines.forEach(f => {
+                if (f.type === "WARNING") return; // Keep warnings separate from monetary fine stats if desired
+                if (f.status === "PAID") paid++;
+                else if (f.status === "DISPUTED") disputed++;
+                else if (f.status === "OVERDUE") overdue++;
+                else if (f.status === "ACTIVE") active++;
+            });
+
+            document.getElementById("statTotal").textContent = total;
+            document.getElementById("statActive").textContent = active;
+            document.getElementById("statOverdue").textContent = overdue;
+            document.getElementById("statDisputed").textContent = disputed;
+            document.getElementById("statPaid").textContent = paid;
+        }
+
+        /* COMBINED FILTER SYSTEM */
+        function setupFilterListeners() {
+            document.getElementById("searchInput").addEventListener("input", applyFilters);
+            document.getElementById("corridorFilter").addEventListener("change", applyFilters);
+            document.getElementById("statusFilter").addEventListener("change", applyFilters);
+            document.getElementById("dateFilter").addEventListener("change", applyFilters);
+
+            document.getElementById("resetFiltersBtn").addEventListener("click", () => {
+                document.getElementById("searchInput").value = "";
+                document.getElementById("corridorFilter").value = "ALL";
+                document.getElementById("statusFilter").value = "ALL";
+                document.getElementById("dateFilter").value = "ALL";
+                applyFilters();
+            });
+        }
+
+        function applyFilters() {
+            const searchTerm = document.getElementById("searchInput").value.trim().toLowerCase();
+            const corridorVal = document.getElementById("corridorFilter").value;
+            const statusVal = document.getElementById("statusFilter").value;
+            const dateVal = document.getElementById("dateFilter").value;
+
+            const filtered = rawFines.filter(fine => {
+                if (searchTerm) {
+                    const matchName = fine.residentName.toLowerCase().includes(searchTerm);
+                    const matchStudent = fine.studentNumber.toLowerCase().includes(searchTerm);
+                    if (!matchName && !matchStudent) return false;
+                }
+
+                if (corridorVal !== "ALL") {
+                    if (fine.corridor.toString().toLowerCase() !== corridorVal.toString().toLowerCase()) {
+                        return false;
+                    }
+                }
+
+                if (statusVal !== "ALL") {
+                    if (statusVal === "ACTIVE" && fine.status !== "ACTIVE") return false;
+                    if (statusVal === "OVERDUE" && fine.status !== "OVERDUE") return false;
+                    if (statusVal === "DISPUTED" && fine.status !== "DISPUTED") return false;
+                    if (statusVal === "PAID" && fine.status !== "PAID") return false;
+                    if (statusVal === "WARNING" && fine.type !== "WARNING") return false;
+                    if (statusVal === "CANCELLED" && fine.status !== "CANCELLED" && fine.status !== "RESOLVED") return false;
+                }
+
+                if (dateVal !== "ALL") {
+                    const now = new Date();
+                    const issueDate = new Date(fine.dateIssued);
+
+                    if (dateVal === "TODAY") {
+                        if (issueDate.toDateString() !== now.toDateString()) return false;
+                    } else if (dateVal === "THIS_WEEK") {
+                        const sevenDaysAgo = new Date();
+                        sevenDaysAgo.setDate(now.getDate() - 7);
+                        if (issueDate < sevenDaysAgo) return false;
+                    } else if (dateVal === "THIS_MONTH") {
+                        if (issueDate.getMonth() !== now.getMonth() || issueDate.getFullYear() !== now.getFullYear()) return false;
+                    }
+                }
+
+                return true;
+            });
+
+            document.getElementById("filteredCountLabel").textContent = `Showing ${filtered.length} of ${rawFines.length} recorded items`;
+
+            renderTable(filtered);
+        }
+
+        /* TABLE RENDERER */
+        function renderTable(fines) {
+            const tbody = document.getElementById("finesTableBody");
+            tbody.innerHTML = "";
+
+            if (fines.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9">
+                            <div class="state-container">
+                                <h4>No matching records</h4>
+                                <p>Try adjusting your search criteria or clear your filters.</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            fines.forEach(fine => {
+                const tr = document.createElement("tr");
+
+                const formattedIssued = formatDate(fine.dateIssued);
+                const badgeHtml = getStatusBadge(fine);
+                const levelLabel = formatLevel(fine.infringementLevel);
+
+                tr.innerHTML = `
+                    <td>
+                        <div class="resident-meta">
+                            <span class="resident-name">${escapeHtml(fine.residentName)}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <span style="font-family: monospace; font-weight: 600;">${escapeHtml(fine.studentNumber)}</span>
+                    </td>
+                    <td>
+                        <div class="resident-meta">
+                            <span>Room ${escapeHtml(fine.roomNumber)}</span>
+                            <span class="resident-sub">${escapeHtml(fine.corridor.startsWith('Corridor') ? fine.corridor : 'Corridor ' + fine.corridor)}</span>
+                        </div>
+                    </td>
+                    <td style="max-width: 240px;">
+                        <span style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;" title="${escapeHtml(fine.reason)}">
+                            ${escapeHtml(fine.reason)}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge-level">${levelLabel}</span>
+                    </td>
+                    <td>
+                        <span class="amount-tag">${fine.type === "WARNING" ? 'N/A' : 'R' + fine.amount.toFixed(2)}</span>
+                    </td>
+                    <td>${formattedIssued}</td>
+                    <td>${badgeHtml}</td>
+                    <td>
+                        <button class="btn-action" data-id="${fine.id}">Inspect</button>
+                    </td>
+                `;
+
+                tr.querySelector(".btn-action").addEventListener("click", () => openDetailModal(fine.id));
+                tbody.appendChild(tr);
+            });
+        }
+
+        /* ISSUE FINE / WARNING MODAL HANDLERS */
+        function setupIssueFineModal() {
+            const openBtn = document.getElementById("openIssueModalBtn");
+            const closeBtn = document.getElementById("closeIssueModalBtn");
+            const cancelBtn = document.getElementById("cancelIssueModalBtn");
+            const modal = document.getElementById("issueFineModal");
+            const form = document.getElementById("issueFineForm");
+
+            const fineRadio = document.getElementById("typeFineRadio");
+            const warningRadio = document.getElementById("typeWarningRadio");
+            const amountContainer = document.getElementById("amountContainer");
+            const amountInput = document.getElementById("issueAmount");
+
+            function toggleTypeView() {
+                if (warningRadio.checked) {
+                    amountContainer.style.opacity = "0.4";
+                    amountInput.value = "0";
+                    amountInput.disabled = true;
+                    amountInput.required = false;
+                } else {
+                    amountContainer.style.opacity = "1";
+                    amountInput.disabled = false;
+                    amountInput.required = true;
+                    if (amountInput.value === "0") amountInput.value = "";
+                }
+            }
+
+            fineRadio.addEventListener("change", toggleTypeView);
+            warningRadio.addEventListener("change", toggleTypeView);
+
+            openBtn.addEventListener("click", () => {
+                form.reset();
+                fineRadio.checked = true;
+                toggleTypeView();
+                modal.classList.add("active");
+            });
+
+            const closeIssueModal = () => {
+                modal.classList.remove("active");
+            };
+
+            closeBtn.addEventListener("click", closeIssueModal);
+            cancelBtn.addEventListener("click", closeIssueModal);
+
+            form.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                await submitFineForm();
+            });
+        }
+
+        async function submitFineForm() {
+            const submitBtn = document.getElementById("submitFineBtn");
+            const residentUid = document.getElementById("issueResidentSelect").value;
+            const recordType = document.querySelector('input[name="recordType"]:checked').value;
+            const level = document.getElementById("issueInfringementLevel").value;
+            const amount = parseFloat(document.getElementById("issueAmount").value || 0);
+            const reason = document.getElementById("issueReason").value.trim();
+
+            const selectedRes = residentList.find(r => r.uid === residentUid);
+            if (!selectedRes) {
+                alert("Please select a valid resident.");
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = "Creating Record...";
+
+            try {
+                // Structured document creation for fines/warnings
+                const finePayload = {
+                    type: recordType, // "FINE" or "WARNING"
+                    userId: selectedRes.uid,
+                    studentNumber: selectedRes.studentNumber,
+                    residentName: selectedRes.fullName,
+                    roomNumber: selectedRes.roomNumber,
+                    corridor: selectedRes.corridor,
+                    infringementLevel: level, // LEVEL_1, LEVEL_2, LEVEL_3
+                    amount: recordType === "WARNING" ? 0 : amount,
+                    reason: reason,
+                    status: recordType === "WARNING" ? "WARNING" : "Active",
+                    paid: false,
+                    dateIssued: serverTimestamp(),
+                    createdByAdminId: currentAdminUid,
+                    createdAt: serverTimestamp()
+                };
+
+                await addDoc(collection(db, "fines"), finePayload);
+
+                document.getElementById("issueFineModal").classList.remove("active");
+                alert(`${recordType === "WARNING" ? "Warning notice" : "Fine record"} issued successfully!`);
+                
+                await fetchFines(); // Refresh UI table
+
+            } catch (err) {
+                console.error("Error issuing fine/warning:", err);
+                alert("Failed to create record. Check Firestore permissions.");
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Issue Record";
+            }
+        }
+
+        /* MODAL INSPECTION & PAYMENT / DISPUTE ACTIONS */
+        function openDetailModal(fineId) {
+            selectedFineId = fineId;
+            const fine = rawFines.find(f => f.id === fineId);
+            if (!fine) return;
+
+            const modalBody = document.getElementById("modalBody");
+            const markPaidBtn = document.getElementById("markPaidBtn");
+            const reinstateBtn = document.getElementById("reinstateBtn");
+            const cancelDeleteBtn = document.getElementById("cancelDeleteBtn");
+            const modalStatusContainer = document.getElementById("modalStatusContainer");
+
+            modalStatusContainer.innerHTML = getStatusBadge(fine);
+
+            modalBody.innerHTML = `
+                <div class="detail-group">
+                    <div class="detail-item">
+                        <span class="detail-label">Resident Name</span>
+                        <span class="detail-val">${escapeHtml(fine.residentName)}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Student Number</span>
+                        <span class="detail-val">${escapeHtml(fine.studentNumber)}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Room Number</span>
+                        <span class="detail-val">${escapeHtml(fine.roomNumber)}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Corridor</span>
+                        <span class="detail-val">${escapeHtml(fine.corridor)}</span>
+                    </div>
+                </div>
+
+                <div>
+                    <span class="detail-label" style="display:block; margin-bottom: 4px;">Infringement Details (${formatLevel(fine.infringementLevel)})</span>
+                    <div class="description-box">${escapeHtml(fine.reason)}</div>
+                </div>
+
+                <div class="detail-group">
+                    <div class="detail-item">
+                        <span class="detail-label">Record Type / Amount</span>
+                        <span class="detail-val" style="color: var(--space-blue-primary); font-size: 18px;">
+                            ${fine.type === "WARNING" ? 'Confidential Warning' : 'R' + fine.amount.toFixed(2)}
+                        </span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Date Issued</span>
+                        <span class="detail-val">${formatDate(fine.dateIssued)}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Expected Payment</span>
+                        <span class="detail-val">${fine.type === "WARNING" ? 'N/A' : formatDate(fine.expectedPaymentDate)}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Payment Date</span>
+                        <span class="detail-val">${fine.datePaid ? formatDate(fine.datePaid) : (fine.type === "WARNING" ? "N/A" : "Not paid")}</span>
+                    </div>
+                </div>
+
+                ${fine.disputeDetails ? `
+                    <div style="border: 1px solid var(--warning-border); background-color: var(--warning-light); padding: 12px; border-radius: var(--radius-sm);">
+                        <span class="detail-label" style="color: var(--warning-amber);">Dispute Reason / Details</span>
+                        <p style="font-size: 13px; color: var(--text-main); margin-top: 2px;">${escapeHtml(fine.disputeDetails)}</p>
+                    </div>
+                ` : ''}
+            `;
+
+            // Action Buttons Visibility
+            if (fine.type !== "WARNING" && fine.status !== "PAID" && fine.status !== "CANCELLED") {
+                markPaidBtn.style.display = "inline-block";
+                markPaidBtn.onclick = () => recordPayment(fine.id);
+            } else {
+                markPaidBtn.style.display = "none";
+            }
+
+            if (fine.status === "DISPUTED") {
+                reinstateBtn.style.display = "inline-block";
+                reinstateBtn.onclick = () => reinstateDisputedFine(fine.id);
+
+                cancelDeleteBtn.style.display = "inline-block";
+                cancelDeleteBtn.onclick = () => cancelAndDeleteFine(fine.id);
+            } else {
+                reinstateBtn.style.display = "none";
+                cancelDeleteBtn.style.display = "none";
+            }
+
+            document.getElementById("fineModal").classList.add("active");
+        }
+
+        async function recordPayment(fineId) {
+            if (!confirm("Confirm marking this fine as PAID? This will update the resident's record and recalculate dashboard totals.")) {
+                return;
+            }
+
+            const markPaidBtn = document.getElementById("markPaidBtn");
+            markPaidBtn.disabled = true;
+            markPaidBtn.textContent = "Updating...";
+
+            try {
+                const fineRef = doc(db, "fines", fineId);
+                await updateDoc(fineRef, {
+                    status: "Paid",
+                    paid: true,
+                    datePaid: serverTimestamp()
+                });
+
+                closeModal();
+                await fetchFines(); // Reload Firestore data
+
+            } catch (err) {
+                console.error("Payment Recording Error:", err);
+                alert("Failed to update fine payment status. Check Firestore permissions.");
+                markPaidBtn.disabled = false;
+                markPaidBtn.textContent = "Record Payment";
+            }
+        }
+
+        async function reinstateDisputedFine(fineId) {
+            if (!confirm("Are you sure you want to reinstate this fine? Its status will return to Active and remain payable by the resident.")) {
+                return;
+            }
+
+            const reinstateBtn = document.getElementById("reinstateBtn");
+            reinstateBtn.disabled = true;
+            reinstateBtn.textContent = "Reinstating...";
+
+            try {
+                const fineRef = doc(db, "fines", fineId);
+                // Status updated to Active; hasBeenDisputed is untouched so it remains true
+                await updateDoc(fineRef, {
+                    status: "Active"
+                });
+
+                closeModal();
+                await fetchFines(); // Reload Firestore data
+
+            } catch (err) {
+                console.error("Reinstate Fine Error:", err);
+                alert("Failed to reinstate fine. Check Firestore permissions.");
+                reinstateBtn.disabled = false;
+                reinstateBtn.textContent = "Reinstate Fine";
+            }
+        }
+
+        async function cancelAndDeleteFine(fineId) {
+            if (!confirm("Are you sure you want to cancel this fine? This will permanently delete its record from the database.")) {
+                return;
+            }
+
+            const cancelDeleteBtn = document.getElementById("cancelDeleteBtn");
+            cancelDeleteBtn.disabled = true;
+            cancelDeleteBtn.textContent = "Deleting...";
+
+            try {
+                const fineRef = doc(db, "fines", fineId);
+                await deleteDoc(fineRef);
+
+                closeModal();
+                await fetchFines(); // Reload Firestore data
+
+            } catch (err) {
+                console.error("Delete Fine Error:", err);
+                alert("Failed to delete fine record. Check Firestore permissions.");
+                cancelDeleteBtn.disabled = false;
+                cancelDeleteBtn.textContent = "Cancel (Delete Fine)";
+            }
+        }
+
+        /* MODAL CLOSE HANDLERS */
+        function closeModal() {
+            document.getElementById("fineModal").classList.remove("active");
+            selectedFineId = null;
+        }
+
+        document.getElementById("closeModalBtn").addEventListener("click", closeModal);
+        document.getElementById("cancelModalBtn").addEventListener("click", closeModal);
+        document.getElementById("fineModal").addEventListener("click", (e) => {
+            if (e.target.id === "fineModal") closeModal();
+        });
+
+        /* LOGOUT HANDLER */
+        document.getElementById("logoutButton").addEventListener("click", async () => {
+            try {
+                await signOut(auth);
+                window.location.href = "index.html";
+            } catch (err) {
+                console.error("Logout Error:", err);
+            }
+        });
+
+        /* UTILITY HELPERS */
+        function getStatusBadge(fine) {
+            if (fine.type === "WARNING") {
+                return `<span class="status-badge badge-warning-record">Warning Notice</span>`;
+            }
+            switch (fine.status) {
+                case "PAID":
+                    return `<span class="status-badge badge-paid">Paid</span>`;
+                case "OVERDUE":
+                    return `<span class="status-badge badge-overdue">Overdue</span>`;
+                case "DISPUTED":
+                    return `<span class="status-badge badge-disputed">Disputed</span>`;
+                case "CANCELLED":
+                case "RESOLVED":
+                    return `<span class="status-badge badge-cancelled">Cancelled</span>`;
+                case "ACTIVE":
+                default:
+                    return `<span class="status-badge badge-active">Payment Due</span>`;
+            }
+        }
+
+        function formatLevel(lvl) {
+            switch (lvl) {
+                case "LEVEL_2": return "Lvl 2";
+                case "LEVEL_3": return "Lvl 3";
+                case "LEVEL_1":
+                default: return "Lvl 1";
+            }
+        }
+
+        function formatDate(dateObj) {
+            if (!dateObj || isNaN(dateObj.getTime())) return "N/A";
+            return dateObj.toLocaleDateString("en-GB", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric"
+            });
+        }
+
+        function renderErrorState(msg) {
+            const tbody = document.getElementById("finesTableBody");
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="9">
+                        <div class="state-container" style="color: var(--danger-red);">
+                            <h4>Error Loading Fines</h4>
+                            <p>${escapeHtml(msg)}</p>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+
+        function escapeHtml(str) {
+            if (!str) return "";
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+
+</html>

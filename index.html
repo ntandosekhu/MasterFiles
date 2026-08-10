@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Files - Login</title>
+
+    <style>
+        :root {
+            --primary: #1d2951;
+            --primary-hover: #151f3d;
+            --primary-light: #3b82f6;
+            --background-dark: #0b1329;
+            --card-bg: #ffffff;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --error-color: #dc2626;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: radial-gradient(circle at 80% 20%, #1e3a8a 0%, #0f172a 50%, var(--background-dark) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 20px;
+            color: var(--text-dark);
+            line-height: 1.5;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 40px 32px;
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.1);
+        }
+
+        .brand {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .brand h1 {
+            color: var(--primary);
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .brand p {
+            margin-top: 6px;
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 400;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #334155;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 15px;
+            background-color: #f8fafc;
+            color: var(--text-dark);
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .form-group input:focus {
+            background-color: #ffffff;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+
+        #loginButton {
+            width: 100%;
+            border: none;
+            border-radius: 8px;
+            padding: 13px;
+            background: var(--primary);
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(29, 41, 81, 0.25);
+        }
+
+        #loginButton:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        #loginButton:active {
+            transform: translateY(0);
+        }
+
+        #loginButton:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .register-area {
+            text-align: center;
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .register-area p {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+
+        #registerButton {
+            background: transparent;
+            border: none;
+            color: var(--primary);
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        #registerButton:hover {
+            color: var(--primary-light);
+            text-decoration: underline;
+        }
+
+        #message {
+            min-height: 20px;
+            margin-top: 16px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--error-color);
+        }
+
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 32px 24px;
+            }
+
+            .brand h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="login-container">
+    <div class="login-card">
+
+        <div class="brand">
+            <h1>Master Files</h1>
+            <p>Sign in to your account</p>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input
+                type="email"
+                id="email"
+                placeholder="Enter your email"
+                autocomplete="email"
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input
+                type="password"
+                id="password"
+                placeholder="Enter your password"
+                autocomplete="current-password"
+            >
+        </div>
+
+        <button id="loginButton">Login</button>
+
+        <p id="message"></p>
+
+        <div class="register-area">
+            <p>Don't have an account?</p>
+            <button id="registerButton">Register</button>
+        </div>
+
+    </div>
+</div>
+
+<script type="module">
+    import {
+        initializeApp
+    } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+
+    import {
+        getAuth,
+        signInWithEmailAndPassword
+    } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+
+    import {
+        getFirestore,
+        doc,
+        getDoc
+    } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDW6IArj2dZiqbf00Ix3SPPSqvxTKG0GgE",
+        authDomain: "master-files-95f6b.firebaseapp.com",
+        projectId: "master-files-95f6b",
+        storageBucket: "master-files-95f6b.firebasestorage.app",
+        messagingSenderId: "537891510061",
+        appId: "1:537891510061:web:fb46c8d1abae02b9e725a4"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const loginButton = document.getElementById("loginButton");
+    const registerButton = document.getElementById("registerButton");
+    const message = document.getElementById("message");
+
+    registerButton.addEventListener("click", () => {
+        window.location.href = "registration.html";
+    });
+
+    loginButton.addEventListener("click", async () => {
+        const email = emailInput.value.trim();
+        const password = passwordInput.value;
+
+        message.textContent = "";
+
+        if (!email || !password) {
+            message.textContent = "Please enter your email and password.";
+            return;
+        }
+
+        loginButton.disabled = true;
+        loginButton.textContent = "Signing in...";
+
+        try {
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+
+            console.log("Authenticated UID:", user.uid);
+
+            const adminRef = doc(db, "admins", user.uid);
+            const adminSnap = await getDoc(adminRef);
+
+            if (adminSnap.exists()) {
+                window.location.href = "admin.html";
+                return;
+            }
+
+            window.location.href = "clienthub.html";
+        } catch (error) {
+            console.error("Login error:", error);
+
+            let errorMessage = "Unable to log in. Please check your details.";
+
+            if (error.code === "auth/invalid-credential") {
+                errorMessage = "Incorrect email or password.";
+            } else if (error.code === "auth/too-many-requests") {
+                errorMessage = "Too many attempts. Please try again later.";
+            } else if (error.code === "auth/network-request-failed") {
+                errorMessage = "Network error. Please check your connection.";
+            }
+
+            message.textContent = errorMessage;
+        } finally {
+            loginButton.disabled = false;
+            loginButton.textContent = "Login";
+        }
+    });
+
+    passwordInput.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+            loginButton.click();
+        }
+    });
+</script>
+
+</body>
+</html>
