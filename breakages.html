@@ -974,10 +974,10 @@
                     <label for="statusFilter" class="filter-label">Maintenance Status</label>
                     <select id="statusFilter" class="form-control">
                         <option value="ALL">All Statuses</option>
-                        <option value="Reported">Reported</option>
-                        <option value="In Progress">In Progress</option>
-                        <option value="Scheduled">Scheduled</option>
-                        <option value="Completed">Completed</option>
+                        <option value="OPEN">Reported (OPEN)</option>
+                        <option value="IN_PROGRESS">In Progress</option>
+                        <option value="SOLVED">Solved</option>
+                        <option value="CLOSED">Closed</option>
                         <option value="OVERDUE">Overdue Maintenance</option>
                     </select>
                 </div>
@@ -1005,10 +1005,10 @@
                     <label for="bulkStatusSelect">Set Status:</label>
                     <select id="bulkStatusSelect" class="form-control">
                         <option value="">-- No Change --</option>
-                        <option value="Reported">Reported</option>
-                        <option value="In Progress">In Progress</option>
-                        <option value="Scheduled">Scheduled</option>
-                        <option value="Completed">Completed</option>
+                        <option value="OPEN">Reported (OPEN)</option>
+                        <option value="IN_PROGRESS">In Progress</option>
+                        <option value="SOLVED">Solved</option>
+                        <option value="CLOSED">Closed</option>
                     </select>
                 </div>
 
@@ -1115,7 +1115,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, collection, getDocs, updateDoc, writeBatch, serverTimestamp, Timestamp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, collection, getDocs, updateDoc, writeBatch, Timestamp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDW6IArj2dZiqbf00Ix3SPPSqvxTKG0GgE",
@@ -1256,8 +1256,8 @@
                 // Expected Fixture Date
                 let expectedFixtureDate = parseFirebaseDate(data.expectedFixtureDate || data.fixtureDate || data.scheduledDate);
 
-                // Maintenance Status (Reported, In Progress, Scheduled, Completed)
-                let status = normalizeStatus(data.status, expectedFixtureDate);
+                // Maintenance Status (OPEN, IN_PROGRESS, SOLVED, CLOSED)
+                let status = normalizeStatus(data.status);
 
                 rawBreakages.push({
                     id: id,
@@ -1314,20 +1314,15 @@
             return typeStr.charAt(0).toUpperCase() + typeStr.slice(1);
         }
 
-        function normalizeStatus(statusStr, expectedDate) {
-            let s = (statusStr || "Reported").toString().trim();
-            const lower = s.toLowerCase();
+        function normalizeStatus(statusStr) {
+            let s = (statusStr || "OPEN").toString().trim().toUpperCase();
 
-            if (lower === "completed" || lower === "fixed" || lower === "resolved") return "Completed";
-            if (lower === "in progress" || lower === "inprogress" || lower === "working") return "In Progress";
-            if (lower === "scheduled") return "Scheduled";
-            
-            // If there's an expected fixture date set and status is reported, treat as Scheduled or In Progress
-            if (expectedDate && s.toUpperCase() === "REPORTED") {
-                return "Scheduled";
-            }
+            if (s === "COMPLETED" || s === "SOLVED" || s === "FIXED" || s === "RESOLVED") return "SOLVED";
+            if (s === "CLOSED") return "CLOSED";
+            if (s === "IN PROGRESS" || s === "IN_PROGRESS" || s === "WORKING") return "IN_PROGRESS";
+            if (s === "SCHEDULED" || s === "REPORTED" || s === "OPEN") return "OPEN";
 
-            return "Reported";
+            return "OPEN";
         }
 
         function parseFirebaseDate(val) {
@@ -1339,7 +1334,7 @@
         }
 
         function isReportOverdue(breakage) {
-            if (breakage.status === "Completed") return false;
+            if (breakage.status === "SOLVED" || breakage.status === "CLOSED") return false;
             if (!breakage.expectedFixtureDate) return false;
             
             const today = new Date();
@@ -1365,9 +1360,9 @@
                     overdue++;
                 }
 
-                if (b.status === "Completed") completed++;
-                else if (b.status === "In Progress") inProgress++;
-                else if (b.status === "Scheduled") scheduled++;
+                if (b.status === "SOLVED" || b.status === "CLOSED") completed++;
+                else if (b.status === "IN_PROGRESS") inProgress++;
+                else if (b.expectedFixtureDate) scheduled++;
                 else reported++;
             });
 
@@ -1625,10 +1620,7 @@
 
             try {
                 const batch = writeBatch(db);
-                const updatePayload = {
-                    updatedAt: serverTimestamp(),
-                    updatedByAdminId: currentAdminUid
-                };
+                const updatePayload = {};
 
                 if (newStatus) updatePayload.status = newStatus;
                 if (newFixtureDate) {
@@ -1726,10 +1718,10 @@
                         <div class="filter-group">
                             <label for="detailStatusSelect" class="filter-label">Update Status</label>
                             <select id="detailStatusSelect" class="form-control">
-                                <option value="Reported" ${b.status === "Reported" ? "selected" : ""}>Reported</option>
-                                <option value="In Progress" ${b.status === "In Progress" ? "selected" : ""}>In Progress</option>
-                                <option value="Scheduled" ${b.status === "Scheduled" ? "selected" : ""}>Scheduled</option>
-                                <option value="Completed" ${b.status === "Completed" ? "selected" : ""}>Completed</option>
+                                <option value="OPEN" ${b.status === "OPEN" ? "selected" : ""}>Reported (OPEN)</option>
+                                <option value="IN_PROGRESS" ${b.status === "IN_PROGRESS" ? "selected" : ""}>In Progress</option>
+                                <option value="SOLVED" ${b.status === "SOLVED" ? "selected" : ""}>Solved</option>
+                                <option value="CLOSED" ${b.status === "CLOSED" ? "selected" : ""}>Closed</option>
                             </select>
                         </div>
 
@@ -1757,9 +1749,7 @@
             try {
                 const docRef = doc(db, BREAKAGES_COLLECTION, activeDetailId);
                 const updatePayload = {
-                    status: newStatus,
-                    updatedAt: serverTimestamp(),
-                    updatedByAdminId: currentAdminUid
+                    status: newStatus
                 };
 
                 if (newDateVal) {
@@ -1828,13 +1818,12 @@
                 return `<span class="status-badge badge-overdue">Overdue</span>`;
             }
             switch (status) {
-                case "Completed":
-                    return `<span class="status-badge badge-completed">Completed</span>`;
-                case "In Progress":
+                case "SOLVED":
+                case "CLOSED":
+                    return `<span class="status-badge badge-completed">${status === 'SOLVED' ? 'Solved' : 'Closed'}</span>`;
+                case "IN_PROGRESS":
                     return `<span class="status-badge badge-in-progress">In Progress</span>`;
-                case "Scheduled":
-                    return `<span class="status-badge badge-scheduled">Scheduled</span>`;
-                case "Reported":
+                case "OPEN":
                 default:
                     return `<span class="status-badge badge-reported">Reported</span>`;
             }
