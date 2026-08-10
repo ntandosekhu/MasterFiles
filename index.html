@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Master Files - Login</title>
 
-    <!-- Google reCAPTCHA API Script -->
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <!-- Google reCAPTCHA v3 Script with render parameter -->
+    <script src="https://www.google.com/recaptcha/api.js?render=6LfAPn8tAAAAAOa1QF1-NqwCu6aPsGWyOep3mo2s"></script>
 
     <style>
         :root {
@@ -100,12 +100,6 @@
             background-color: #ffffff;
             border-color: var(--primary-light);
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-        }
-
-        .recaptcha-container {
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: center;
         }
 
         #loginButton {
@@ -217,11 +211,6 @@
             >
         </div>
 
-        <!-- Google reCAPTCHA Checkbox Widget -->
-        <div class="recaptcha-container">
-            <div class="g-recaptcha" data-sitekey="6LfAPn8tAAAAAOa1QF1-NqwCu6aPsGWyOep3mo2s"></div>
-        </div>
-
         <button id="loginButton">Login</button>
 
         <p id="message"></p>
@@ -259,6 +248,8 @@
         appId: "1:537891510061:web:fb46c8d1abae02b9e725a4"
     };
 
+    const RECAPTCHA_SITE_KEY = "6LfAPn8tAAAAAOa1QF1-NqwCu6aPsGWyOep3mo2s";
+
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
@@ -284,17 +275,34 @@
             return;
         }
 
-        // Verify reCAPTCHA completion
-        const recaptchaResponse = typeof grecaptcha !== "undefined" ? grecaptcha.getResponse() : null;
-        if (!recaptchaResponse) {
-            message.textContent = "Please complete the reCAPTCHA verification.";
-            return;
-        }
-
         loginButton.disabled = true;
         loginButton.textContent = "Signing in...";
 
         try {
+            // Execute score-based reCAPTCHA v3
+            let recaptchaToken = "";
+            if (typeof grecaptcha !== "undefined") {
+                recaptchaToken = await new Promise((resolve) => {
+                    grecaptcha.ready(async () => {
+                        try {
+                            const token = await grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: "login" });
+                            resolve(token);
+                        } catch (err) {
+                            console.error("reCAPTCHA execution error:", err);
+                            resolve(null);
+                        }
+                    });
+                });
+            }
+
+            if (!recaptchaToken) {
+                message.textContent = "Security check failed. Please try again.";
+                loginButton.disabled = false;
+                loginButton.textContent = "Login";
+                return;
+            }
+
+            // Authenticate with Firebase
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
 
@@ -323,11 +331,6 @@
             }
 
             message.textContent = errorMessage;
-
-            // Reset reCAPTCHA on login failure
-            if (typeof grecaptcha !== "undefined") {
-                grecaptcha.reset();
-            }
         } finally {
             loginButton.disabled = false;
             loginButton.textContent = "Login";
