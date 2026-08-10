@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Master Files - Login</title>
 
-    <!-- Load Google reCAPTCHA v3 with your site key -->
-    <script src="https://www.google.com/recaptcha/api.js?render=6LfAPn8tAAAAAOa1QF1-NqwCu6aPsGWyOep3mo2s"></script>
-
     <style>
         :root {
             --primary: #1d2951;
@@ -229,6 +226,11 @@
     } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
 
     import {
+        initializeAppCheck,
+        ReCaptchaV3Provider
+    } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app-check.js";
+
+    import {
         getAuth,
         signInWithEmailAndPassword
     } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
@@ -250,7 +252,21 @@
 
     const RECAPTCHA_SITE_KEY = "6LfAPn8tAAAAAOa1QF1-NqwCu6aPsGWyOep3mo2s";
 
+    // 1. Initialize Firebase App
     const app = initializeApp(firebaseConfig);
+
+    // 2. Initialize Firebase App Check with reCAPTCHA v3
+    let appCheck;
+    try {
+        appCheck = initializeAppCheck(app, {
+            provider: new ReCaptchaV3Provider(RECAPTCHA_SITE_KEY),
+            isTokenAutoRefreshEnabled: true
+        });
+    } catch (error) {
+        console.error("Firebase App Check initialization failed:", error);
+    }
+
+    // 3. Initialize Firebase Services
     const auth = getAuth(app);
     const db = getFirestore(app);
 
@@ -279,25 +295,7 @@
         loginButton.textContent = "Signing in...";
 
         try {
-            // Trigger reCAPTCHA v3 token generation directly on button press
-            const recaptchaToken = await new Promise((resolve, reject) => {
-                if (typeof grecaptcha === "undefined") {
-                    reject(new Error("reCAPTCHA library not loaded"));
-                    return;
-                }
-                grecaptcha.ready(async () => {
-                    try {
-                        const token = await grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: "login" });
-                        resolve(token);
-                    } catch (err) {
-                        reject(err);
-                    }
-                });
-            });
-
-            console.log("reCAPTCHA v3 Token generated:", recaptchaToken);
-
-            // Execute Firebase Authentication after reCAPTCHA verification step
+            // Firebase Auth automatically passes App Check tokens with requests
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
 
@@ -317,14 +315,14 @@
 
             let errorMessage = "Unable to log in. Please check your details.";
 
-            if (error.message === "reCAPTCHA library not loaded") {
-                errorMessage = "Security verification could not load. Check your network connection.";
-            } else if (error.code === "auth/invalid-credential") {
+            if (error.code === "auth/invalid-credential") {
                 errorMessage = "Incorrect email or password.";
             } else if (error.code === "auth/too-many-requests") {
                 errorMessage = "Too many attempts. Please try again later.";
             } else if (error.code === "auth/network-request-failed") {
                 errorMessage = "Network error. Please check your connection.";
+            } else if (error.code === "auth/app-check-token-invalid") {
+                errorMessage = "Security verification failed. Please try again.";
             }
 
             message.textContent = errorMessage;
