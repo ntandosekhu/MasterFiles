@@ -37,7 +37,7 @@ body {
 }
 
 /* =========================
-   HEADER
+   HEADER & CIRCULAR LOGO BADGE
 ========================= */
 .header {
     background: var(--space-blue);
@@ -48,6 +48,32 @@ body {
     align-items: center;
     gap: 20px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.header-branding {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.header-logo-badge {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background-color: var(--space-blue);
+    border: 2px solid rgba(255, 255, 255, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+.header-logo-img {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
 }
 
 .header-branding h1 {
@@ -250,23 +276,6 @@ body {
     line-height: 1;
 }
 
-/* Wrench Icon styled directly in Space Blue */
-.card-icon-wrench {
-    width: 28px;
-    height: 28px;
-    margin-bottom: 12px;
-    display: block;
-    background-color: var(--space-blue);
-    -webkit-mask-image: url('images/breakageswrench.png');
-    mask-image: url('images/breakageswrench.png');
-    -webkit-mask-size: contain;
-    mask-size: contain;
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
-    -webkit-mask-position: center;
-    mask-position: center;
-}
-
 .card-title {
     font-size: 17px;
     font-weight: 700;
@@ -301,31 +310,31 @@ body {
 }
 
 /* =========================
-   BREAKAGE CARD WATERMARK BACKDROP
+   BREAKAGE CARD CENTERED SUBTLE WATERMARK
 ========================= */
 .service-card.breakage-card {
     position: relative;
     overflow: hidden;
 }
 
-/* Space Blue Watermark Backdrop */
 .service-card.breakage-card::after {
     content: "";
     position: absolute;
-    right: -12px;
-    bottom: -12px;
-    width: 140px;
-    height: 140px;
-    background-color: var(--space-blue);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 190px;
+    height: 190px;
+    background-color: #94a3b8;
     -webkit-mask-image: url('images/breakageswrench.png');
     mask-image: url('images/breakageswrench.png');
     -webkit-mask-size: contain;
     mask-size: contain;
     -webkit-mask-repeat: no-repeat;
     mask-repeat: no-repeat;
-    -webkit-mask-position: right bottom;
-    mask-position: right bottom;
-    opacity: 0.08; /* Subtle space blue backdrop */
+    -webkit-mask-position: center;
+    mask-position: center;
+    opacity: 0.07;
     pointer-events: none;
     z-index: 0;
 }
@@ -363,7 +372,7 @@ body {
     z-index: 1;
     pointer-events: none;
 
-    /* Lighter blue shade to contrast clearly against var(--space-blue) background */
+    /* Lighter blue shade so it contrasts clearly against var(--space-blue) */
     background-color: #5B75B8;
 
     -webkit-mask-image: url('images/breakageswrench.png');
@@ -433,8 +442,13 @@ body {
 ========================= -->
 <header class="header">
     <div class="header-branding">
-        <h1>House Beyers Naude</h1>
-        <p>Master Files</p>
+        <div class="header-logo-badge">
+            <img src="images/breakageswrench.png" alt="House Beyers Naudé Logo" class="header-logo-img">
+        </div>
+        <div>
+            <h1>House Beyers Naude</h1>
+            <p>Master Files</p>
+        </div>
     </div>
     <button class="logout-button" id="logoutButton">Log Out</button>
 </header>
@@ -515,7 +529,7 @@ body {
 
                 <div class="service-card breakage-card">
                     <div class="card-top">
-                        <div class="card-icon-wrench" aria-label="Report Breakage"></div>
+                        <span class="card-icon">🔧</span>
                         <h3 class="card-title">Report a Breakage</h3>
                         <p class="card-description">Report damage or a maintenance-related breakage in your room.</p>
                     </div>
