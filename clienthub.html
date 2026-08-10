@@ -250,12 +250,21 @@ body {
     line-height: 1;
 }
 
-.card-icon-img {
-    width: 30px;
-    height: 30px;
-    object-fit: contain;
+/* Wrench Icon styled directly in Space Blue */
+.card-icon-wrench {
+    width: 28px;
+    height: 28px;
     margin-bottom: 12px;
     display: block;
+    background-color: var(--space-blue);
+    -webkit-mask-image: url('images/breakageswrench.png');
+    mask-image: url('images/breakageswrench.png');
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
 }
 
 .card-title {
@@ -299,18 +308,24 @@ body {
     overflow: hidden;
 }
 
+/* Space Blue Watermark Backdrop */
 .service-card.breakage-card::after {
     content: "";
     position: absolute;
-    right: -15px;
-    bottom: -15px;
-    width: 135px;
-    height: 135px;
-    background-image: url('images/breakageswrench.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: right bottom;
-    opacity: 0.08; /* Subtle transparent watermark backdrop */
+    right: -12px;
+    bottom: -12px;
+    width: 140px;
+    height: 140px;
+    background-color: var(--space-blue);
+    -webkit-mask-image: url('images/breakageswrench.png');
+    mask-image: url('images/breakageswrench.png');
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: right bottom;
+    mask-position: right bottom;
+    opacity: 0.08; /* Subtle space blue backdrop */
     pointer-events: none;
     z-index: 0;
 }
@@ -345,10 +360,10 @@ body {
     bottom: -8px;
     width: 55px;
     height: 55px;
-    z-index: 1; /* Sits in front of button backdrop, behind text */
+    z-index: 1;
     pointer-events: none;
 
-    /* Lighter blue shade so it contrasts clearly against var(--space-blue) */
+    /* Lighter blue shade to contrast clearly against var(--space-blue) background */
     background-color: #5B75B8;
 
     -webkit-mask-image: url('images/breakageswrench.png');
@@ -500,7 +515,7 @@ body {
 
                 <div class="service-card breakage-card">
                     <div class="card-top">
-                        <img src="images/breakageswrench.png" alt="Report Breakage" class="card-icon-img">
+                        <div class="card-icon-wrench" aria-label="Report Breakage"></div>
                         <h3 class="card-title">Report a Breakage</h3>
                         <p class="card-description">Report damage or a maintenance-related breakage in your room.</p>
                     </div>
