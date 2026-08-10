@@ -243,27 +243,24 @@ body {
     margin-bottom: 20px;
 }
 
-/* Space Blue Circular Badge Identifier */
+/* Large Space Blue Service Icons */
 .card-icon {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background-color: var(--space-blue);
+    width: 72px;
+    height: 72px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 20px;
     margin-bottom: 14px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     line-height: 1;
     flex-shrink: 0;
 }
 
 .card-icon img {
-    width: 22px;
-    height: 22px;
+    width: 64px;
+    height: 64px;
     object-fit: contain;
     display: block;
+    filter: brightness(0) saturate(100%) invert(17%) sepia(22%) saturate(1391%) hue-rotate(190deg) brightness(91%) contrast(91%);
 }
 
 .card-title {
@@ -480,7 +477,9 @@ body {
             <div class="card-grid">
                 <div class="service-card">
                     <div class="card-top">
-                        <span class="card-icon">🛠️</span>
+                        <span class="card-icon">
+                            <img src="images/myinfo.png" alt="My Info">
+                        </span>
                         <h3 class="card-title">My Info</h3>
                         <p class="card-description">View your residence and personal information.</p>
                     </div>
@@ -533,7 +532,9 @@ body {
                 <!-- 4. Report a Breakage -->
                 <div class="service-card breakage-card">
                     <div class="card-top">
-                        <span class="card-icon">🔧</span>
+                        <span class="card-icon">
+                            <img src="images/breakageswrench.png" alt="Report a Breakage">
+                        </span>
                         <h3 class="card-title">Report a Breakage</h3>
                         <p class="card-description">Report damage or a maintenance-related breakage in your room.</p>
                     </div>
@@ -552,7 +553,9 @@ body {
                 
                 <div class="service-card" id="corridorCard">
                     <div class="card-top">
-                        <span class="card-icon">👑</span>
+                        <span class="card-icon">
+                            <img src="images/corridor.png" alt="Manage My Corridor">
+                        </span>
                         <h3 class="card-title">Manage My Corridor</h3>
                         <p class="card-description">Manage corridor-related residence matters and view corridor information.</p>
                     </div>
