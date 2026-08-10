@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Master Files - Login</title>
 
-    <!-- Google reCAPTCHA v3 Script with render parameter -->
+    <!-- Load Google reCAPTCHA v3 with your site key -->
     <script src="https://www.google.com/recaptcha/api.js?render=6LfAPn8tAAAAAOa1QF1-NqwCu6aPsGWyOep3mo2s"></script>
 
     <style>
@@ -279,30 +279,25 @@
         loginButton.textContent = "Signing in...";
 
         try {
-            // Execute score-based reCAPTCHA v3
-            let recaptchaToken = "";
-            if (typeof grecaptcha !== "undefined") {
-                recaptchaToken = await new Promise((resolve) => {
-                    grecaptcha.ready(async () => {
-                        try {
-                            const token = await grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: "login" });
-                            resolve(token);
-                        } catch (err) {
-                            console.error("reCAPTCHA execution error:", err);
-                            resolve(null);
-                        }
-                    });
+            // Trigger reCAPTCHA v3 token generation directly on button press
+            const recaptchaToken = await new Promise((resolve, reject) => {
+                if (typeof grecaptcha === "undefined") {
+                    reject(new Error("reCAPTCHA library not loaded"));
+                    return;
+                }
+                grecaptcha.ready(async () => {
+                    try {
+                        const token = await grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: "login" });
+                        resolve(token);
+                    } catch (err) {
+                        reject(err);
+                    }
                 });
-            }
+            });
 
-            if (!recaptchaToken) {
-                message.textContent = "Security check failed. Please try again.";
-                loginButton.disabled = false;
-                loginButton.textContent = "Login";
-                return;
-            }
+            console.log("reCAPTCHA v3 Token generated:", recaptchaToken);
 
-            // Authenticate with Firebase
+            // Execute Firebase Authentication after reCAPTCHA verification step
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
 
@@ -322,7 +317,9 @@
 
             let errorMessage = "Unable to log in. Please check your details.";
 
-            if (error.code === "auth/invalid-credential") {
+            if (error.message === "reCAPTCHA library not loaded") {
+                errorMessage = "Security verification could not load. Check your network connection.";
+            } else if (error.code === "auth/invalid-credential") {
                 errorMessage = "Incorrect email or password.";
             } else if (error.code === "auth/too-many-requests") {
                 errorMessage = "Too many attempts. Please try again later.";
