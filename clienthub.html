@@ -259,6 +259,13 @@ body {
     flex-shrink: 0;
 }
 
+.card-icon img {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+    display: block;
+}
+
 .card-title {
     font-size: 17px;
     font-weight: 700;
@@ -487,24 +494,43 @@ body {
             <h4 class="section-heading">Residence Services</h4>
             <div class="card-grid">
                 
+                <!-- 1. Venue Bookings -->
                 <div class="service-card">
                     <div class="card-top">
-                        <span class="card-icon">📅</span>
+                        <span class="card-icon">
+                            <img src="images/bookings.png" alt="Venue Bookings">
+                        </span>
                         <h3 class="card-title">Venue Bookings</h3>
                         <p class="card-description">View venue availability and make or manage bookings.</p>
                     </div>
                     <button class="card-button" data-link="bookings.html">Manage Bookings</button>
                 </div>
 
+                <!-- 2. Academic Resources -->
                 <div class="service-card">
                     <div class="card-top">
-                        <span class="card-icon">📋</span>
+                        <span class="card-icon">
+                            <img src="images/academics.png" alt="Academic Resources">
+                        </span>
+                        <h3 class="card-title">Academic Resources</h3>
+                        <p class="card-description">Access academic support materials, study resources, and learning tools for residents.</p>
+                    </div>
+                    <button class="card-button" data-link="academicresources.html">View Academic Resources</button>
+                </div>
+
+                <!-- 3. My Fines -->
+                <div class="service-card">
+                    <div class="card-top">
+                        <span class="card-icon">
+                            <img src="images/fines.png" alt="My Fines">
+                        </span>
                         <h3 class="card-title">My Fines</h3>
                         <p class="card-description">View current, disputed and paid fines.</p>
                     </div>
                     <button class="card-button" data-link="myfines.html">View My Fines</button>
                 </div>
 
+                <!-- 4. Report a Breakage -->
                 <div class="service-card breakage-card">
                     <div class="card-top">
                         <span class="card-icon">🔧</span>
