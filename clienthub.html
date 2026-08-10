@@ -292,6 +292,35 @@ body {
 }
 
 /* =========================
+   BREAKAGE CARD WATERMARK BACKDROP
+========================= */
+.service-card.breakage-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.service-card.breakage-card::after {
+    content: "";
+    position: absolute;
+    right: -15px;
+    bottom: -15px;
+    width: 135px;
+    height: 135px;
+    background-image: url('images/breakageswrench.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: right bottom;
+    opacity: 0.08; /* Subtle transparent watermark backdrop */
+    pointer-events: none;
+    z-index: 0;
+}
+
+.service-card.breakage-card > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* =========================
    BREAKAGE BUTTON WATERMARK
 ========================= */
 .card-button.btn-breakage {
@@ -469,7 +498,7 @@ body {
                     <button class="card-button" data-link="myfines.html">View My Fines</button>
                 </div>
 
-                <div class="service-card">
+                <div class="service-card breakage-card">
                     <div class="card-top">
                         <img src="images/breakageswrench.png" alt="Report Breakage" class="card-icon-img">
                         <h3 class="card-title">Report a Breakage</h3>
