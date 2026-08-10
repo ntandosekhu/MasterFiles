@@ -289,23 +289,31 @@ body {
 .card-button.btn-breakage {
     position: relative;
     overflow: hidden;
-    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
+/* Keeps button text sitting above the watermark */
+.card-button.btn-breakage span {
+    position: relative;
+    z-index: 2;
+}
+
+/* Watermark pseudo-element rendered on top of the solid blue background */
 .card-button.btn-breakage::before {
     content: "";
     position: absolute;
-    right: -6px;
-    bottom: -10px;
-    width: 65px;
-    height: 65px;
-    z-index: -1;
+    right: -4px;
+    bottom: -8px;
+    width: 55px;
+    height: 55px;
+    z-index: 1; /* Sits in front of button backdrop, behind text */
     pointer-events: none;
 
-    /* Opaque lighter shade of Space Blue */
-    background-color: #384C80;
+    /* Lighter blue shade so it contrasts clearly against var(--space-blue) */
+    background-color: #5B75B8;
 
-    /* Relative path handles 'C:/Users/HP/Documents/Master Files/images/breakageswrench.png' when hosted or run locally in Master Files folder */
     -webkit-mask-image: url('images/breakageswrench.png');
     mask-image: url('images/breakageswrench.png');
     -webkit-mask-size: contain;
@@ -315,23 +323,23 @@ body {
     -webkit-mask-position: center;
     mask-position: center;
 
-    /* Thickening line effect using multi-directional drop shadows */
+    /* Drop shadows to keep fine vector lines prominent */
     filter: 
-        drop-shadow(0.8px 0 0 #384C80) 
-        drop-shadow(-0.8px 0 0 #384C80) 
-        drop-shadow(0 0.8px 0 #384C80) 
-        drop-shadow(0 -0.8px 0 #384C80);
+        drop-shadow(0.8px 0 0 #5B75B8) 
+        drop-shadow(-0.8px 0 0 #5B75B8) 
+        drop-shadow(0 0.8px 0 #5B75B8) 
+        drop-shadow(0 -0.8px 0 #5B75B8);
 
     transition: background-color 0.15s ease, filter 0.15s ease;
 }
 
 .card-button.btn-breakage:hover::before {
-    background-color: #4A63A4;
+    background-color: #7993D6;
     filter: 
-        drop-shadow(0.8px 0 0 #4A63A4) 
-        drop-shadow(-0.8px 0 0 #4A63A4) 
-        drop-shadow(0 0.8px 0 #4A63A4) 
-        drop-shadow(0 -0.8px 0 #4A63A4);
+        drop-shadow(0.8px 0 0 #7993D6) 
+        drop-shadow(-0.8px 0 0 #7993D6) 
+        drop-shadow(0 0.8px 0 #7993D6) 
+        drop-shadow(0 -0.8px 0 #7993D6);
 }
 
 /* Hide Corridor Leadership section by default */
@@ -459,7 +467,9 @@ body {
                         <h3 class="card-title">Report a Breakage</h3>
                         <p class="card-description">Report damage or a maintenance-related breakage in your room.</p>
                     </div>
-                    <button class="card-button btn-breakage" data-link="mybreakages.html">Report Breakage</button>
+                    <button class="card-button btn-breakage" data-link="mybreakages.html">
+                        <span>Report Breakage</span>
+                    </button>
                 </div>
 
             </div>
