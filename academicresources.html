@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>House Beyers Naude - Academic Resources</title>
+
+<style>
+/* =========================
+   GLOBAL & COLOUR SYSTEM
+========================= */
+:root {
+    --space-blue: #1D2951;
+    --space-blue-hover: #151f3d;
+    --space-blue-light: #263968;
+    --background: #f4f5f7;
+    --card-bg: #ffffff;
+    --border: #e2e8f0;
+    --text-primary: #1f2937;
+    --text-muted: #64748b;
+    --badge-bg: #eff6ff;
+    --badge-text: #1d4ed8;
+    --accent-bg: #f8fafc;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--background);
+    color: var(--text-primary);
+    line-height: 1.5;
+    min-height: 100vh;
+}
+
+/* =========================
+   HEADER
+========================= */
+.header {
+    background: var(--space-blue);
+    color: white;
+    padding: 18px 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.header-branding h1 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+}
+
+.header-branding p {
+    color: #cbd5e1;
+    font-size: 13px;
+    margin-top: 2px;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.12);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    padding: 9px 16px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13px;
+    text-decoration: none;
+    transition: background 0.15s ease, border-color 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.22);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.logout-button {
+    background: #dc2626;
+    color: white;
+    border: none;
+    padding: 9px 18px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13px;
+    transition: background 0.15s ease;
+}
+
+.logout-button:hover {
+    background: #b91c1c;
+}
+
+/* =========================
+   MAIN LAYOUT & CONTAINERS
+========================= */
+.container {
+    max-width: 1040px;
+    margin: auto;
+    padding: 32px 20px 48px 20px;
+}
+
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 250px;
+    gap: 12px;
+    color: var(--text-muted);
+}
+
+.spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid var(--border);
+    border-top-color: var(--space-blue);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+.spinner-sm {
+    width: 20px;
+    height: 20px;
+    border-width: 2px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.error-banner {
+    display: none;
+    background: #fee2e2;
+    border: 1px solid #fca5a5;
+    color: #991b1b;
+    padding: 14px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    margin-bottom: 24px;
+}
+
+.dashboard-content {
+    display: none;
+}
+
+/* =========================
+   PAGE TITLE & INTRO
+========================= */
+.page-title {
+    margin-bottom: 24px;
+}
+
+.page-title h2 {
+    color: var(--space-blue);
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.page-title p {
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+/* =========================
+   PROGRAM DIRECTOR PANEL
+========================= */
+.pd-panel {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 22px 26px;
+    margin-bottom: 32px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    border-left: 5px solid var(--space-blue);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.pd-info-group {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.pd-avatar-badge {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: var(--space-blue);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.pd-details h3 {
+    font-size: 18px;
+    color: var(--space-blue);
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+
+.pd-title-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+
+.pd-subtext {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.4;
+}
+
+.btn-primary {
+    background: var(--space-blue);
+    color: white;
+    border: none;
+    padding: 11px 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: center;
+    transition: background 0.15s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.btn-primary:hover {
+    background: var(--space-blue-hover);
+}
+
+.btn-disabled {
+    background: #cbd5e1;
+    cursor: not-allowed;
+}
+
+.btn-disabled:hover {
+    background: #cbd5e1;
+}
+
+/* =========================
+   SEARCH & FILTER BAR
+========================= */
+.search-section {
+    margin-bottom: 24px;
+}
+
+.search-input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.search-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    color: var(--text-muted);
+    pointer-events: none;
+}
+
+.search-input {
+    width: 100%;
+    padding: 13px 16px 13px 44px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 14px;
+    color: var(--text-primary);
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.search-input:focus {
+    border-color: var(--space-blue);
+    box-shadow: 0 0 0 3px rgba(29, 41, 81, 0.1);
+}
+
+.search-input::placeholder {
+    color: #94a3b8;
+}
+
+/* =========================
+   FACULTY ACCORDION HIERARCHY
+========================= */
+.section-heading {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+}
+
+.faculty-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Level 1: Faculty Card */
+.faculty-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.faculty-card:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.faculty-header {
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    background: var(--card-bg);
+    user-select: none;
+    transition: background-color 0.15s ease;
+}
+
+.faculty-header:hover {
+    background-color: var(--accent-bg);
+}
+
+.faculty-title-group {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.faculty-icon-badge {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--space-blue);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.faculty-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--space-blue);
+}
+
+.accordion-chevron {
+    font-size: 14px;
+    color: var(--text-muted);
+    transition: transform 0.2s ease;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f1f5f9;
+}
+
+.faculty-card.open .faculty-chevron {
+    transform: rotate(180deg);
+}
+
+.faculty-body {
+    display: none;
+    padding: 0 24px 24px 24px;
+    border-top: 1px solid var(--border);
+    background: #fdfdfd;
+}
+
+.faculty-card.open .faculty-body {
+    display: block;
+}
+
+/* Level 2: Course Card */
+.courses-container {
+    padding-top: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.course-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: border-color 0.15s ease;
+}
+
+.course-card:hover {
+    border-color: #cbd5e1;
+}
+
+.course-header {
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    background: var(--accent-bg);
+    user-select: none;
+}
+
+.course-header:hover {
+    background: #f1f5f9;
+}
+
+.course-title-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.course-code-badge {
+    background: var(--badge-bg);
+    color: var(--badge-text);
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.course-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.course-card.open .course-chevron {
+    transform: rotate(180deg);
+}
+
+.course-body {
+    display: none;
+    padding: 16px 18px;
+    border-top: 1px solid var(--border);
+    background: var(--card-bg);
+}
+
+.course-card.open .course-body {
+    display: block;
+}
+
+/* Level 3: Resource Items */
+.resources-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.resource-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: var(--accent-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    gap: 16px;
+    transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.resource-item:hover {
+    border-color: #cbd5e1;
+    background: #ffffff;
+}
+
+.resource-main {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.resource-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.resource-text {
+    min-width: 0;
+}
+
+.resource-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--space-blue);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.resource-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.btn-resource {
+    background: var(--space-blue);
+    color: white;
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.15s ease;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.btn-resource:hover {
+    background: var(--space-blue-hover);
+}
+
+.btn-resource.disabled {
+    background: #e2e8f0;
+    color: #94a3b8;
+    cursor: not-allowed;
+}
+
+/* =========================
+   EMPTY & INFORMATIONAL STATES
+========================= */
+.empty-state {
+    padding: 24px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 13px;
+    background: var(--accent-bg);
+    border-radius: 8px;
+    border: 1px dashed var(--border);
+}
+
+.empty-state-main {
+    padding: 48px 24px;
+    background: var(--card-bg);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+}
+
+/* =========================
+   RESPONSIVE DESIGN
+========================= */
+@media (max-width: 640px) {
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 16px 20px;
+    }
+
+    .header-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .pd-panel {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .btn-primary {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .resource-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .btn-resource {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .faculty-header {
+        padding: 16px;
+    }
+
+    .faculty-body {
+        padding: 0 16px 16px 16px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- =========================
+     HEADER
+========================= -->
+<header class="header">
+    <div class="header-branding">
+        <h1>Academic Resources</h1>
+        <p>Academic support and resources</p>
+    </div>
+    <div class="header-actions">
+        <a href="clienthub.html" class="btn-secondary">← Back to Dashboard</a>
+        <button class="logout-button" id="logoutButton">Log Out</button>
+    </div>
+</header>
+
+<main class="container">
+
+    <!-- =========================
+         LOADING & ERROR STATES
+    ========================= -->
+    <div id="loadingState" class="loading-container">
+        <div class="spinner"></div>
+        <p>Loading academic resources portal...</p>
+    </div>
+
+    <div id="errorBanner" class="error-banner"></div>
+
+    <!-- =========================
+         DASHBOARD CONTENT
+    ========================= -->
+    <div id="dashboardContent" class="dashboard-content">
+
+        <!-- TITLE SECTION -->
+        <section class="page-title">
+            <h2>Academic Resources</h2>
+            <p>Access academic resources organised by faculty and course.</p>
+        </section>
+
+        <!-- PROGRAM DIRECTOR PANEL -->
+        <section class="pd-panel" id="pdPanel">
+            <div class="pd-info-group">
+                <div class="pd-avatar-badge">🎓</div>
+                <div class="pd-details">
+                    <div class="pd-title-label">Program Director</div>
+                    <h3 id="pdName">Checking Program Director...</h3>
+                    <p class="pd-subtext" id="pdCourseContext">Loading course association...</p>
+                </div>
+            </div>
+            <div id="pdActionArea">
+                <button class="btn-primary btn-disabled" id="pdContactBtn" disabled>Contact Program Director</button>
+            </div>
+        </section>
+
+        <!-- SEARCH BAR -->
+        <section class="search-section">
+            <div class="search-input-wrapper">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" class="search-input" placeholder="Search faculties, courses, or resource titles...">
+            </div>
+        </section>
+
+        <!-- FACULTY ACCORDION BROWSER -->
+        <section class="services-group">
+            <h4 class="section-heading">Academic Faculties</h4>
+            
+            <div id="facultiesContainer" class="faculty-list">
+                <!-- Faculties loaded dynamically via JS -->
+            </div>
+        </section>
+
+    </div>
+
+</main>
+
+<script type="module">
+
+/* =========================
+   FIREBASE IMPORTS
+========================= */
+import {
+    initializeApp
+} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+
+import {
+    getAuth,
+    onAuthStateChanged,
+    signOut
+} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+
+import {
+    getFirestore,
+    doc,
+    getDoc,
+    collection,
+    getDocs
+} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+
+/* =========================
+   FIREBASE CONFIGURATION
+========================= */
+const firebaseConfig = {
+    apiKey: "AIzaSyDW6IArj2dZiqbf00Ix3SPPSqvxTKG0GgE",
+    authDomain: "master-files-95f6b.firebaseapp.com",
+    projectId: "master-files-95f6b",
+    storageBucket: "master-files-95f6b.firebasestorage.app",
+    messagingSenderId: "537891510061",
+    appId: "1:537891510061:web:fb46c8d1abae02b9e725a4",
+    measurementId: "G-4GNVR5EBJX"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+/* =========================
+   DOM REFERENCES
+========================= */
+const loadingState = document.getElementById("loadingState");
+const dashboardContent = document.getElementById("dashboardContent");
+const errorBanner = document.getElementById("errorBanner");
+const logoutButton = document.getElementById("logoutButton");
+
+const pdNameEl = document.getElementById("pdName");
+const pdCourseContextEl = document.getElementById("pdCourseContext");
+const pdActionAreaEl = document.getElementById("pdActionArea");
+
+const searchInput = document.getElementById("searchInput");
+const facultiesContainer = document.getElementById("facultiesContainer");
+
+/* =========================
+   GLOBAL STATE
+========================= */
+let facultiesData = [];
+let userCourse = "";
+
+/* =========================
+   HELPERS & ERROR HANDLING
+========================= */
+function showError(message) {
+    loadingState.style.display = "none";
+    errorBanner.textContent = message;
+    errorBanner.style.display = "block";
+}
+
+function logError(context, err) {
+    console.error(`[AcademicResources] ${context}:`, err);
+}
+
+/* =========================
+   LOGOUT HANDLER
+========================= */
+logoutButton.addEventListener("click", async () => {
+    try {
+        await signOut(auth);
+        window.location.href = "index.html";
+    } catch (error) {
+        logError("Logout error", error);
+        alert("Failed to log out. Please try again.");
+    }
+});
+
+/* =========================
+   AUTHENTICATION & DATA INITIALIZATION
+========================= */
+onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+        window.location.href = "index.html";
+        return;
+    }
+
+    try {
+        // 1. Fetch authenticated user's profile
+        const userRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userRef);
+
+        if (userSnap.exists()) {
+            const userData = userSnap.data();
+            userCourse = userData.course || userData.program || userData.courseCode || "";
+        }
+
+        // 2. Load complete faculties hierarchy
+        await loadFacultiesHierarchy();
+
+        // 3. Resolve Program Director details based on user's course
+        resolveProgramDirector();
+
+        // 4. Reveal UI
+        loadingState.style.display = "none";
+        dashboardContent.style.display = "block";
+
+    } catch (error) {
+        logError("Page initialization error", error);
+        showError("We could not load the academic resources portal. Please try refreshing the page.");
+    }
+});
+
+/* =========================
+   PROGRAM DIRECTOR RESOLUTION
+========================= */
+function resolveProgramDirector() {
+    if (!userCourse) {
+        pdNameEl.textContent = "Program Director information is currently unavailable.";
+        pdCourseContextEl.textContent = "No course recorded for your account profile.";
+        pdActionAreaEl.innerHTML = `<button class="btn-primary btn-disabled" disabled>Contact Program Director</button>`;
+        return;
+    }
+
+    let foundDirector = null;
+    let matchingCourseName = userCourse;
+
+    const normalizedUserCourse = userCourse.trim().toLowerCase();
+
+    // Traverse loaded faculties and courses to find matching program director
+    for (const faculty of facultiesData) {
+        for (const course of faculty.courses) {
+            const codeMatch = course.code && course.code.trim().toLowerCase() === normalizedUserCourse;
+            const nameMatch = course.name && course.name.trim().toLowerCase().includes(normalizedUserCourse);
+            
+            if (codeMatch || nameMatch) {
+                matchingCourseName = course.code ? `${course.code} — ${course.name || ''}` : course.name;
+                if (course.programDirector) {
+                    foundDirector = course.programDirector;
+                    break;
+                }
+            }
+        }
+        if (foundDirector) break;
+    }
+
+    if (foundDirector) {
+        const directorName = typeof foundDirector === 'object' ? (foundDirector.name || "Program Director") : foundDirector;
+        const directorEmail = typeof foundDirector === 'object' ? (foundDirector.email || "") : "";
+        
+        pdNameEl.textContent = directorName;
+        pdCourseContextEl.textContent = `Course: ${matchingCourseName}`;
+
+        if (directorEmail) {
+            pdActionAreaEl.innerHTML = `
+                <a href="mailto:${directorEmail}?subject=Academic Inquiry - House Beyers Naude" class="btn-primary">
+                    ✉️ Contact Program Director
+                </a>`;
+        } else {
+            pdActionAreaEl.innerHTML = `
+                <button class="btn-primary" onclick="alert('Program Director Email: ${directorEmail || 'Contact residence management for assistance.'}')">
+                    Contact Program Director
+                </button>`;
+        }
+    } else {
+        pdNameEl.textContent = "Program Director information is currently unavailable.";
+        pdCourseContextEl.textContent = `Course: ${userCourse}`;
+        pdActionAreaEl.innerHTML = `<button class="btn-primary btn-disabled" disabled>Contact Program Director</button>`;
+    }
+}
+
+/* =========================
+   FIREBASE DATA RETRIEVAL
+========================= */
+async function loadFacultiesHierarchy() {
+    facultiesData = [];
+    facultiesContainer.innerHTML = "";
+
+    try {
+        const facultiesRef = collection(db, "faculties");
+        const facultiesSnap = await getDocs(facultiesRef);
+
+        if (facultiesSnap.empty) {
+            facultiesContainer.innerHTML = `
+                <div class="empty-state empty-state-main">
+                    📁 No academic faculties are currently available.
+                </div>`;
+            return;
+        }
+
+        // Fetch courses for each faculty
+        for (const facultyDoc of facultiesSnap.docs) {
+            const fData = facultyDoc.data();
+            const facultyObj = {
+                id: facultyDoc.id,
+                name: fData.name || fData.facultyName || fData.title || `Faculty (${facultyDoc.id})`,
+                courses: []
+            };
+
+            // Fetch course subcollection
+            try {
+                const coursesRef = collection(db, "faculties", facultyDoc.id, "courses");
+                const coursesSnap = await getDocs(coursesRef);
+
+                for (const courseDoc of coursesSnap.docs) {
+                    const cData = courseDoc.data();
+                    const courseObj = {
+                        id: courseDoc.id,
+                        code: cData.code || cData.courseCode || courseDoc.id.toUpperCase(),
+                        name: cData.name || cData.courseName || cData.title || "",
+                        programDirector: cData.programDirector || cData.director || null,
+                        resources: []
+                    };
+
+                    // Handle resources stored as array inside doc or in subcollection
+                    if (Array.isArray(cData.resources)) {
+                        courseObj.resources = cData.resources;
+                    } else {
+                        try {
+                            const resourcesRef = collection(db, "faculties", facultyDoc.id, "courses", courseDoc.id, "resources");
+                            const resourcesSnap = await getDocs(resourcesRef);
+                            resourcesSnap.forEach(resDoc => {
+                                courseObj.resources.push({ id: resDoc.id, ...resDoc.data() });
+                            });
+                        } catch (resErr) {
+                            logError(`Could not fetch resources subcollection for ${courseDoc.id}`, resErr);
+                        }
+                    }
+
+                    facultyObj.courses.push(courseObj);
+                }
+            } catch (courseErr) {
+                logError(`Could not fetch courses for faculty ${facultyDoc.id}`, courseErr);
+            }
+
+            facultiesData.push(facultyObj);
+        }
+
+        renderFaculties(facultiesData);
+
+    } catch (error) {
+        logError("Firestore query error", error);
+        facultiesContainer.innerHTML = `
+            <div class="empty-state empty-state-main">
+                ⚠️ Academic resources could not be loaded at this time. Please check your connection.
+            </div>`;
+    }
+}
+
+/* =========================
+   UI RENDERING FUNCTIONS
+========================= */
+function renderFaculties(faculties) {
+    facultiesContainer.innerHTML = "";
+
+    if (!faculties || faculties.length === 0) {
+        facultiesContainer.innerHTML = `
+            <div class="empty-state empty-state-main">
+                No matching academic faculties or resources found.
+            </div>`;
+        return;
+    }
+
+    faculties.forEach((faculty, fIndex) => {
+        const facultyCard = document.createElement("div");
+        facultyCard.className = "faculty-card";
+        facultyCard.id = `faculty-card-${fIndex}`;
+
+        const coursesCount = faculty.courses.length;
+
+        facultyCard.innerHTML = `
+            <div class="faculty-header" onclick="toggleFaculty(${fIndex})">
+                <div class="faculty-title-group">
+                    <span class="faculty-icon-badge">🏛️</span>
+                    <div>
+                        <div class="faculty-name">${escapeHtml(faculty.name)}</div>
+                    </div>
+                </div>
+                <div class="accordion-chevron faculty-chevron">▼</div>
+            </div>
+            <div class="faculty-body">
+                <div class="courses-container" id="courses-container-${fIndex}">
+                    ${renderCoursesHTML(faculty.courses, fIndex)}
+                </div>
+            </div>
+        `;
+
+        facultiesContainer.appendChild(facultyCard);
+    });
+}
+
+function renderCoursesHTML(courses, fIndex) {
+    if (!courses || courses.length === 0) {
+        return `<div class="empty-state">No courses are currently available for this faculty.</div>`;
+    }
+
+    return courses.map((course, cIndex) => {
+        const resourceCount = course.resources ? course.resources.length : 0;
+        const displayName = course.name ? `${course.name}` : "";
+
+        return `
+            <div class="course-card" id="course-card-${fIndex}-${cIndex}">
+                <div class="course-header" onclick="toggleCourse(${fIndex}, ${cIndex}, event)">
+                    <div class="course-title-group">
+                        <span class="course-code-badge">${escapeHtml(course.code)}</span>
+                        ${displayName ? `<span class="course-name">${escapeHtml(displayName)}</span>` : ''}
+                    </div>
+                    <div class="accordion-chevron course-chevron">▼</div>
+                </div>
+                <div class="course-body">
+                    <div class="resources-list">
+                        ${renderResourcesHTML(course.resources)}
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join("");
+}
+
+function renderResourcesHTML(resources) {
+    if (!resources || resources.length === 0) {
+        return `<div class="empty-state">No academic resources are currently available for this course.</div>`;
+    }
+
+    return resources.map(res => {
+        const title = res.title || res.name || "Academic Document";
+        const desc = res.description || res.type || "";
+        const rawUrl = res.url || res.link || "";
+        const isValidUrl = rawUrl && rawUrl.trim() !== "";
+
+        return `
+            <div class="resource-item">
+                <div class="resource-main">
+                    <span class="resource-icon">📄</span>
+                    <div class="resource-text">
+                        <div class="resource-title">${escapeHtml(title)}</div>
+                        ${desc ? `<div class="resource-desc">${escapeHtml(desc)}</div>` : ''}
+                    </div>
+                </div>
+                ${isValidUrl ? `
+                    <a href="${escapeHtml(rawUrl)}" target="_blank" rel="noopener noreferrer" class="btn-resource">
+                        Open Resource ↗
+                    </a>
+                ` : `
+                    <button class="btn-resource disabled" disabled>Link Unavailable</button>
+                `}
+            </div>
+        `;
+    }).join("");
+}
+
+/* =========================
+   ACCORDION INTERACTION LOGIC
+========================= */
+window.toggleFaculty = function(fIndex) {
+    const card = document.getElementById(`faculty-card-${fIndex}`);
+    if (card) {
+        card.classList.toggle("open");
+    }
+};
+
+window.toggleCourse = function(fIndex, cIndex, event) {
+    event.stopPropagation();
+    const card = document.getElementById(`course-card-${fIndex}-${cIndex}`);
+    if (card) {
+        card.classList.toggle("open");
+    }
+};
+
+/* =========================
+   DYNAMIC SEARCH FILTER
+========================= */
+searchInput.addEventListener("input", (e) => {
+    const query = e.target.value.trim().toLowerCase();
+
+    if (!query) {
+        // Reset view
+        renderFaculties(facultiesData);
+        return;
+    }
+
+    // Filter faculties, courses, or resource titles
+    const filteredFaculties = facultiesData.map(faculty => {
+        const facultyMatches = faculty.name.toLowerCase().includes(query);
+
+        const filteredCourses = faculty.courses.map(course => {
+            const courseMatches = course.code.toLowerCase().includes(query) || course.name.toLowerCase().includes(query);
+
+            const filteredResources = course.resources.filter(res => {
+                const title = (res.title || res.name || "").toLowerCase();
+                const desc = (res.description || "").toLowerCase();
+                return title.includes(query) || desc.includes(query);
+            });
+
+            if (courseMatches || filteredResources.length > 0) {
+                return {
+                    ...course,
+                    resources: courseMatches ? course.resources : filteredResources,
+                    _forceOpen: true
+                };
+            }
+            return null;
+        }).filter(c => c !== null);
+
+        if (facultyMatches || filteredCourses.length > 0) {
+            return {
+                ...faculty,
+                courses: facultyMatches ? faculty.courses : filteredCourses,
+                _forceOpen: true
+            };
+        }
+        return null;
+    }).filter(f => f !== null);
+
+    renderFaculties(filteredFaculties);
+
+    // Automatically expand all matched accordions for easy viewing
+    document.querySelectorAll('.faculty-card').forEach(card => card.classList.add('open'));
+    document.querySelectorAll('.course-card').forEach(card => card.classList.add('open'));
+});
+
+/* =========================
+   SECURITY SANITIZATION
+========================= */
+function escapeHtml(str) {
+    if (!str) return "";
+    return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+</script>
+
+</body>
+</html>
