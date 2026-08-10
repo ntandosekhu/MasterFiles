@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Master Files - Login</title>
 
+    <!-- Google reCAPTCHA API Script -->
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
     <style>
         :root {
             --primary: #1d2951;
@@ -97,6 +100,12 @@
             background-color: #ffffff;
             border-color: var(--primary-light);
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+
+        .recaptcha-container {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
         }
 
         #loginButton {
@@ -208,6 +217,11 @@
             >
         </div>
 
+        <!-- Google reCAPTCHA Checkbox Widget -->
+        <div class="recaptcha-container">
+            <div class="g-recaptcha" data-sitekey="6LfAPn8tAAAAAOa1QF1-NqwCu6aPsGWyOep3mo2s"></div>
+        </div>
+
         <button id="loginButton">Login</button>
 
         <p id="message"></p>
@@ -270,6 +284,13 @@
             return;
         }
 
+        // Verify reCAPTCHA completion
+        const recaptchaResponse = typeof grecaptcha !== "undefined" ? grecaptcha.getResponse() : null;
+        if (!recaptchaResponse) {
+            message.textContent = "Please complete the reCAPTCHA verification.";
+            return;
+        }
+
         loginButton.disabled = true;
         loginButton.textContent = "Signing in...";
 
@@ -302,6 +323,11 @@
             }
 
             message.textContent = errorMessage;
+
+            // Reset reCAPTCHA on login failure
+            if (typeof grecaptcha !== "undefined") {
+                grecaptcha.reset();
+            }
         } finally {
             loginButton.disabled = false;
             loginButton.textContent = "Login";
