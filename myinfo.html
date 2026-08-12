@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -1162,6 +1161,14 @@ from
 
 
 import {
+    initializeAppCheck,
+    ReCaptchaV3Provider
+}
+from
+"https://www.gstatic.com/firebasejs/12.17.0/firebase-app-check.js";
+
+
+import {
     getAuth,
     onAuthStateChanged,
     signOut
@@ -1213,6 +1220,20 @@ const firebaseConfig = {
 const app =
     initializeApp(
         firebaseConfig
+    );
+
+
+const appCheck =
+    initializeAppCheck(
+        app,
+        {
+            provider:
+                new ReCaptchaV3Provider(
+                    '6LfAPn8tAAAAAOa1QF1-NqwCu6aPsGWyOep3mo2s'
+                ),
+            isTokenAutoRefreshEnabled:
+                true
+        }
     );
 
 
@@ -2370,4 +2391,3 @@ document
 
 </body>
 </html>
-
