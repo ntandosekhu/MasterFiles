@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+[source: 10]<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -1433,18 +1433,18 @@ function searchStudent() {
         return;
     }
 
-    // Search in allUsers array
-    const match = allUsers.find(u => 
-        (u.studentNumber && String(u.studentNumber).toLowerCase() === val.toLowerCase()) ||
-        (u.studentId && String(u.studentId).toLowerCase() === val.toLowerCase())
-    );
+    // Search in allUsers array (handling string numbers and field aliases safely)
+    const match = allUsers.find(u => {
+        const num = u.studentNumber ?? u.studentId ?? u.studentNo ?? u.cardNumber;
+        return num !== undefined && String(num).trim().toLowerCase() === val.toLowerCase();
+    });
 
     if (match) {
         selectedStudent = match;
-        stName.textContent = match.name || match.fullName || "Student User";
-        stNum.textContent = match.studentNumber || match.studentId || val;
-        stRoom.textContent = match.roomNumber || "N/A";
-        stRole.textContent = (match.accountType || "Resident").replace(/_/g, " ");
+        stName.textContent = match.name || match.fullName || match.displayName || "Student User";
+        stNum.textContent = match.studentNumber || match.studentId || match.studentNo || val;
+        stRoom.textContent = match.roomNumber || match.room || "N/A";
+        stRole.textContent = (match.accountType || match.role || "Resident").replace(/_/g, " ");
 
         studentCard.classList.add("active");
         showMessage("Student account verified.");
@@ -1465,16 +1465,18 @@ btnClearStudent.addEventListener("click", () => {
 });
 
 function checkResFormState() {
-    const canSubmit = selectedStudent && selectedSlotStart && resFormEnd.value;
+    const canSubmit = Boolean(selectedStudent && selectedSlotStart && resFormEnd.value);
     btnSubmitResBooking.disabled = !canSubmit;
 }
 
 function checkEventFormState() {
-    const canSubmit = eventTitle.value.trim().length > 0 && selectedSlotStart && eventFormEnd.value;
+    const canSubmit = Boolean(eventTitle.value.trim().length > 0 && selectedSlotStart && eventFormEnd.value);
     btnSubmitEvent.disabled = !canSubmit;
 }
 
 eventTitle.addEventListener("input", checkEventFormState);
+resFormEnd.addEventListener("change", checkResFormState);
+eventFormEnd.addEventListener("change", checkEventFormState);
 
 /* =========================
    CREATE RESIDENT BOOKING
@@ -1496,12 +1498,12 @@ residentBookingForm.addEventListener("submit", async (e) => {
         await addDoc(collection(db, "bookings"), {
             venueId: currentVenueId,
             venueName: currentVenueName,
-            bookerId: selectedStudent.uid,
-            bookerName: selectedStudent.name || selectedStudent.fullName || "Resident",
-            bookerStudentNumber: selectedStudent.studentNumber || selectedStudent.studentId || "",
-            bookerType: selectedStudent.accountType || "HOUSE_MEMBER",
+            bookerId: selectedStudent.uid || selectedStudent.id || "",
+            bookerName: selectedStudent.name || selectedStudent.fullName || selectedStudent.displayName || "Resident",
+            bookerStudentNumber: String(selectedStudent.studentNumber || selectedStudent.studentId || selectedStudent.studentNo || ""),
+            bookerType: selectedStudent.accountType || selectedStudent.role || "HOUSE_MEMBER",
             createdBy: currentAdmin.uid,
-            createdByName: currentAdminRecord.name || "Administrator",
+            createdByName: currentAdminRecord?.name || currentAdmin.displayName || "Administrator",
             isHouseEvent: false,
             startTime: selectedSlotStart.toISOString(),
             endTime: selectedEnd.toISOString(),
@@ -1510,7 +1512,7 @@ residentBookingForm.addEventListener("submit", async (e) => {
             createdAt: new Date().toISOString()
         });
 
-        showMessage(`Booking created successfully for ${selectedStudent.name || 'Resident'}.`);
+        showMessage(`Booking created successfully for ${selectedStudent.name || selectedStudent.fullName || 'Resident'}.`);
         resetForms();
         await loadData();
     } catch (error) {
@@ -1545,7 +1547,7 @@ houseEventForm.addEventListener("submit", async (e) => {
             bookerId: currentAdmin.uid,
             bookerName: `[Event] ${eventTitle.value.trim()}`,
             createdBy: currentAdmin.uid,
-            createdByName: currentAdminRecord.name || "Administrator",
+            createdByName: currentAdminRecord?.name || currentAdmin.displayName || "Administrator",
             isHouseEvent: true,
             type: "HOUSE_EVENT",
             organiser: eventOrganiser.value,
@@ -1739,6 +1741,19 @@ btnModalCancelBooking.addEventListener("click", async () => {
             status: "CANCELLED"
         });
 
+        // Also cancel in houseEvents if it exists there
+        if (activeModalBooking.isHouseEvent || activeModalBooking.type === "HOUSE_EVENT") {
+            try {
+                const eventQuery = query(collection(db, "houseEvents"), where("title", "==", activeModalBooking.title || ""));
+                const eventSnap = await getDocs(eventQuery);
+                eventSnap.forEach(async (eDoc) => {
+                    await updateDoc(doc(db, "houseEvents", eDoc.id), { status: "CANCELLED" });
+                });
+            } catch (eErr) {
+                console.warn("Could not sync cancellation to houseEvents:", eErr);
+            }
+        }
+
         showMessage("Booking cancelled successfully.");
         closeModal();
         await loadData();
@@ -1797,7 +1812,7 @@ async function verifyAdminAccess(user) {
 
     if (userSnap.exists()) {
         currentAdminRecord = userSnap.data();
-        adminNameEl.textContent = currentAdminRecord.name || user.displayName || "Admin User";
+        adminNameEl.textContent = currentAdminRecord.name || currentAdminRecord.fullName || user.displayName || "Admin User";
         adminEmailEl.textContent = user.email || "Administrator";
     } else {
         adminNameEl.textContent = user.displayName || "Admin User";
