@@ -243,7 +243,11 @@
 
 <body>
 
-<div class="registration-card">
+<div id="appCheckLoading" style="color: #ffffff; font-size: 16px; font-weight: 600; text-align: center;">
+    Loading...
+</div>
+
+<div class="registration-card" id="appContent" style="display: none;">
 
     <div class="header">
         <h1>Master Files</h1>
@@ -386,6 +390,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+    import { initializeAppCheck, ReCaptchaV3Provider, getToken } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app-check.js";
     import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
     import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
 
@@ -400,6 +405,25 @@
     };
 
     const app = initializeApp(firebaseConfig);
+
+    const appCheck = initializeAppCheck(app, {
+        provider: new ReCaptchaV3Provider('6LfAPn8tAAAAAOa1QF1-NqwCu6aPsGWyOep3mo2s'),
+        isTokenAutoRefreshEnabled: true
+    });
+
+    async function initializeGate() {
+        try {
+            await getToken(appCheck, false);
+            document.getElementById("appCheckLoading").style.display = "none";
+            document.getElementById("appContent").style.display = "block";
+        } catch (error) {
+            console.error("App Check failed:", error);
+            document.getElementById("appCheckLoading").textContent = "Access denied: Failed App Check verification.";
+        }
+    }
+
+    initializeGate();
+
     const auth = getAuth(app);
     const db = getFirestore(app);
 
