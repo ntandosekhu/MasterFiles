@@ -1,4 +1,4 @@
-[source: 13]<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -798,7 +798,7 @@
     </style>
 </head>
 
-<body>
+<body style="display: none;">
 
     <!-- HEADER -->
     <header class="header">
@@ -1057,6 +1057,7 @@
     <!-- FIREBASE & APPLICATION LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+        import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app-check.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
         import { getFirestore, doc, getDoc, collection, getDocs, updateDoc, addDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
 
@@ -1071,6 +1072,10 @@
         };
 
         const app = initializeApp(firebaseConfig);
+        const appCheck = initializeAppCheck(app, {
+            provider: new ReCaptchaV3Provider('6LfAPn8tAAAAAOa1QF1-NqwCu6aPsGWyOep3mo2s'),
+            isTokenAutoRefreshEnabled: true
+        });
         const auth = getAuth(app);
         const db = getFirestore(app);
 
@@ -1101,6 +1106,8 @@
                     window.location.href = "index.html";
                     return;
                 }
+
+                document.body.style.display = "";
 
                 // Authorised -> Load data
                 await initDashboard();
@@ -1232,9 +1239,7 @@
 
                 if (recordType === "WARNING") {
                     computedStatus = "WARNING";
-                } else if (rawStatus === "DISPUTE_SUBMITTED" || rawStatus === "DISPUTED") {
-                    computedStatus = "DISPUTED";
-                } else if (rawStatus !== "PAID" && rawStatus !== "CANCELLED" && rawStatus !== "RESOLVED") {
+                } else if (rawStatus !== "PAID" && rawStatus !== "CANCELLED" && rawStatus !== "RESOLVED" && rawStatus !== "DISPUTED") {
                     if (now > expectedPaymentDate) {
                         computedStatus = "OVERDUE";
                     } else {
@@ -1652,7 +1657,7 @@
 
             try {
                 const fineRef = doc(db, "fines", fineId);
-                // Reset status to Active so that the resident can pay or view it
+                // Status updated to Active; hasBeenDisputed is untouched so it remains true
                 await updateDoc(fineRef, {
                     status: "Active"
                 });
