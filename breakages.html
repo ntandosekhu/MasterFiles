@@ -859,261 +859,270 @@
 
 <body>
 
-    <!-- HEADER -->
-    <header class="header">
-        <div class="brand">
-            <h1>House Beyers Naude</h1>
-            <p>Master Files • Breakages & Maintenance</p>
-        </div>
-        <div class="header-actions">
-            <a href="admin.html" class="btn-nav">
-                &larr; Dashboard
-            </a>
-            <button class="logout-button" id="logoutButton">Log Out</button>
-        </div>
-    </header>
-
-    <!-- MAIN CONTAINER -->
-    <main class="container">
-
-        <!-- PAGE INTRO -->
-        <section class="page-intro">
-            <div>
-                <h2>Breakages & Maintenance</h2>
-                <p>Monitor, organise and manage maintenance reports across House Beyers Naude.</p>
-            </div>
-        </section>
-
-        <!-- HOUSE-WIDE SUMMARY METRICS -->
-        <section class="summary-grid">
-            <div class="summary-card">
-                <div>
-                    <div class="summary-title">Total Reports</div>
-                    <div class="summary-value" id="statTotal">--</div>
-                </div>
-                <div class="summary-subtext">All breakage records</div>
-            </div>
-
-            <div class="summary-card reported">
-                <div>
-                    <div class="summary-title">Reported</div>
-                    <div class="summary-value" id="statReported">--</div>
-                </div>
-                <div class="summary-subtext">Awaiting maintenance action</div>
-            </div>
-
-            <div class="summary-card in-progress">
-                <div>
-                    <div class="summary-title">In Progress</div>
-                    <div class="summary-value" id="statInProgress">--</div>
-                </div>
-                <div class="summary-subtext">Maintenance work active</div>
-            </div>
-
-            <div class="summary-card scheduled">
-                <div>
-                    <div class="summary-title">Scheduled</div>
-                    <div class="summary-value" id="statScheduled">--</div>
-                </div>
-                <div class="summary-subtext">Has expected fixture date</div>
-            </div>
-
-            <div class="summary-card completed">
-                <div>
-                    <div class="summary-title">Completed</div>
-                    <div class="summary-value" id="statCompleted">--</div>
-                </div>
-                <div class="summary-subtext">Successfully repaired</div>
-            </div>
-
-            <div class="summary-card overdue">
-                <div>
-                    <div class="summary-title">Overdue</div>
-                    <div class="summary-value" id="statOverdue">--</div>
-                </div>
-                <div class="summary-subtext">Passed fixture date</div>
-            </div>
-        </section>
-
-        <!-- SEARCH & COMBINED FILTERS -->
-        <section class="filter-panel">
-            <div class="filter-grid">
-                <div class="filter-group">
-                    <label for="searchInput" class="filter-label">Search Breakages</label>
-                    <input type="text" id="searchInput" class="form-control" placeholder="Search by resident name, student #, room, or description...">
-                </div>
-
-                <div class="filter-group">
-                    <label for="roomFilter" class="filter-label">Room</label>
-                    <select id="roomFilter" class="form-control">
-                        <option value="ALL">All Rooms</option>
-                    </select>
-                </div>
-
-                <div class="filter-group">
-                    <label for="damageTypeFilter" class="filter-label">Damage Type</label>
-                    <select id="damageTypeFilter" class="form-control">
-                        <option value="ALL">All Categories</option>
-                        <option value="Plugs">Plugs</option>
-                        <option value="Shelves">Shelves</option>
-                        <option value="Bed">Bed</option>
-                        <option value="Window">Window</option>
-                        <option value="Mirror">Mirror</option>
-                        <option value="Door">Door</option>
-                    </select>
-                </div>
-
-                <div class="filter-group">
-                    <label for="corridorFilter" class="filter-label">Corridor</label>
-                    <select id="corridorFilter" class="form-control">
-                        <option value="ALL">All Corridors</option>
-                    </select>
-                </div>
-
-                <div class="filter-group">
-                    <label for="statusFilter" class="filter-label">Maintenance Status</label>
-                    <select id="statusFilter" class="form-control">
-                        <option value="ALL">All Statuses</option>
-                        <option value="OPEN">Reported (OPEN)</option>
-                        <option value="IN_PROGRESS">In Progress</option>
-                        <option value="SOLVED">Solved</option>
-                        <option value="CLOSED">Closed</option>
-                        <option value="OVERDUE">Overdue Maintenance</option>
-                    </select>
-                </div>
-
-                <div>
-                    <button id="resetFiltersBtn" class="btn-reset">Clear Filters</button>
-                </div>
-            </div>
-
-            <div class="active-filter-indicator">
-                <span id="filteredCountLabel">Showing 0 of 0 records</span>
-                <span id="activeFilterTags" style="font-weight: 600; color: var(--space-blue-primary);"></span>
-            </div>
-        </section>
-
-        <!-- BULK ACTION BAR (HIDDEN BY DEFAULT) -->
-        <section class="bulk-action-bar" id="bulkActionBar" style="display: none;">
-            <div class="bulk-info">
-                <span class="bulk-counter-pill" id="bulkCountLabel">0 Selected</span>
-                <span>Bulk Maintenance Operations</span>
-            </div>
-
-            <div class="bulk-controls">
-                <div class="bulk-control-group">
-                    <label for="bulkStatusSelect">Set Status:</label>
-                    <select id="bulkStatusSelect" class="form-control">
-                        <option value="">-- No Change --</option>
-                        <option value="OPEN">Reported (OPEN)</option>
-                        <option value="IN_PROGRESS">In Progress</option>
-                        <option value="SOLVED">Solved</option>
-                        <option value="CLOSED">Closed</option>
-                    </select>
-                </div>
-
-                <div class="bulk-control-group">
-                    <label for="bulkFixtureDate">Fixture Date:</label>
-                    <input type="date" id="bulkFixtureDate" class="form-control">
-                </div>
-
-                <button class="btn-bulk-apply" id="btnApplyBulk">Apply Changes</button>
-                <button class="btn-bulk-clear" id="btnClearSelection">Clear Selection</button>
-            </div>
-        </section>
-
-        <!-- BREAKAGES TABLE -->
-        <section class="table-card">
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th class="checkbox-col">
-                                <input type="checkbox" id="selectAllCheckbox" class="custom-checkbox" title="Select All Displayed">
-                            </th>
-                            <th>Resident</th>
-                            <th>Student No.</th>
-                            <th>Room / Corridor</th>
-                            <th>Damage Category</th>
-                            <th>Description</th>
-                            <th>Reported Date</th>
-                            <th>Expected Fixture</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="breakagesTableBody">
-                        <tr>
-                            <td colspan="10">
-                                <div class="state-container">
-                                    <div class="spinner"></div>
-                                    <h4>Loading house-wide breakage records...</h4>
-                                    <p>Connecting to database records.</p>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
-    </main>
-
-    <!-- BREAKAGE DETAIL & MANAGEMENT MODAL -->
-    <div class="modal-overlay" id="detailModal">
-        <div class="modal-card">
-            <div class="modal-header">
-                <h3>Breakage Maintenance Record</h3>
-                <button class="modal-close" id="closeDetailModalBtn">&times;</button>
-            </div>
-            <div class="modal-body" id="detailModalBody">
-                <!-- Modal content rendered via JS -->
-            </div>
-            <div class="modal-footer">
-                <div id="modalStatusContainer"></div>
-                <div style="display: flex; gap: 8px;">
-                    <button class="btn-reset" id="cancelDetailModalBtn">Close</button>
-                    <button class="btn-save-modal" id="btnSaveDetail">Save Changes</button>
-                </div>
-            </div>
-        </div>
+    <div id="appCheckLoading" style="color: var(--space-blue-primary); font-size: 16px; font-weight: 600; text-align: center; margin-top: 50px;">
+        Loading application security check...
     </div>
 
-    <!-- BULK ACTION CONFIRMATION MODAL -->
-    <div class="modal-overlay" id="bulkConfirmModal">
-        <div class="modal-card" style="max-width: 500px;">
-            <div class="modal-header">
-                <h3>Confirm Bulk Maintenance Update</h3>
-                <button class="modal-close" id="closeBulkModalBtn">&times;</button>
+    <div id="appContent" style="display: none; width: 100%; flex-direction: column; min-height: 100vh;">
+
+        <!-- HEADER -->
+        <header class="header">
+            <div class="brand">
+                <h1>House Beyers Naude</h1>
+                <p>Master Files • Breakages & Maintenance</p>
             </div>
-            <div class="modal-body">
-                <p id="bulkModalSummaryText" style="font-size: 15px; color: var(--text-main); font-weight: 600;"></p>
-                
-                <div style="background-color: var(--space-blue-light); padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--space-blue-border); margin-top: 10px;">
-                    <span class="detail-label">Changes to be applied:</span>
-                    <ul id="bulkChangesList" style="margin-top: 6px; padding-left: 20px; font-size: 14px; color: var(--text-main);">
-                    </ul>
+            <div class="header-actions">
+                <a href="admin.html" class="btn-nav">
+                    &larr; Dashboard
+                </a>
+                <button class="logout-button" id="logoutButton">Log Out</button>
+            </div>
+        </header>
+
+        <!-- MAIN CONTAINER -->
+        <main class="container">
+
+            <!-- PAGE INTRO -->
+            <section class="page-intro">
+                <div>
+                    <h2>Breakages & Maintenance</h2>
+                    <p>Monitor, organise and manage maintenance reports across House Beyers Naude.</p>
+                </div>
+            </section>
+
+            <!-- HOUSE-WIDE SUMMARY METRICS -->
+            <section class="summary-grid">
+                <div class="summary-card">
+                    <div>
+                        <div class="summary-title">Total Reports</div>
+                        <div class="summary-value" id="statTotal">--</div>
+                    </div>
+                    <div class="summary-subtext">All breakage records</div>
                 </div>
 
-                <p style="font-size: 13px; color: var(--danger-red); font-weight: 500; margin-top: 6px;">
-                    This action will update all selected Firestore records.
-                </p>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-reset" id="cancelBulkConfirmBtn">Cancel</button>
-                <button class="btn-save-modal" id="btnConfirmBulkExecution">Confirm & Execute</button>
+                <div class="summary-card reported">
+                    <div>
+                        <div class="summary-title">Reported</div>
+                        <div class="summary-value" id="statReported">--</div>
+                    </div>
+                    <div class="summary-subtext">Awaiting maintenance action</div>
+                </div>
+
+                <div class="summary-card in-progress">
+                    <div>
+                        <div class="summary-title">In Progress</div>
+                        <div class="summary-value" id="statInProgress">--</div>
+                    </div>
+                    <div class="summary-subtext">Maintenance work active</div>
+                </div>
+
+                <div class="summary-card scheduled">
+                    <div>
+                        <div class="summary-title">Scheduled</div>
+                        <div class="summary-value" id="statScheduled">--</div>
+                    </div>
+                    <div class="summary-subtext">Has expected fixture date</div>
+                </div>
+
+                <div class="summary-card completed">
+                    <div>
+                        <div class="summary-title">Completed</div>
+                        <div class="summary-value" id="statCompleted">--</div>
+                    </div>
+                    <div class="summary-subtext">Successfully repaired</div>
+                </div>
+
+                <div class="summary-card overdue">
+                    <div>
+                        <div class="summary-title">Overdue</div>
+                        <div class="summary-value" id="statOverdue">--</div>
+                    </div>
+                    <div class="summary-subtext">Passed fixture date</div>
+                </div>
+            </section>
+
+            <!-- SEARCH & COMBINED FILTERS -->
+            <section class="filter-panel">
+                <div class="filter-grid">
+                    <div class="filter-group">
+                        <label for="searchInput" class="filter-label">Search Breakages</label>
+                        <input type="text" id="searchInput" class="form-control" placeholder="Search by resident name, student #, room, or description...">
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="roomFilter" class="filter-label">Room</label>
+                        <select id="roomFilter" class="form-control">
+                            <option value="ALL">All Rooms</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="damageTypeFilter" class="filter-label">Damage Type</label>
+                        <select id="damageTypeFilter" class="form-control">
+                            <option value="ALL">All Categories</option>
+                            <option value="Plugs">Plugs</option>
+                            <option value="Shelves">Shelves</option>
+                            <option value="Bed">Bed</option>
+                            <option value="Window">Window</option>
+                            <option value="Mirror">Mirror</option>
+                            <option value="Door">Door</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="corridorFilter" class="filter-label">Corridor</label>
+                        <select id="corridorFilter" class="form-control">
+                            <option value="ALL">All Corridors</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="statusFilter" class="filter-label">Maintenance Status</label>
+                        <select id="statusFilter" class="form-control">
+                            <option value="ALL">All Statuses</option>
+                            <option value="OPEN">Reported (OPEN)</option>
+                            <option value="IN_PROGRESS">In Progress</option>
+                            <option value="SOLVED">Solved</option>
+                            <option value="CLOSED">Closed</option>
+                            <option value="OVERDUE">Overdue Maintenance</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <button id="resetFiltersBtn" class="btn-reset">Clear Filters</button>
+                    </div>
+                </div>
+
+                <div class="active-filter-indicator">
+                    <span id="filteredCountLabel">Showing 0 of 0 records</span>
+                    <span id="activeFilterTags" style="font-weight: 600; color: var(--space-blue-primary);"></span>
+                </div>
+            </section>
+
+            <!-- BULK ACTION BAR (HIDDEN BY DEFAULT) -->
+            <section class="bulk-action-bar" id="bulkActionBar" style="display: none;">
+                <div class="bulk-info">
+                    <span class="bulk-counter-pill" id="bulkCountLabel">0 Selected</span>
+                    <span>Bulk Maintenance Operations</span>
+                </div>
+
+                <div class="bulk-controls">
+                    <div class="bulk-control-group">
+                        <label for="bulkStatusSelect">Set Status:</label>
+                        <select id="bulkStatusSelect" class="form-control">
+                            <option value="">-- No Change --</option>
+                            <option value="OPEN">Reported (OPEN)</option>
+                            <option value="IN_PROGRESS">In Progress</option>
+                            <option value="SOLVED">Solved</option>
+                            <option value="CLOSED">Closed</option>
+                        </select>
+                    </div>
+
+                    <div class="bulk-control-group">
+                        <label for="bulkFixtureDate">Fixture Date:</label>
+                        <input type="date" id="bulkFixtureDate" class="form-control">
+                    </div>
+
+                    <button class="btn-bulk-apply" id="btnApplyBulk">Apply Changes</button>
+                    <button class="btn-bulk-clear" id="btnClearSelection">Clear Selection</button>
+                </div>
+            </section>
+
+            <!-- BREAKAGES TABLE -->
+            <section class="table-card">
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="checkbox-col">
+                                    <input type="checkbox" id="selectAllCheckbox" class="custom-checkbox" title="Select All Displayed">
+                                </th>
+                                <th>Resident</th>
+                                <th>Student No.</th>
+                                <th>Room / Corridor</th>
+                                <th>Damage Category</th>
+                                <th>Description</th>
+                                <th>Reported Date</th>
+                                <th>Expected Fixture</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="breakagesTableBody">
+                            <tr>
+                                <td colspan="10">
+                                    <div class="state-container">
+                                        <div class="spinner"></div>
+                                        <h4>Loading house-wide breakage records...</h4>
+                                        <p>Connecting to database records.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- BREAKAGE DETAIL & MANAGEMENT MODAL -->
+        <div class="modal-overlay" id="detailModal">
+            <div class="modal-card">
+                <div class="modal-header">
+                    <h3>Breakage Maintenance Record</h3>
+                    <button class="modal-close" id="closeDetailModalBtn">&times;</button>
+                </div>
+                <div class="modal-body" id="detailModalBody">
+                    <!-- Modal content rendered via JS -->
+                </div>
+                <div class="modal-footer">
+                    <div id="modalStatusContainer"></div>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn-reset" id="cancelDetailModalBtn">Close</button>
+                        <button class="btn-save-modal" id="btnSaveDetail">Save Changes</button>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- FOOTER -->
-    <footer class="footer">
-        House Beyers Naude • House of Masters
-    </footer>
+        <!-- BULK ACTION CONFIRMATION MODAL -->
+        <div class="modal-overlay" id="bulkConfirmModal">
+            <div class="modal-card" style="max-width: 500px;">
+                <div class="modal-header">
+                    <h3>Confirm Bulk Maintenance Update</h3>
+                    <button class="modal-close" id="closeBulkModalBtn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p id="bulkModalSummaryText" style="font-size: 15px; color: var(--text-main); font-weight: 600;"></p>
+                    
+                    <div style="background-color: var(--space-blue-light); padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--space-blue-border); margin-top: 10px;">
+                        <span class="detail-label">Changes to be applied:</span>
+                        <ul id="bulkChangesList" style="margin-top: 6px; padding-left: 20px; font-size: 14px; color: var(--text-main);">
+                        </ul>
+                    </div>
+
+                    <p style="font-size: 13px; color: var(--danger-red); font-weight: 500; margin-top: 6px;">
+                        This action will update all selected Firestore records.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-reset" id="cancelBulkConfirmBtn">Cancel</button>
+                    <button class="btn-save-modal" id="btnConfirmBulkExecution">Confirm & Execute</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <footer class="footer">
+            House Beyers Naude • House of Masters
+        </footer>
+
+    </div>
 
     <!-- FIREBASE & APPLICATION LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+        import { initializeAppCheck, ReCaptchaV3Provider, getToken } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app-check.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
         import { getFirestore, doc, getDoc, collection, getDocs, updateDoc, writeBatch, Timestamp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
 
@@ -1128,6 +1137,25 @@
         };
 
         const app = initializeApp(firebaseConfig);
+
+        const appCheck = initializeAppCheck(app, {
+            provider: new ReCaptchaV3Provider('6LfAPn8tAAAAAOa1QF1-NqwCu6aPsGWyOep3mo2s'),
+            isTokenAutoRefreshEnabled: true
+        });
+
+        async function initializeGate() {
+            try {
+                await getToken(appCheck, false);
+                document.getElementById("appCheckLoading").style.display = "none";
+                document.getElementById("appContent").style.display = "flex";
+            } catch (error) {
+                console.error("App Check failed:", error);
+                document.getElementById("appCheckLoading").textContent = "Access denied: Failed App Check verification.";
+            }
+        }
+
+        initializeGate();
+
         const auth = getAuth(app);
         const db = getFirestore(app);
 
