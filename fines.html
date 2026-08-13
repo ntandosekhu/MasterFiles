@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+[source: 13]<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -1232,7 +1232,9 @@
 
                 if (recordType === "WARNING") {
                     computedStatus = "WARNING";
-                } else if (rawStatus !== "PAID" && rawStatus !== "CANCELLED" && rawStatus !== "RESOLVED" && rawStatus !== "DISPUTED") {
+                } else if (rawStatus === "DISPUTE_SUBMITTED" || rawStatus === "DISPUTED") {
+                    computedStatus = "DISPUTED";
+                } else if (rawStatus !== "PAID" && rawStatus !== "CANCELLED" && rawStatus !== "RESOLVED") {
                     if (now > expectedPaymentDate) {
                         computedStatus = "OVERDUE";
                     } else {
@@ -1650,7 +1652,7 @@
 
             try {
                 const fineRef = doc(db, "fines", fineId);
-                // Status updated to Active; hasBeenDisputed is untouched so it remains true
+                // Reset status to Active so that the resident can pay or view it
                 await updateDoc(fineRef, {
                     status: "Active"
                 });
