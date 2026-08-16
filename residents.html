@@ -6,6 +6,10 @@
     <title>House Beyers Naude - Residents Directory</title>
 
     <style>
+        body {
+            display: none;
+        }
+
         :root {
             --primary: #1D2951;
             --primary-hover: #151f3d;
@@ -1020,6 +1024,10 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
         import { 
+            initializeAppCheck, 
+            ReCaptchaV3Provider 
+        } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app-check.js";
+        import { 
             getAuth, 
             onAuthStateChanged, 
             signOut 
@@ -1045,6 +1053,10 @@
         };
 
         const app = initializeApp(firebaseConfig);
+        const appCheck = initializeAppCheck(app, {
+            provider: new ReCaptchaV3Provider('6LfAPn8tAAAAAOa1QF1-NqwCu6aPsGWyOep3mo2s'),
+            isTokenAutoRefreshEnabled: true
+        });
         const auth = getAuth(app);
         const db = getFirestore(app);
 
@@ -1082,6 +1094,7 @@
                 await loadAdminProfile();
                 await loadFaculties();
                 await loadHouseMembers();
+                document.body.style.display = "flex";
             } catch (error) {
                 console.error("Error initializing Residents dashboard:", error);
                 renderErrorState("Unable to load resident data. Please check your connection or permissions.");
