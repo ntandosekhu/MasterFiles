@@ -3,16 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Subcommittee Management - Residence Management System</title>
+    <title>Subcommittee Management - Residence System</title>
     
-    <!-- reCAPTCHA v3 Enterprise Script -->
+    <!-- reCAPTCHA v3 Enterprise Script for App Check -->
     <script src="https://www.google.com/recaptcha/enterprise.js?render=6LfAPn8tAAAAAOa1QF1-NqwCu6aPsGWyOep3mo2s"></script>
 
     <style>
         :root {
             --space-blue: #1D2951;
             --space-blue-hover: #151f3d;
-            --space-blue-light: #263968;
             --space-blue-subtle: #f0f4ff;
             --background: #f4f5f7;
             --card-bg: #ffffff;
@@ -97,7 +96,7 @@
 
         /* LAYOUT CONTAINER */
         .container {
-            max-width: 1000px;
+            max-width: 900px;
             margin: auto;
             padding: 32px 20px 48px 20px;
         }
@@ -150,7 +149,7 @@
         }
 
         .page-content {
-            display: none; /* strictly hidden until authorization passes */
+            display: none; /* Strictly hidden until App Check, Auth, and admin verification pass */
         }
 
         /* SCOPE CARD */
@@ -166,9 +165,6 @@
             font-size: 18px;
             color: var(--space-blue);
             margin-bottom: 6px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }
 
         .scope-card p {
@@ -274,7 +270,7 @@
         /* STUDENT DISPLAY CARD */
         .student-details-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 16px;
             margin-bottom: 20px;
             background: #f8fafc;
@@ -297,7 +293,7 @@
             color: var(--text-primary);
         }
 
-        /* HOUSE ROLE BADGES & REMOVAL */
+        /* HOUSE ROLE BADGES */
         .roles-list {
             display: flex;
             flex-wrap: wrap;
@@ -370,7 +366,7 @@
         .modal-card {
             background: var(--card-bg);
             border-radius: 12px;
-            max-width: 500px;
+            max-width: 480px;
             width: 100%;
             padding: 24px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
@@ -390,7 +386,7 @@
             margin-bottom: 24px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
 
         .modal-row {
@@ -444,32 +440,32 @@
     <!-- INITIALIZATION & AUTHORIZATION LOADING GATE -->
     <div id="loadingState" class="status-container">
         <div class="spinner"></div>
-        <h3 id="loadingStatusText">Establishing Secure Connection...</h3>
-        <p>Verifying Firebase App Check token and RC subcommittee permissions.</p>
+        <h3 id="loadingStatusText">Initializing App Check & Authenticating...</h3>
+        <p>Verifying admin privileges and subcommittee access rights.</p>
     </div>
 
     <!-- ACCESS DENIED STATE -->
     <div id="accessDeniedState" class="status-container" style="display: none;">
         <div class="access-denied-card">
             <h3>Unauthorized Access</h3>
-            <p id="accessDeniedMessage">Your authenticated account does not have RC portfolio privileges required to manage subcommittees.</p>
+            <p id="accessDeniedMessage">Your authenticated account does not have active RC subcommittee privileges in the admins collection.</p>
             <button class="btn-action" id="btnDeniedReturn">Return to Dashboard</button>
         </div>
     </div>
 
-    <!-- PROTECTED PAGE CONTENT -->
+    <!-- PROTECTED PAGE CONTENT (REVEALED ONLY AFTER AUTHORIZATION) -->
     <div id="pageContent" class="page-content">
 
-        <!-- SCOPE HEADER -->
+        <!-- SCOPE HEADER CARD -->
         <section class="scope-card">
             <h2>SUBCOMMITTEE MANAGEMENT &mdash; <span id="rcRoleTitle">Loading...</span></h2>
-            <p>You are authorized to assign and remove house roles strictly within your designated RC responsibility scope.</p>
+            <p>You are authorized to manage house roles strictly assigned to your RC responsibility.</p>
             <div class="scope-tags" id="permittedRolesContainer">
                 <!-- Permitted role badges dynamically inserted here -->
             </div>
         </section>
 
-        <!-- STUDENT SEARCH CARD -->
+        <!-- STUDENT LOOKUP CARD (SEPARATE DATA SOURCE: users COLLECTION) -->
         <section class="card">
             <h3 class="card-title">1. Search Housemate by Student Number</h3>
             <div class="search-box">
@@ -499,8 +495,8 @@
                     <span id="stRoom">-</span>
                 </div>
                 <div class="detail-item">
-                    <label>UID</label>
-                    <span id="stUid" style="font-size: 12px; font-family: monospace;">-</span>
+                    <label>Account Status</label>
+                    <span id="stStatus">-</span>
                 </div>
             </div>
 
@@ -515,7 +511,7 @@
                 <div class="form-group">
                     <label>Assign Permitted Role</label>
                     <select id="roleAssignSelect" class="form-select">
-                        <!-- Permitted roles dynamically populated -->
+                        <!-- Permitted roles dynamically populated strictly based on admins/{auth.uid} -->
                     </select>
                 </div>
                 <button class="btn-action btn-success" id="btnInitiateAssign">Assign House Role</button>
@@ -529,7 +525,7 @@
 <!-- CONFIRMATION MODAL -->
 <div id="confirmModal" class="modal-overlay">
     <div class="modal-card">
-        <div class="modal-header" id="modalHeaderTitle">Confirm Role Change</div>
+        <div class="modal-header" id="modalHeaderTitle">Confirm Role Assignment</div>
         <div class="modal-body">
             <div class="modal-row">
                 <strong>Housemate:</strong>
@@ -548,7 +544,7 @@
                 <span id="mdRoleName" style="font-weight: 700; color: var(--space-blue);">-</span>
             </div>
             <div class="modal-row">
-                <strong>Managing RC:</strong>
+                <strong>Managing Admin RC:</strong>
                 <span id="mdRcTitle">-</span>
             </div>
             <div class="modal-row">
@@ -566,18 +562,18 @@
 <script type="module">
 
 /* ==========================================================================
-   FIREBASE IMPORTS
+   FIREBASE SDK IMPORTS
    ========================================================================== */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
 import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app-check.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
 import { 
-    getFirestore, collection, doc, getDoc, getDocs, updateDoc, 
-    addDoc, query, where, arrayUnion, arrayRemove, serverTimestamp 
+    getFirestore, doc, getDoc, getDocs, collection, query, where, updateDoc, 
+    addDoc, arrayUnion, arrayRemove, serverTimestamp 
 } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
 
 /* ==========================================================================
-   FIREBASE INITIALIZATION
+   FIREBASE & APP CHECK INITIALIZATION
    ========================================================================== */
 const firebaseConfig = {
     apiKey: "AIzaSyDW6IArj2dZiqbf00Ix3SPPSqvxTKG0GgE",
@@ -591,7 +587,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
-/* App Check Initialization */
+// Initialize App Check with reCAPTCHA v3 Enterprise before doing authorization work
 let appCheck;
 try {
     appCheck = initializeAppCheck(app, {
@@ -599,16 +595,16 @@ try {
         isTokenAutoRefreshEnabled: true
     });
 } catch (err) {
-    console.error("App Check Initialization Error:", err);
+    console.error("App Check error:", err);
 }
 
 const auth = getAuth(app);
 const db = getFirestore(app);
 
 /* ==========================================================================
-   EXACT ROLE PERMISSION MAPPING & DICTIONARIES
+   RC PERMISSION MAPPING & DICTIONARIES
    ========================================================================== */
-const ROLE_MAP = {
+const RC_PERMISSIONS_MAP = {
     'RC_FIRST_YEARS': {
         title: 'RC First Years',
         roles: [
@@ -650,8 +646,8 @@ const ALL_ROLE_LABELS = {
 
 /* STATE VARIABLES */
 let currentUser = null;
-let currentUserRecord = null;
-let currentRcKey = null;
+let adminRecord = null;
+let activeRcKey = null;
 let permittedRoleObjects = [];
 let permittedRoleIds = [];
 
@@ -676,31 +672,30 @@ const studentResultCard = document.getElementById("studentResultCard");
 const stName = document.getElementById("stName");
 const stNumber = document.getElementById("stNumber");
 const stRoom = document.getElementById("stRoom");
-const stUid = document.getElementById("stUid");
+const stStatus = document.getElementById("stStatus");
 const currentRolesList = document.getElementById("currentRolesList");
 
 const confirmModal = document.getElementById("confirmModal");
 
 /* ==========================================================================
-   ROLE RESOLUTION HELPER
+   ADMIN ROLE RESOLUTION (SOLE SOURCE: admins/{auth.uid})
    ========================================================================== */
-function resolveRcKey(data) {
+function parseRcRoleFromAdminData(data) {
     if (!data) return null;
-    const candidates = [
-        data.rcRole, data.accountType, data.role, data.subcommitteeRole
-    ].filter(Boolean).map(s => String(s).toUpperCase().trim().replace(/\s+/g, '_'));
+    
+    // Evaluate candidates from the admins collection document
+    const rawRole = String(data.role || data.rcRole || data.adminRole || '').toUpperCase().trim();
 
-    for (const raw of candidates) {
-        if (raw === 'RC_FIRST_YEARS' || raw.includes('FIRST_YEAR')) return 'RC_FIRST_YEARS';
-        if (raw === 'RC_SPORTS' || raw.includes('SPORT')) return 'RC_SPORTS';
-        if (raw === 'RC_VICE_PRIME' || raw.includes('VICE') || raw.includes('DISCIPLINARY')) return 'RC_VICE_PRIME';
-        if (raw === 'RC_ACADEMICS' || raw.includes('ACADEMIC')) return 'RC_ACADEMICS';
-    }
+    if (rawRole === 'RC_FIRST_YEARS' || rawRole.includes('FIRST_YEAR')) return 'RC_FIRST_YEARS';
+    if (rawRole === 'RC_SPORTS' || rawRole.includes('SPORT')) return 'RC_SPORTS';
+    if (rawRole === 'RC_VICE_PRIME' || rawRole.includes('VICE') || rawRole.includes('DISCIPLINARY')) return 'RC_VICE_PRIME';
+    if (rawRole === 'RC_ACADEMICS' || rawRole.includes('ACADEMIC')) return 'RC_ACADEMICS';
+
     return null;
 }
 
 /* ==========================================================================
-   AUTHENTICATION & AUTHORIZATION FLOW
+   AUTHENTICATION & STRICT ADMIN AUTHORIZATION SEQUENCE
    ========================================================================== */
 onAuthStateChanged(auth, async (user) => {
     if (!user) {
@@ -709,46 +704,56 @@ onAuthStateChanged(auth, async (user) => {
     }
 
     currentUser = user;
-    loadingStatusText.textContent = "Checking Administrative Permissions...";
+    loadingStatusText.textContent = "Verifying admins/" + user.uid + "...";
 
     try {
-        const userDocRef = doc(db, "users", user.uid);
-        const userSnap = await getDoc(userDocRef);
+        // STRICT RULE: Determine authority ONLY from admins/{auth.uid}
+        const adminDocRef = doc(db, "admins", user.uid);
+        const adminSnap = await getDoc(adminDocRef);
 
-        if (!userSnap.exists()) {
-            throw new Error("User record not found in system.");
-        }
-
-        currentUserRecord = userSnap.data();
-        currentRcKey = resolveRcKey(currentUserRecord);
-
-        if (!currentRcKey || !ROLE_MAP[currentRcKey]) {
-            showAccessDenied("Your authenticated account (" + (currentUserRecord.accountType || "User") + ") is not registered under a permitted RC Subcommittee portfolio.");
+        if (!adminSnap.exists()) {
+            showAccessDenied("Your UID was not found in the 'admins' collection. Access denied.");
             return;
         }
 
-        // Set up permitted roles
-        const rcData = ROLE_MAP[currentRcKey];
-        permittedRoleObjects = rcData.roles;
-        permittedRoleIds = rcData.roles.map(r => r.id);
+        adminRecord = adminSnap.data();
 
-        // Populate Interface Scope
-        rcRoleTitle.textContent = rcData.title;
+        // Check active status if present
+        if (adminRecord.status && String(adminRecord.status).toLowerCase() === 'inactive') {
+            showAccessDenied("Your administrator account is marked as INACTIVE.");
+            return;
+        }
+
+        activeRcKey = parseRcRoleFromAdminData(adminRecord);
+
+        if (!activeRcKey || !RC_PERMISSIONS_MAP[activeRcKey]) {
+            showAccessDenied("Your admin role (" + (adminRecord.role || "Unknown") + ") does not match any recognized RC Subcommittee scope.");
+            return;
+        }
+
+        // Setup permitted roles for dropdown & write validations
+        const rcConfig = RC_PERMISSIONS_MAP[activeRcKey];
+        permittedRoleObjects = rcConfig.roles;
+        permittedRoleIds = rcConfig.roles.map(r => r.id);
+
+        // Populate Interface Headers & Dropdowns
+        rcRoleTitle.textContent = rcConfig.title;
         permittedRolesContainer.innerHTML = permittedRoleObjects.map(r => 
             `<span class="scope-tag">${r.label}</span>`
         ).join("");
 
+        // Populate the dropdown ONLY with permitted roles
         roleAssignSelect.innerHTML = permittedRoleObjects.map(r => 
             `<option value="${r.id}">${r.label}</option>`
         ).join("");
 
-        // Reveal Protected Interface
+        // Authorization checks complete -> Reveal Interface
         loadingState.style.display = "none";
         pageContent.style.display = "block";
 
     } catch (err) {
         console.error("Authorization Error:", err);
-        showAccessDenied("Failed to verify authorization: " + err.message);
+        showAccessDenied("Error reading administrator permissions: " + err.message);
     }
 });
 
@@ -759,7 +764,7 @@ function showAccessDenied(msg) {
 }
 
 /* ==========================================================================
-   STUDENT SEARCH (PRIMARY IDENTIFIER: STUDENT NUMBER)
+   STUDENT LOOKUP (QUERY users COLLECTION BY studentnumber)
    ========================================================================== */
 async function searchStudent() {
     const rawInput = studentSearchInput.value.trim();
@@ -774,7 +779,7 @@ async function searchStudent() {
     try {
         const usersRef = collection(db, "users");
         
-        // Query both string and numeric representations for robust matching
+        // Search by exact studentnumber field (string and numeric)
         let q = query(usersRef, where("studentnumber", "==", rawInput));
         let snap = await getDocs(q);
 
@@ -783,18 +788,18 @@ async function searchStudent() {
             snap = await getDocs(q);
         }
 
-        const numVal = parseInt(rawInput, 10);
-        if (snap.empty && !isNaN(numVal)) {
-            q = query(usersRef, where("studentnumber", "==", numVal));
+        const numericVal = parseInt(rawInput, 10);
+        if (snap.empty && !isNaN(numericVal)) {
+            q = query(usersRef, where("studentnumber", "==", numericVal));
             snap = await getDocs(q);
         }
-        if (snap.empty && !isNaN(numVal)) {
-            q = query(usersRef, where("studentNumber", "==", numVal));
+        if (snap.empty && !isNaN(numericVal)) {
+            q = query(usersRef, where("studentNumber", "==", numericVal));
             snap = await getDocs(q);
         }
 
         if (snap.empty) {
-            alert("No housemate found with student number: " + rawInput);
+            alert("No housemate record found matching student number: " + rawInput);
             studentResultCard.style.display = "none";
             selectedStudentDoc = null;
         } else {
@@ -804,8 +809,8 @@ async function searchStudent() {
         }
 
     } catch (err) {
-        console.error("Student search error:", err);
-        alert("Error searching for housemate: " + err.message);
+        console.error("Student query error:", err);
+        alert("Error retrieving student record: " + err.message);
     } finally {
         btnSearchStudent.disabled = false;
         btnSearchStudent.textContent = "Search";
@@ -818,12 +823,12 @@ function displayStudentDetails() {
     stName.textContent = selectedStudentDoc.name || selectedStudentDoc.fullName || "N/A";
     stNumber.textContent = selectedStudentDoc.studentnumber || selectedStudentDoc.studentNumber || "N/A";
     stRoom.textContent = selectedStudentDoc.roomNumber || selectedStudentDoc.room || "N/A";
-    stUid.textContent = selectedStudentDoc.id;
+    stStatus.textContent = selectedStudentDoc.status || (selectedStudentDoc.isStudentregistered ? "Registered" : "Active");
 
     const currentRoles = Array.isArray(selectedStudentDoc.houseRoles) ? selectedStudentDoc.houseRoles : [];
 
     if (currentRoles.length === 0) {
-        currentRolesList.innerHTML = `<span style="font-size:13px; color:var(--text-muted); italic;">No house roles currently assigned.</span>`;
+        currentRolesList.innerHTML = `<span style="font-size:13px; color:var(--text-muted); font-style: italic;">No house roles assigned.</span>`;
     } else {
         currentRolesList.innerHTML = currentRoles.map(roleKey => {
             const label = ALL_ROLE_LABELS[roleKey] || roleKey;
@@ -838,7 +843,7 @@ function displayStudentDetails() {
                 `;
             } else {
                 return `
-                    <div class="role-badge read-only" title="Cannot be managed by ${ROLE_MAP[currentRcKey].title}">
+                    <div class="role-badge read-only" title="Cannot be modified by ${RC_PERMISSIONS_MAP[activeRcKey].title}">
                         <span>${label}</span>
                     </div>
                 `;
@@ -855,43 +860,43 @@ studentSearchInput.addEventListener("keydown", (e) => {
 });
 
 /* ==========================================================================
-   ROLE ASSIGNMENT & REMOVAL INITIATION
+   ROLE MODIFICATION PREPARATION (ASSIGN / REMOVE)
    ========================================================================== */
-// Initiate Assignment
+// Assign Role Click
 document.getElementById("btnInitiateAssign").addEventListener("click", () => {
     if (!selectedStudentDoc) return;
-    const targetRole = roleAssignSelect.value;
+    const selectedRole = roleAssignSelect.value;
     
-    // Client-side Double Security Verification
-    if (!permittedRoleIds.includes(targetRole)) {
-        alert("SECURITY ERROR: You are not authorized to assign this role.");
+    // Client Verification against Admin Permitted Scope
+    if (!permittedRoleIds.includes(selectedRole)) {
+        alert("AUTHORIZATION REJECTED: You are not authorized to assign this role.");
         return;
     }
 
     const currentRoles = Array.isArray(selectedStudentDoc.houseRoles) ? selectedStudentDoc.houseRoles : [];
-    if (currentRoles.includes(targetRole)) {
-        alert("This housemate already possesses the role: " + ALL_ROLE_LABELS[targetRole]);
+    if (currentRoles.includes(selectedRole)) {
+        alert("This housemate already has the role: " + (ALL_ROLE_LABELS[selectedRole] || selectedRole));
         return;
     }
 
     pendingAction = {
         type: 'ASSIGN',
-        roleId: targetRole,
-        roleLabel: ALL_ROLE_LABELS[targetRole] || targetRole
+        roleId: selectedRole,
+        roleLabel: ALL_ROLE_LABELS[selectedRole] || selectedRole
     };
 
     openConfirmationModal();
 });
 
-// Initiate Removal
+// Remove Role Click
 currentRolesList.addEventListener("click", (e) => {
     const btn = e.target.closest(".btn-remove-role");
     if (!btn) return;
     const targetRole = btn.getAttribute("data-role");
 
-    // Client-side Double Security Verification
+    // Client Verification against Admin Permitted Scope
     if (!permittedRoleIds.includes(targetRole)) {
-        alert("SECURITY ERROR: You are not authorized to remove this role.");
+        alert("AUTHORIZATION REJECTED: You are not authorized to remove this role.");
         return;
     }
 
@@ -905,19 +910,19 @@ currentRolesList.addEventListener("click", (e) => {
 });
 
 /* ==========================================================================
-   CONFIRMATION MODAL & FIRESTORE WRITE EXECUTION
+   CONFIRMATION MODAL & FIRESTORE WRITE / AUDIT EXECUTION
    ========================================================================== */
 function openConfirmationModal() {
     if (!selectedStudentDoc || !pendingAction) return;
 
     const currentRoles = Array.isArray(selectedStudentDoc.houseRoles) ? selectedStudentDoc.houseRoles : [];
 
-    document.getElementById("mdStudentName").textContent = selectedStudentDoc.name || "N/A";
+    document.getElementById("mdStudentName").textContent = selectedStudentDoc.name || selectedStudentDoc.fullName || "N/A";
     document.getElementById("mdStudentNumber").textContent = selectedStudentDoc.studentnumber || selectedStudentDoc.studentNumber || "N/A";
     document.getElementById("mdActionType").textContent = pendingAction.type === 'ASSIGN' ? 'ASSIGN ROLE' : 'REMOVE ROLE';
     document.getElementById("mdActionType").style.color = pendingAction.type === 'ASSIGN' ? 'var(--success)' : 'var(--danger)';
     document.getElementById("mdRoleName").textContent = pendingAction.roleLabel;
-    document.getElementById("mdRcTitle").textContent = ROLE_MAP[currentRcKey].title;
+    document.getElementById("mdRcTitle").textContent = RC_PERMISSIONS_MAP[activeRcKey].title;
     document.getElementById("mdCurrentRoles").textContent = currentRoles.length ? currentRoles.join(", ") : "None";
 
     confirmModal.classList.add("active");
@@ -930,13 +935,13 @@ function closeModal() {
 
 document.getElementById("btnCancelModal").addEventListener("click", closeModal);
 
-// EXECUTE WRITING TO FIRESTORE
+// EXECUTE WRITES
 document.getElementById("btnConfirmAction").addEventListener("click", async () => {
     if (!selectedStudentDoc || !pendingAction) return;
 
-    // MANDATORY SECURITY VERIFICATION BEFORE WRITE
+    // MANDATORY SECURITY VERIFICATION
     if (!permittedRoleIds.includes(pendingAction.roleId)) {
-        alert("SECURITY REJECTION: Target role falls outside permitted RC scope.");
+        alert("SECURITY REJECTION: Target role falls outside your authorized admin scope.");
         closeModal();
         return;
     }
@@ -949,7 +954,7 @@ document.getElementById("btnConfirmAction").addEventListener("click", async () =
         const studentRef = doc(db, "users", selectedStudentDoc.id);
         const previousHouseRoles = Array.isArray(selectedStudentDoc.houseRoles) ? [...selectedStudentDoc.houseRoles] : [];
 
-        // 1. Update Student's houseRoles Array (Preserving non-managed roles)
+        // 1. Update ONLY the houseRoles array on the user's document
         if (pendingAction.type === 'ASSIGN') {
             await updateDoc(studentRef, {
                 houseRoles: arrayUnion(pendingAction.roleId)
@@ -960,40 +965,39 @@ document.getElementById("btnConfirmAction").addEventListener("click", async () =
             });
         }
 
-        // Calculate state for audit log
-        let updatedHouseRoles = [...previousHouseRoles];
+        // Calculate exact newState for activity log
+        let newHouseRoles = [...previousHouseRoles];
         if (pendingAction.type === 'ASSIGN') {
-            if (!updatedHouseRoles.includes(pendingAction.roleId)) updatedHouseRoles.push(pendingAction.roleId);
+            if (!newHouseRoles.includes(pendingAction.roleId)) newHouseRoles.push(pendingAction.roleId);
         } else {
-            updatedHouseRoles = updatedHouseRoles.filter(r => r !== pendingAction.roleId);
+            newHouseRoles = newHouseRoles.filter(r => r !== pendingAction.roleId);
         }
 
-        // 2. Log Activity to audit trail
+        // 2. Write event to activityLogs collection
         await addDoc(collection(db, "activityLogs"), {
             category: "HOUSE_ROLE",
             action: pendingAction.type === 'ASSIGN' ? "ASSIGNED" : "REMOVED",
             role: pendingAction.roleId,
             actorUid: currentUser.uid,
-            actorName: currentUserRecord.name || currentUser.displayName || "Admin/RC",
-            actorRole: currentRcKey,
+            actorRole: activeRcKey,
             subjectUid: selectedStudentDoc.id,
             subjectName: selectedStudentDoc.name || selectedStudentDoc.fullName || "Housemate",
             subjectStudentNumber: selectedStudentDoc.studentnumber || selectedStudentDoc.studentNumber || "",
             previousState: previousHouseRoles,
-            newState: updatedHouseRoles,
+            newState: newHouseRoles,
             timestamp: serverTimestamp()
         });
 
-        // 3. Update local state & refresh view
-        selectedStudentDoc.houseRoles = updatedHouseRoles;
+        // 3. Update local state and UI view
+        selectedStudentDoc.houseRoles = newHouseRoles;
         displayStudentDetails();
 
-        alert(`Successfully ${pendingAction.type === 'ASSIGN' ? 'assigned' : 'removed'} ${pendingAction.roleLabel}!`);
+        alert(`Role successfully ${pendingAction.type === 'ASSIGN' ? 'assigned' : 'removed'}!`);
         closeModal();
 
     } catch (err) {
         console.error("Firestore Write Error:", err);
-        alert("Operation failed: " + err.message);
+        alert("Failed to update role: " + err.message);
     } finally {
         btnConfirm.disabled = false;
         btnConfirm.textContent = "Confirm & Write";
