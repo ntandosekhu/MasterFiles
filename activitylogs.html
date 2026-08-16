@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity Log & Audit Trail - Residence Management</title>
+    
+    <!-- reCAPTCHA v3 Enterprise Script -->
+    <script src="https://www.google.com/recaptcha/enterprise.js?render=6LfAPn8tAAAAAOa1QF1-NqwCu6aPsGWyOep3mo2s"></script>
+    
+    <style>
+        :root {
+            --space-blue: #1D2951;
+            --space-blue-hover: #151f3d;
+            --space-blue-light: #263968;
+            --space-blue-subtle: #f0f4ff;
+            --background: #f4f5f7;
+            --card-bg: #ffffff;
+            --border: #e2e8f0;
+            --text-primary: #1f2937;
+            --text-muted: #64748b;
+            --danger: #dc2626;
+            --success: #166534;
+            --warning: #92400e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+
+        /* HEADER */
+        .header {
+            background: var(--space-blue);
+            color: white;
+            padding: 18px 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .header-branding h1 {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .header-branding p {
+            color: #cbd5e1;
+            font-size: 13px;
+            margin-top: 2px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .header-button {
+            border: none;
+            padding: 9px 16px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: background 0.15s ease;
+        }
+
+        .back-button {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .logout-button {
+            background: var(--danger);
+            color: white;
+        }
+
+        .logout-button:hover {
+            background: #b91c1c;
+        }
+
+        .print-button {
+            background: #059669;
+            color: white;
+        }
+
+        .print-button:hover {
+            background: #047857;
+        }
+
+        /* CONTAINER & LOADING GATE */
+        .container {
+            max-width: 1400px;
+            margin: auto;
+            padding: 32px 20px 48px 20px;
+        }
+
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            gap: 16px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--border);
+            border-top-color: var(--space-blue);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .page-content {
+            display: none; /* Strictly hidden until App Check & Authorization pass */
+        }
+
+        /* FILTERS & SEARCH */
+        .filter-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .form-input, .form-select {
+            padding: 9px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 13px;
+            background: #fafafa;
+            color: var(--text-primary);
+            width: 100%;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--space-blue);
+            background: #ffffff;
+        }
+
+        /* AUDIT TRAIL TABLE / LIST */
+        .table-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+            margin-bottom: 32px;
+        }
+
+        .audit-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            text-align: left;
+        }
+
+        .audit-table th {
+            background: var(--space-blue-subtle);
+            color: var(--space-blue);
+            font-weight: 700;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            text-transform: uppercase;
+            font-size: 11px;
+        }
+
+        .audit-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+
+        .audit-table tbody tr {
+            transition: background 0.15s ease;
+            cursor: pointer;
+        }
+
+        .audit-table tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        /* BADGES */
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .badge-category { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+        .badge-housemate { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+        .badge-admin { background: #f3e8ff; color: #6b21a8; border: 1px solid #d8b4fe; }
+        .badge-system { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
+
+        /* MODAL DETAILS */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            max-width: 750px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 28px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 12px;
+        }
+
+        .modal-header h3 { color: var(--space-blue); font-size: 18px; }
+
+        .modal-close {
+            background: none; border: none; font-size: 24px; color: var(--text-muted); cursor: pointer;
+        }
+
+        .state-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .state-box h5 {
+            font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px;
+        }
+
+        .state-box pre {
+            font-size: 12px; background: white; padding: 10px; border: 1px solid var(--border); border-radius: 6px; white-space: pre-wrap; word-break: break-all;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            font-size: 13px;
+        }
+
+        .detail-field label {
+            font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; display: block;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        /* A4 PRINT / PDF REPORT SPECIFIC STYLES */
+        @media print {
+            body {
+                background: white;
+                color: black;
+                font-size: 11pt;
+            }
+
+            .header, .filter-card, .header-actions, .modal-overlay, #loadingState {
+                display: none !important;
+            }
+
+            .container {
+                max-width: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
+            .page-content {
+                display: block !important;
+            }
+
+            .print-header {
+                display: block !important;
+                margin-bottom: 20px;
+                border-bottom: 2px solid #000;
+                padding-bottom: 10px;
+            }
+
+            .print-summary {
+                display: grid !important;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+                margin-bottom: 20px;
+                border: 1px solid #ccc;
+                padding: 10px;
+            }
+
+            .table-card {
+                border: none;
+                box-shadow: none;
+            }
+
+            .audit-table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            .audit-table th, .audit-table td {
+                border: 1px solid #ddd !important;
+                padding: 8px !important;
+                font-size: 9pt !important;
+            }
+
+            .audit-table th {
+                background-color: #f2f2f2 !important;
+                color: black !important;
+            }
+
+            tr {
+                page-break-inside: avoid;
+            }
+
+            @page {
+                size: A4 portrait;
+                margin: 1.5cm;
+            }
+        }
+
+        .print-header, .print-summary {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+    <div class="header-branding">
+        <h1>Residence Management System</h1>
+        <p>Official System Audit Trail & Activity Log</p>
+    </div>
+    <div class="header-actions">
+        <button class="header-button back-button" id="btnDashboard">← Dashboard</button>
+        <button class="header-button print-button" id="btnPrintReport">Print / Export PDF (A4)</button>
+        <button class="header-button logout-button" id="btnLogout">Log Out</button>
+    </div>
+</header>
+
+<main class="container">
+
+    <!-- APP CHECK & AUTH LOADING GATE -->
+    <div id="loadingState" class="loading-container">
+        <div class="spinner"></div>
+        <h3 id="loadingStatusText">Establishing Secure Connection...</h3>
+        <p>Verifying Firebase App Check token and administrative authorizations.</p>
+    </div>
+
+    <!-- PROTECTED PAGE CONTENT -->
+    <div id="pageContent" class="page-content">
+
+        <!-- PRINT/PDF SPECIFIC HEADER -->
+        <div class="print-header">
+            <h2>House Beyers Naudé - Administrative Activity Log</h2>
+            <p id="printReportMeta">Generated on: - | Filters: None</p>
+        </div>
+
+        <!-- PRINT/PDF SUMMARY BLOCK -->
+        <div class="print-summary" id="printSummary">
+            <div><strong>Total Events:</strong> <span id="sumTotal">0</span></div>
+            <div><strong>Housemate Submissions:</strong> <span id="sumHousemate">0</span></div>
+            <div><strong>RC/Admin Actions:</strong> <span id="sumAdmin">0</span></div>
+            <div><strong>Bookings:</strong> <span id="sumBookings">0</span></div>
+            <div><strong>Fines:</strong> <span id="sumFines">0</span></div>
+            <div><strong>Disputes:</strong> <span id="sumDisputes">0</span></div>
+            <div><strong>Breakages:</strong> <span id="sumBreakages">0</span></div>
+            <div><strong>RC Decisions:</strong> <span id="sumDecisions">0</span></div>
+        </div>
+
+        <!-- FILTERS AND SEARCH -->
+        <section class="filter-card">
+            <div class="filter-grid">
+                <div class="form-group">
+                    <label>Search Audit Trail</label>
+                    <input type="text" id="searchInput" class="form-input" placeholder="Name, ID, UID, keywords...">
+                </div>
+
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="filterCategory" class="form-select">
+                        <option value="ALL">All Categories</option>
+                        <option value="BOOKING">Bookings</option>
+                        <option value="FINE">Fines</option>
+                        <option value="FINE_DISPUTE">Fine Disputes</option>
+                        <option value="BREAKAGE">Breakages</option>
+                        <option value="RC_DECISION">RC Decisions</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Actor Type</label>
+                    <select id="filterActorType" class="form-select">
+                        <option value="ALL">All Actors</option>
+                        <option value="HOUSEMATE">Housemates</option>
+                        <option value="RC_ADMIN">RC / Admin</option>
+                        <option value="SYSTEM">System</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Action</label>
+                    <select id="filterAction" class="form-select">
+                        <option value="ALL">All Actions</option>
+                        <option value="SUBMITTED">Submitted</option>
+                        <option value="CREATED">Created</option>
+                        <option value="APPROVED">Approved</option>
+                        <option value="REJECTED">Rejected</option>
+                        <option value="MODIFIED">Modified</option>
+                        <option value="DISPUTED">Disputed</option>
+                        <option value="REVIEWED">Reviewed</option>
+                        <option value="RESOLVED">Resolved</option>
+                        <option value="COMPLETED">Completed</option>
+                        <option value="DECIDED">Decided</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Start Date</label>
+                    <input type="date" id="filterStartDate" class="form-input">
+                </div>
+
+                <div class="form-group">
+                    <label>End Date</label>
+                    <input type="date" id="filterEndDate" class="form-input">
+                </div>
+            </div>
+        </section>
+
+        <!-- AUDIT LOG TABLE -->
+        <section class="table-card">
+            <table class="audit-table">
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>Category</th>
+                        <th>Action</th>
+                        <th>Actor</th>
+                        <th>Subject / Target</th>
+                        <th>Record ID</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody id="auditTableBody">
+                    <tr>
+                        <td colspan="7" class="empty-state">Loading activity records from Firestore...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+    </div>
+
+</main>
+
+<!-- EVENT DETAILS MODAL -->
+<div id="eventModal" class="modal-overlay">
+    <div class="modal-card">
+        <div class="modal-header">
+            <h3 id="modalEventTitle">Event Details</h3>
+            <button class="modal-close" id="btnModalClose">&times;</button>
+        </div>
+        
+        <div class="detail-grid">
+            <div class="detail-field"><label>Event ID</label><span id="mdEventId">-</span></div>
+            <div class="detail-field"><label>Timestamp</label><span id="mdTimestamp">-</span></div>
+            <div class="detail-field"><label>Category</label><span id="mdCategory">-</span></div>
+            <div class="detail-field"><label>Action</label><span id="mdAction">-</span></div>
+            <div class="detail-field"><label>Actor Name</label><span id="mdActorName">-</span></div>
+            <div class="detail-field"><label>Actor Role / Type</label><span id="mdActorRole">-</span></div>
+            <div class="detail-field"><label>Actor UID</label><span id="mdActorUid">-</span></div>
+            <div class="detail-field"><label>Subject Name</label><span id="mdSubjectName">-</span></div>
+            <div class="detail-field"><label>Subject Student #</label><span id="mdSubjectNum">-</span></div>
+            <div class="detail-field"><label>Record ID</label><span id="mdRecordId">-</span></div>
+            <div class="detail-field"><label>Related Record ID</label><span id="mdRelatedRecordId">-</span></div>
+            <div class="detail-field"><label>Reason / Notes</label><span id="mdReason">-</span></div>
+        </div>
+
+        <!-- BEFORE AND AFTER STATE COMPARISON -->
+        <div class="state-comparison">
+            <div class="state-box">
+                <h5>State Before (Previous)</h5>
+                <pre id="mdStateBefore">N/A</pre>
+            </div>
+            <div class="state-box">
+                <h5>State After (New)</h5>
+                <pre id="mdStateAfter">N/A</pre>
+            </div>
+        </div>
+
+        <div style="text-align: right;">
+            <button class="header-button back-button" style="background: var(--space-blue);" id="btnModalCloseFooter">Close</button>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+
+/* ==========================================================================
+   FIREBASE IMPORTS
+   ========================================================================== */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app-check.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+import { getFirestore, collection, getDocs, doc, getDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+
+/* ==========================================================================
+   FIREBASE INITIALIZATION (EXACT CONFIGURATION & SINGLE INITIALIZATION)
+   ========================================================================== */
+const firebaseConfig = {
+    apiKey: "AIzaSyDW6IArj2dZiqbf00Ix3SPPSqvxTKG0GgE",
+    authDomain: "master-files-95f6b.firebaseapp.com",
+    projectId: "master-files-95f6b",
+    storageBucket: "master-files-95f6b.firebasestorage.app",
+    messagingSenderId: "537891510061",
+    appId: "1:537891510061:web:fb46c8d1abae02b9e725a4",
+    measurementId: "G-4GNVR5EBJX"
+};
+
+const app = initializeApp(firebaseConfig);
+
+/* ==========================================================================
+   1. FIREBASE APP CHECK INITIALIZATION (STRICT SEQUENCE GATE)
+   ========================================================================== */
+let appCheck;
+try {
+    appCheck = initializeAppCheck(app, {
+        provider: new ReCaptchaEnterpriseProvider('6LfAPn8tAAAAAOa1QF1-NqwCu6aPsGWyOep3mo2s'),
+        isTokenAutoRefreshEnabled: true
+    });
+} catch (err) {
+    console.error("App Check Initialization failed:", err);
+}
+
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+/* STATE VARIABLES */
+let currentUser = null;
+let currentUserRecord = null;
+let rawLogs = [];
+let filteredLogs = [];
+
+/* DOM ELEMENTS */
+const loadingState = document.getElementById("loadingState");
+const loadingStatusText = document.getElementById("loadingStatusText");
+const pageContent = document.getElementById("pageContent");
+const auditTableBody = document.getElementById("auditTableBody");
+
+const searchInput = document.getElementById("searchInput");
+const filterCategory = document.getElementById("filterCategory");
+const filterActorType = document.getElementById("filterActorType");
+const filterAction = document.getElementById("filterAction");
+const filterStartDate = document.getElementById("filterStartDate");
+const filterEndDate = document.getElementById("filterEndDate");
+
+const eventModal = document.getElementById("eventModal");
+
+/* ==========================================================================
+   UTILITY & FORMATTING FUNCTIONS
+========================================================================== */
+function parseDate(val) {
+    if (!val) return null;
+    if (val.toDate && typeof val.toDate === "function") return val.toDate();
+    const d = new Date(val);
+    return isNaN(d.getTime()) ? null : d;
+}
+
+function formatDateShort(date) {
+    if (!date) return "N/A";
+    return date.toLocaleString('en-ZA', { dateStyle: 'short', timeStyle: 'medium' });
+}
+
+function safeText(str) {
+    return str ? String(str) : "N/A";
+}
+
+/* ==========================================================================
+   AUTHENTICATION & AUTHORIZATION FLOW
+========================================================================== */
+onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+        // Auth failed -> Preserve logout/redirect behavior
+        window.location.href = "index.html";
+        return;
+    }
+
+    currentUser = user;
+    loadingStatusText.textContent = "Verifying Administrative Permissions...";
+
+    try {
+        // Fetch User Record to verify Admin/RC privileges
+        const userDocRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userDocRef);
+
+        if (!userSnap.exists()) {
+            throw new Error("User record not found in system.");
+        }
+
+        currentUserRecord = userSnap.data();
+        const role = (currentUserRecord.accountType || currentUserRecord.role || "").toUpperCase();
+
+        // Check if user is authorized (RC, Admin, or Committee Member)
+        const isAuthorized = role.includes("ADMIN") || role.includes("RC") || role.includes("COMMITTEE") || currentUserRecord.isAdmin === true;
+
+        if (!isAuthorized) {
+            alert("Unauthorized Access. The Activity Log is restricted to administrative staff.");
+            window.location.href = "index.html";
+            return;
+        }
+
+        // Authorization Passed -> Fetch Data from Firestore
+        loadingStatusText.textContent = "Retrieving Audit Records...";
+        await fetchActivityLogs();
+
+        // Reveal Protected Interface
+        loadingState.style.display = "none";
+        pageContent.style.display = "block";
+
+    } catch (err) {
+        console.error("Access verification failed:", err);
+        alert("Security Gate Failed: " + err.message);
+        window.location.href = "index.html";
+    }
+});
+
+/* ==========================================================================
+   FETCH ACTIVITY LOGS FROM FIRESTORE
+========================================================================== */
+async function fetchActivityLogs() {
+    try {
+        // Fetch from dedicated 'activityLogs' collection
+        const q = query(collection(db, "activityLogs"), orderBy("timestamp", "desc"));
+        const snapshot = await getDocs(q);
+
+        rawLogs = [];
+        snapshot.forEach((docSnap) => {
+            rawLogs.push({ id: docSnap.id, ...docSnap.data() });
+        });
+
+        applyFilters();
+    } catch (err) {
+        console.error("Error loading activity logs:", err);
+        auditTableBody.innerHTML = `<tr><td colspan="7" class="empty-state" style="color:var(--danger);">Error loading audit records: ${err.message}</td></tr>`;
+    }
+}
+
+/* ==========================================================================
+   FILTERING & SEARCH ENGINE
+========================================================================== */
+function applyFilters() {
+    const searchVal = searchInput.value.toLowerCase().trim();
+    const catVal = filterCategory.value;
+    const actorTypeVal = filterActorType.value;
+    const actionVal = filterAction.value;
+    const startVal = filterStartDate.value ? new Date(filterStartDate.value) : null;
+    const endVal = filterEndDate.value ? new Date(filterEndDate.value) : null;
+
+    if (endVal) endVal.setHours(23, 59, 59, 999);
+
+    filteredLogs = rawLogs.filter((log) => {
+        // Category Filter
+        if (catVal !== "ALL" && (log.category || "").toUpperCase() !== catVal) return false;
+
+        // Actor Type Filter
+        if (actorTypeVal !== "ALL" && (log.actorType || "").toUpperCase() !== actorTypeVal) return false;
+
+        // Action Filter
+        if (actionVal !== "ALL" && (log.action || "").toUpperCase() !== actionVal) return false;
+
+        // Date Range
+        const logDate = parseDate(log.timestamp);
+        if (logDate) {
+            if (startVal && logDate < startVal) return false;
+            if (endVal && logDate > endVal) return false;
+        }
+
+        // Text Search
+        if (searchVal) {
+            const searchableText = `
+                ${log.actorName || ''} ${log.actorUid || ''} ${log.actorRole || ''}
+                ${log.subjectName || ''} ${log.subjectStudentNumber || ''} ${log.subjectUid || ''}
+                ${log.recordId || ''} ${log.relatedRecordId || ''} ${log.reason || ''}
+                ${log.notes || ''} ${log.action || ''} ${log.category || ''}
+            `.toLowerCase();
+
+            if (!searchableText.includes(searchVal)) return false;
+        }
+
+        return true;
+    });
+
+    renderAuditTable();
+    updatePrintSummary();
+}
+
+/* Listeners for live filtering */
+searchInput.addEventListener("input", applyFilters);
+filterCategory.addEventListener("change", applyFilters);
+filterActorType.addEventListener("change", applyFilters);
+filterAction.addEventListener("change", applyFilters);
+filterStartDate.addEventListener("change", applyFilters);
+filterEndDate.addEventListener("change", applyFilters);
+
+/* ==========================================================================
+   RENDER TABLE & BADGES
+========================================================================== */
+function renderAuditTable() {
+    if (filteredLogs.length === 0) {
+        auditTableBody.innerHTML = `<tr><td colspan="7" class="empty-state">No matching activity records found in the audit trail.</td></tr>`;
+        return;
+    }
+
+    auditTableBody.innerHTML = filteredLogs.map((log) => {
+        const dateObj = parseDate(log.timestamp);
+        const formattedTime = formatDateShort(dateObj);
+        const actorType = (log.actorType || "HOUSEMATE").toUpperCase();
+        
+        let actorBadgeClass = "badge-housemate";
+        if (actorType === "RC_ADMIN" || actorType === "ADMIN") actorBadgeClass = "badge-admin";
+        if (actorType === "SYSTEM") actorBadgeClass = "badge-system";
+
+        return `
+            <tr data-id="${log.id}">
+                <td><strong>${formattedTime}</strong></td>
+                <td><span class="badge badge-category">${safeText(log.category)}</span></td>
+                <td><strong>${safeText(log.action)}</strong></td>
+                <td>
+                    ${safeText(log.actorName)}<br>
+                    <span class="badge ${actorBadgeClass}">${safeText(log.actorRole || log.actorType)}</span>
+                </td>
+                <td>
+                    ${safeText(log.subjectName || log.subjectStudentNumber)}
+                    ${log.subjectStudentNumber ? `<br><small style="color:var(--text-muted);">${log.subjectStudentNumber}</small>` : ''}
+                </td>
+                <td><code>${safeText(log.recordId)}</code></td>
+                <td>${safeText(log.reason || log.notes || "No extra details")}</td>
+            </tr>
+        `;
+    }).join("");
+}
+
+/* Event Listener for Row Clicks (Modal Details) */
+auditTableBody.addEventListener("click", (e) => {
+    const row = e.target.closest("tr");
+    if (!row) return;
+    const logId = row.getAttribute("data-id");
+    const selectedLog = rawLogs.find((l) => l.id === logId);
+    if (selectedLog) openModal(selectedLog);
+});
+
+/* ==========================================================================
+   MODAL & STATE COMPARISON (BEFORE vs AFTER)
+========================================================================== */
+function openModal(log) {
+    document.getElementById("mdEventId").textContent = safeText(log.id);
+    document.getElementById("mdTimestamp").textContent = formatDateShort(parseDate(log.timestamp));
+    document.getElementById("mdCategory").textContent = safeText(log.category);
+    document.getElementById("mdAction").textContent = safeText(log.action);
+    document.getElementById("mdActorName").textContent = safeText(log.actorName);
+    document.getElementById("mdActorRole").textContent = `${safeText(log.actorRole)} (${safeText(log.actorType)})`;
+    document.getElementById("mdActorUid").textContent = safeText(log.actorUid);
+    document.getElementById("mdSubjectName").textContent = safeText(log.subjectName);
+    document.getElementById("mdSubjectNum").textContent = safeText(log.subjectStudentNumber);
+    document.getElementById("mdRecordId").textContent = safeText(log.recordId);
+    document.getElementById("mdRelatedRecordId").textContent = safeText(log.relatedRecordId);
+    document.getElementById("mdReason").textContent = safeText(log.reason || log.notes);
+
+    // State Before vs After rendering
+    const beforeEl = document.getElementById("mdStateBefore");
+    const afterEl = document.getElementById("mdStateAfter");
+
+    beforeEl.textContent = log.previousState ? JSON.stringify(log.previousState, null, 2) : "N/A (Initial Event)";
+    afterEl.textContent = log.newState ? JSON.stringify(log.newState, null, 2) : "N/A";
+
+    eventModal.classList.add("active");
+}
+
+function closeModal() {
+    eventModal.classList.remove("active");
+}
+
+document.getElementById("btnModalClose").addEventListener("click", closeModal);
+document.getElementById("btnModalCloseFooter").addEventListener("click", closeModal);
+
+/* ==========================================================================
+   PRINT / EXPORT A4 REPORT GENERATION
+========================================================================== */
+function updatePrintSummary() {
+    document.getElementById("sumTotal").textContent = filteredLogs.length;
+    document.getElementById("sumHousemate").textContent = filteredLogs.filter(l => (l.actorType || '').toUpperCase() === 'HOUSEMATE').length;
+    document.getElementById("sumAdmin").textContent = filteredLogs.filter(l => (l.actorType || '').toUpperCase() === 'RC_ADMIN').length;
+    document.getElementById("sumBookings").textContent = filteredLogs.filter(l => (l.category || '').toUpperCase() === 'BOOKING').length;
+    document.getElementById("sumFines").textContent = filteredLogs.filter(l => (l.category || '').toUpperCase() === 'FINE').length;
+    document.getElementById("sumDisputes").textContent = filteredLogs.filter(l => (l.category || '').toUpperCase() === 'FINE_DISPUTE').length;
+    document.getElementById("sumBreakages").textContent = filteredLogs.filter(l => (l.category || '').toUpperCase() === 'BREAKAGE').length;
+    document.getElementById("sumDecisions").textContent = filteredLogs.filter(l => (l.category || '').toUpperCase() === 'RC_DECISION').length;
+
+    const filtersText = `Category: ${filterCategory.value} | Actor: ${filterActorType.value} | Action: ${filterAction.value}`;
+    document.getElementById("printReportMeta").textContent = `Generated on: ${new Date().toLocaleString()} | ${filtersText}`;
+}
+
+document.getElementById("btnPrintReport").addEventListener("click", () => {
+    window.print();
+});
+
+/* ==========================================================================
+   NAVIGATION
+========================================================================== */
+document.getElementById("btnDashboard").addEventListener("click", () => {
+    window.location.href = "admin.html";
+});
+
+document.getElementById("btnLogout").addEventListener("click", async () => {
+    try {
+        await signOut(auth);
+        window.location.href = "index.html";
+    } catch (err) {
+        alert("Logout failed: " + err.message);
+    }
+});
+
+</script>
+</body>
+</html>
