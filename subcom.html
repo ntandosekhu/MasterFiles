@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subcommittee Management - Residence Management System</title>
+    
+    <!-- reCAPTCHA v3 Enterprise Script -->
+    <script src="https://www.google.com/recaptcha/enterprise.js?render=6LfAPn8tAAAAAOa1QF1-NqwCu6aPsGWyOep3mo2s"></script>
+
+    <style>
+        :root {
+            --space-blue: #1D2951;
+            --space-blue-hover: #151f3d;
+            --space-blue-light: #263968;
+            --space-blue-subtle: #f0f4ff;
+            --background: #f4f5f7;
+            --card-bg: #ffffff;
+            --border: #e2e8f0;
+            --text-primary: #1f2937;
+            --text-muted: #64748b;
+            --danger: #dc2626;
+            --danger-hover: #b91c1c;
+            --success: #059669;
+            --success-hover: #047857;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+
+        /* HEADER */
+        .header {
+            background: var(--space-blue);
+            color: white;
+            padding: 18px 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .header-branding h1 {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .header-branding p {
+            color: #cbd5e1;
+            font-size: 13px;
+            margin-top: 2px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .header-button {
+            border: none;
+            padding: 9px 16px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: background 0.15s ease;
+        }
+
+        .back-button {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .logout-button {
+            background: var(--danger);
+            color: white;
+        }
+
+        .logout-button:hover {
+            background: var(--danger-hover);
+        }
+
+        /* LAYOUT CONTAINER */
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            padding: 32px 20px 48px 20px;
+        }
+
+        /* LOADING & ACCESS DENIED GATES */
+        .status-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            gap: 16px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--border);
+            border-top-color: var(--space-blue);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .access-denied-card {
+            background: var(--card-bg);
+            border: 1px solid #fca5a5;
+            border-radius: 12px;
+            padding: 32px;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.08);
+        }
+
+        .access-denied-card h3 {
+            color: var(--danger);
+            margin-bottom: 8px;
+            font-size: 20px;
+        }
+
+        .access-denied-card p {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .page-content {
+            display: none; /* strictly hidden until authorization passes */
+        }
+
+        /* SCOPE CARD */
+        .scope-card {
+            background: var(--space-blue-subtle);
+            border: 1px solid #bfdbfe;
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin-bottom: 24px;
+        }
+
+        .scope-card h2 {
+            font-size: 18px;
+            color: var(--space-blue);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .scope-card p {
+            font-size: 13px;
+            color: #334155;
+        }
+
+        .scope-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .scope-tag {
+            background: var(--space-blue);
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
+
+        /* CARDS & FORMS */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--space-blue);
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 12px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+        }
+
+        .form-group label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .form-input, .form-select {
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            background: #fafafa;
+            color: var(--text-primary);
+            width: 100%;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--space-blue);
+            background: #ffffff;
+        }
+
+        .btn-action {
+            background: var(--space-blue);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s ease;
+            white-space: nowrap;
+        }
+
+        .btn-action:hover {
+            background: var(--space-blue-hover);
+        }
+
+        .btn-success {
+            background: var(--success);
+        }
+
+        .btn-success:hover {
+            background: var(--success-hover);
+        }
+
+        /* STUDENT DISPLAY CARD */
+        .student-details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+            background: #f8fafc;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .detail-item label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            display: block;
+        }
+
+        .detail-item span {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* HOUSE ROLE BADGES & REMOVAL */
+        .roles-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .role-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #e0f2fe;
+            color: #0369a1;
+            border: 1px solid #bae6fd;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .role-badge.read-only {
+            background: #f1f5f9;
+            color: #475569;
+            border-color: #e2e8f0;
+        }
+
+        .btn-remove-role {
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .btn-remove-role:hover {
+            background: var(--danger-hover);
+        }
+
+        .assign-section {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px dashed var(--border);
+        }
+
+        /* MODAL */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            max-width: 500px;
+            width: 100%;
+            padding: 24px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .modal-header {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--space-blue);
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+        }
+
+        .modal-body {
+            font-size: 14px;
+            margin-bottom: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .modal-row {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 6px;
+        }
+
+        .modal-row strong {
+            color: var(--text-muted);
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: var(--text-primary);
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e1;
+        }
+    </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+    <div class="header-branding">
+        <h1>Residence Management System</h1>
+        <p>Subcommittee Management & Role Assignment</p>
+    </div>
+    <div class="header-actions">
+        <button class="header-button back-button" id="btnDashboard">← Dashboard</button>
+        <button class="header-button logout-button" id="btnLogout">Log Out</button>
+    </div>
+</header>
+
+<main class="container">
+
+    <!-- INITIALIZATION & AUTHORIZATION LOADING GATE -->
+    <div id="loadingState" class="status-container">
+        <div class="spinner"></div>
+        <h3 id="loadingStatusText">Establishing Secure Connection...</h3>
+        <p>Verifying Firebase App Check token and RC subcommittee permissions.</p>
+    </div>
+
+    <!-- ACCESS DENIED STATE -->
+    <div id="accessDeniedState" class="status-container" style="display: none;">
+        <div class="access-denied-card">
+            <h3>Unauthorized Access</h3>
+            <p id="accessDeniedMessage">Your authenticated account does not have RC portfolio privileges required to manage subcommittees.</p>
+            <button class="btn-action" id="btnDeniedReturn">Return to Dashboard</button>
+        </div>
+    </div>
+
+    <!-- PROTECTED PAGE CONTENT -->
+    <div id="pageContent" class="page-content">
+
+        <!-- SCOPE HEADER -->
+        <section class="scope-card">
+            <h2>SUBCOMMITTEE MANAGEMENT &mdash; <span id="rcRoleTitle">Loading...</span></h2>
+            <p>You are authorized to assign and remove house roles strictly within your designated RC responsibility scope.</p>
+            <div class="scope-tags" id="permittedRolesContainer">
+                <!-- Permitted role badges dynamically inserted here -->
+            </div>
+        </section>
+
+        <!-- STUDENT SEARCH CARD -->
+        <section class="card">
+            <h3 class="card-title">1. Search Housemate by Student Number</h3>
+            <div class="search-box">
+                <div class="form-group">
+                    <label>Student Number</label>
+                    <input type="text" id="studentSearchInput" class="form-input" placeholder="e.g. 2026123456" />
+                </div>
+                <button class="btn-action" id="btnSearchStudent" style="align-self: flex-end;">Search</button>
+            </div>
+        </section>
+
+        <!-- STUDENT RESULT & ROLE MANAGEMENT CARD -->
+        <section class="card" id="studentResultCard" style="display: none;">
+            <h3 class="card-title">2. Housemate Portfolio & Role Management</h3>
+
+            <div class="student-details-grid">
+                <div class="detail-item">
+                    <label>Full Name</label>
+                    <span id="stName">-</span>
+                </div>
+                <div class="detail-item">
+                    <label>Student Number</label>
+                    <span id="stNumber">-</span>
+                </div>
+                <div class="detail-item">
+                    <label>Room Number</label>
+                    <span id="stRoom">-</span>
+                </div>
+                <div class="detail-item">
+                    <label>UID</label>
+                    <span id="stUid" style="font-size: 12px; font-family: monospace;">-</span>
+                </div>
+            </div>
+
+            <div>
+                <label style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted);">Current House Roles</label>
+                <div class="roles-list" id="currentRolesList">
+                    <!-- Current roles rendered here -->
+                </div>
+            </div>
+
+            <div class="assign-section">
+                <div class="form-group">
+                    <label>Assign Permitted Role</label>
+                    <select id="roleAssignSelect" class="form-select">
+                        <!-- Permitted roles dynamically populated -->
+                    </select>
+                </div>
+                <button class="btn-action btn-success" id="btnInitiateAssign">Assign House Role</button>
+            </div>
+        </section>
+
+    </div>
+
+</main>
+
+<!-- CONFIRMATION MODAL -->
+<div id="confirmModal" class="modal-overlay">
+    <div class="modal-card">
+        <div class="modal-header" id="modalHeaderTitle">Confirm Role Change</div>
+        <div class="modal-body">
+            <div class="modal-row">
+                <strong>Housemate:</strong>
+                <span id="mdStudentName">-</span>
+            </div>
+            <div class="modal-row">
+                <strong>Student Number:</strong>
+                <span id="mdStudentNumber">-</span>
+            </div>
+            <div class="modal-row">
+                <strong>Action:</strong>
+                <span id="mdActionType" style="font-weight: 700;">-</span>
+            </div>
+            <div class="modal-row">
+                <strong>Role:</strong>
+                <span id="mdRoleName" style="font-weight: 700; color: var(--space-blue);">-</span>
+            </div>
+            <div class="modal-row">
+                <strong>Managing RC:</strong>
+                <span id="mdRcTitle">-</span>
+            </div>
+            <div class="modal-row">
+                <strong>Current Roles:</strong>
+                <span id="mdCurrentRoles" style="font-size: 12px;">-</span>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary" id="btnCancelModal">Cancel</button>
+            <button class="btn-action" id="btnConfirmAction">Confirm & Write</button>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+
+/* ==========================================================================
+   FIREBASE IMPORTS
+   ========================================================================== */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app-check.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+import { 
+    getFirestore, collection, doc, getDoc, getDocs, updateDoc, 
+    addDoc, query, where, arrayUnion, arrayRemove, serverTimestamp 
+} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+
+/* ==========================================================================
+   FIREBASE INITIALIZATION
+   ========================================================================== */
+const firebaseConfig = {
+    apiKey: "AIzaSyDW6IArj2dZiqbf00Ix3SPPSqvxTKG0GgE",
+    authDomain: "master-files-95f6b.firebaseapp.com",
+    projectId: "master-files-95f6b",
+    storageBucket: "master-files-95f6b.firebasestorage.app",
+    messagingSenderId: "537891510061",
+    appId: "1:537891510061:web:fb46c8d1abae02b9e725a4",
+    measurementId: "G-4GNVR5EBJX"
+};
+
+const app = initializeApp(firebaseConfig);
+
+/* App Check Initialization */
+let appCheck;
+try {
+    appCheck = initializeAppCheck(app, {
+        provider: new ReCaptchaEnterpriseProvider('6LfAPn8tAAAAAOa1QF1-NqwCu6aPsGWyOep3mo2s'),
+        isTokenAutoRefreshEnabled: true
+    });
+} catch (err) {
+    console.error("App Check Initialization Error:", err);
+}
+
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+/* ==========================================================================
+   EXACT ROLE PERMISSION MAPPING & DICTIONARIES
+   ========================================================================== */
+const ROLE_MAP = {
+    'RC_FIRST_YEARS': {
+        title: 'RC First Years',
+        roles: [
+            { id: 'MENTOR', label: 'Mentor' },
+            { id: 'MENTOR_SECRETARY', label: 'Mentor Secretary' }
+        ]
+    },
+    'RC_SPORTS': {
+        title: 'RC Sports',
+        roles: [
+            { id: 'SPORTS_COMMITTEE', label: 'Sports Committee' },
+            { id: 'SPORTS_SECRETARY', label: 'Sports Secretary' }
+        ]
+    },
+    'RC_VICE_PRIME': {
+        title: 'RC Vice Prime',
+        roles: [
+            { id: 'DISCIPLINARY_COMMITTEE', label: 'Disciplinary Committee' },
+            { id: 'DC_SECRETARY', label: 'DC Secretary' }
+        ]
+    },
+    'RC_ACADEMICS': {
+        title: 'RC Academics',
+        roles: [
+            { id: 'PEER_TUTOR', label: 'Peer Tutor' }
+        ]
+    }
+};
+
+const ALL_ROLE_LABELS = {
+    'MENTOR': 'Mentor',
+    'MENTOR_SECRETARY': 'Mentor Secretary',
+    'SPORTS_COMMITTEE': 'Sports Committee',
+    'SPORTS_SECRETARY': 'Sports Secretary',
+    'DISCIPLINARY_COMMITTEE': 'Disciplinary Committee',
+    'DC_SECRETARY': 'DC Secretary',
+    'PEER_TUTOR': 'Peer Tutor'
+};
+
+/* STATE VARIABLES */
+let currentUser = null;
+let currentUserRecord = null;
+let currentRcKey = null;
+let permittedRoleObjects = [];
+let permittedRoleIds = [];
+
+let selectedStudentDoc = null;
+let pendingAction = null; // { type: 'ASSIGN' | 'REMOVE', roleId: string, roleLabel: string }
+
+/* DOM ELEMENTS */
+const loadingState = document.getElementById("loadingState");
+const loadingStatusText = document.getElementById("loadingStatusText");
+const accessDeniedState = document.getElementById("accessDeniedState");
+const accessDeniedMessage = document.getElementById("accessDeniedMessage");
+const pageContent = document.getElementById("pageContent");
+
+const rcRoleTitle = document.getElementById("rcRoleTitle");
+const permittedRolesContainer = document.getElementById("permittedRolesContainer");
+const roleAssignSelect = document.getElementById("roleAssignSelect");
+
+const studentSearchInput = document.getElementById("studentSearchInput");
+const btnSearchStudent = document.getElementById("btnSearchStudent");
+const studentResultCard = document.getElementById("studentResultCard");
+
+const stName = document.getElementById("stName");
+const stNumber = document.getElementById("stNumber");
+const stRoom = document.getElementById("stRoom");
+const stUid = document.getElementById("stUid");
+const currentRolesList = document.getElementById("currentRolesList");
+
+const confirmModal = document.getElementById("confirmModal");
+
+/* ==========================================================================
+   ROLE RESOLUTION HELPER
+   ========================================================================== */
+function resolveRcKey(data) {
+    if (!data) return null;
+    const candidates = [
+        data.rcRole, data.accountType, data.role, data.subcommitteeRole
+    ].filter(Boolean).map(s => String(s).toUpperCase().trim().replace(/\s+/g, '_'));
+
+    for (const raw of candidates) {
+        if (raw === 'RC_FIRST_YEARS' || raw.includes('FIRST_YEAR')) return 'RC_FIRST_YEARS';
+        if (raw === 'RC_SPORTS' || raw.includes('SPORT')) return 'RC_SPORTS';
+        if (raw === 'RC_VICE_PRIME' || raw.includes('VICE') || raw.includes('DISCIPLINARY')) return 'RC_VICE_PRIME';
+        if (raw === 'RC_ACADEMICS' || raw.includes('ACADEMIC')) return 'RC_ACADEMICS';
+    }
+    return null;
+}
+
+/* ==========================================================================
+   AUTHENTICATION & AUTHORIZATION FLOW
+   ========================================================================== */
+onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+        window.location.href = "index.html";
+        return;
+    }
+
+    currentUser = user;
+    loadingStatusText.textContent = "Checking Administrative Permissions...";
+
+    try {
+        const userDocRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userDocRef);
+
+        if (!userSnap.exists()) {
+            throw new Error("User record not found in system.");
+        }
+
+        currentUserRecord = userSnap.data();
+        currentRcKey = resolveRcKey(currentUserRecord);
+
+        if (!currentRcKey || !ROLE_MAP[currentRcKey]) {
+            showAccessDenied("Your authenticated account (" + (currentUserRecord.accountType || "User") + ") is not registered under a permitted RC Subcommittee portfolio.");
+            return;
+        }
+
+        // Set up permitted roles
+        const rcData = ROLE_MAP[currentRcKey];
+        permittedRoleObjects = rcData.roles;
+        permittedRoleIds = rcData.roles.map(r => r.id);
+
+        // Populate Interface Scope
+        rcRoleTitle.textContent = rcData.title;
+        permittedRolesContainer.innerHTML = permittedRoleObjects.map(r => 
+            `<span class="scope-tag">${r.label}</span>`
+        ).join("");
+
+        roleAssignSelect.innerHTML = permittedRoleObjects.map(r => 
+            `<option value="${r.id}">${r.label}</option>`
+        ).join("");
+
+        // Reveal Protected Interface
+        loadingState.style.display = "none";
+        pageContent.style.display = "block";
+
+    } catch (err) {
+        console.error("Authorization Error:", err);
+        showAccessDenied("Failed to verify authorization: " + err.message);
+    }
+});
+
+function showAccessDenied(msg) {
+    loadingState.style.display = "none";
+    accessDeniedMessage.textContent = msg;
+    accessDeniedState.style.display = "flex";
+}
+
+/* ==========================================================================
+   STUDENT SEARCH (PRIMARY IDENTIFIER: STUDENT NUMBER)
+   ========================================================================== */
+async function searchStudent() {
+    const rawInput = studentSearchInput.value.trim();
+    if (!rawInput) {
+        alert("Please enter a student number.");
+        return;
+    }
+
+    btnSearchStudent.disabled = true;
+    btnSearchStudent.textContent = "Searching...";
+
+    try {
+        const usersRef = collection(db, "users");
+        
+        // Query both string and numeric representations for robust matching
+        let q = query(usersRef, where("studentnumber", "==", rawInput));
+        let snap = await getDocs(q);
+
+        if (snap.empty) {
+            q = query(usersRef, where("studentNumber", "==", rawInput));
+            snap = await getDocs(q);
+        }
+
+        const numVal = parseInt(rawInput, 10);
+        if (snap.empty && !isNaN(numVal)) {
+            q = query(usersRef, where("studentnumber", "==", numVal));
+            snap = await getDocs(q);
+        }
+        if (snap.empty && !isNaN(numVal)) {
+            q = query(usersRef, where("studentNumber", "==", numVal));
+            snap = await getDocs(q);
+        }
+
+        if (snap.empty) {
+            alert("No housemate found with student number: " + rawInput);
+            studentResultCard.style.display = "none";
+            selectedStudentDoc = null;
+        } else {
+            const docSnap = snap.docs[0];
+            selectedStudentDoc = { id: docSnap.id, ...docSnap.data() };
+            displayStudentDetails();
+        }
+
+    } catch (err) {
+        console.error("Student search error:", err);
+        alert("Error searching for housemate: " + err.message);
+    } finally {
+        btnSearchStudent.disabled = false;
+        btnSearchStudent.textContent = "Search";
+    }
+}
+
+function displayStudentDetails() {
+    if (!selectedStudentDoc) return;
+
+    stName.textContent = selectedStudentDoc.name || selectedStudentDoc.fullName || "N/A";
+    stNumber.textContent = selectedStudentDoc.studentnumber || selectedStudentDoc.studentNumber || "N/A";
+    stRoom.textContent = selectedStudentDoc.roomNumber || selectedStudentDoc.room || "N/A";
+    stUid.textContent = selectedStudentDoc.id;
+
+    const currentRoles = Array.isArray(selectedStudentDoc.houseRoles) ? selectedStudentDoc.houseRoles : [];
+
+    if (currentRoles.length === 0) {
+        currentRolesList.innerHTML = `<span style="font-size:13px; color:var(--text-muted); italic;">No house roles currently assigned.</span>`;
+    } else {
+        currentRolesList.innerHTML = currentRoles.map(roleKey => {
+            const label = ALL_ROLE_LABELS[roleKey] || roleKey;
+            const isManageable = permittedRoleIds.includes(roleKey);
+
+            if (isManageable) {
+                return `
+                    <div class="role-badge">
+                        <span>${label}</span>
+                        <button class="btn-remove-role" data-role="${roleKey}" title="Remove ${label}">&times;</button>
+                    </div>
+                `;
+            } else {
+                return `
+                    <div class="role-badge read-only" title="Cannot be managed by ${ROLE_MAP[currentRcKey].title}">
+                        <span>${label}</span>
+                    </div>
+                `;
+            }
+        }).join("");
+    }
+
+    studentResultCard.style.display = "block";
+}
+
+btnSearchStudent.addEventListener("click", searchStudent);
+studentSearchInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") searchStudent();
+});
+
+/* ==========================================================================
+   ROLE ASSIGNMENT & REMOVAL INITIATION
+   ========================================================================== */
+// Initiate Assignment
+document.getElementById("btnInitiateAssign").addEventListener("click", () => {
+    if (!selectedStudentDoc) return;
+    const targetRole = roleAssignSelect.value;
+    
+    // Client-side Double Security Verification
+    if (!permittedRoleIds.includes(targetRole)) {
+        alert("SECURITY ERROR: You are not authorized to assign this role.");
+        return;
+    }
+
+    const currentRoles = Array.isArray(selectedStudentDoc.houseRoles) ? selectedStudentDoc.houseRoles : [];
+    if (currentRoles.includes(targetRole)) {
+        alert("This housemate already possesses the role: " + ALL_ROLE_LABELS[targetRole]);
+        return;
+    }
+
+    pendingAction = {
+        type: 'ASSIGN',
+        roleId: targetRole,
+        roleLabel: ALL_ROLE_LABELS[targetRole] || targetRole
+    };
+
+    openConfirmationModal();
+});
+
+// Initiate Removal
+currentRolesList.addEventListener("click", (e) => {
+    const btn = e.target.closest(".btn-remove-role");
+    if (!btn) return;
+    const targetRole = btn.getAttribute("data-role");
+
+    // Client-side Double Security Verification
+    if (!permittedRoleIds.includes(targetRole)) {
+        alert("SECURITY ERROR: You are not authorized to remove this role.");
+        return;
+    }
+
+    pendingAction = {
+        type: 'REMOVE',
+        roleId: targetRole,
+        roleLabel: ALL_ROLE_LABELS[targetRole] || targetRole
+    };
+
+    openConfirmationModal();
+});
+
+/* ==========================================================================
+   CONFIRMATION MODAL & FIRESTORE WRITE EXECUTION
+   ========================================================================== */
+function openConfirmationModal() {
+    if (!selectedStudentDoc || !pendingAction) return;
+
+    const currentRoles = Array.isArray(selectedStudentDoc.houseRoles) ? selectedStudentDoc.houseRoles : [];
+
+    document.getElementById("mdStudentName").textContent = selectedStudentDoc.name || "N/A";
+    document.getElementById("mdStudentNumber").textContent = selectedStudentDoc.studentnumber || selectedStudentDoc.studentNumber || "N/A";
+    document.getElementById("mdActionType").textContent = pendingAction.type === 'ASSIGN' ? 'ASSIGN ROLE' : 'REMOVE ROLE';
+    document.getElementById("mdActionType").style.color = pendingAction.type === 'ASSIGN' ? 'var(--success)' : 'var(--danger)';
+    document.getElementById("mdRoleName").textContent = pendingAction.roleLabel;
+    document.getElementById("mdRcTitle").textContent = ROLE_MAP[currentRcKey].title;
+    document.getElementById("mdCurrentRoles").textContent = currentRoles.length ? currentRoles.join(", ") : "None";
+
+    confirmModal.classList.add("active");
+}
+
+function closeModal() {
+    confirmModal.classList.remove("active");
+    pendingAction = null;
+}
+
+document.getElementById("btnCancelModal").addEventListener("click", closeModal);
+
+// EXECUTE WRITING TO FIRESTORE
+document.getElementById("btnConfirmAction").addEventListener("click", async () => {
+    if (!selectedStudentDoc || !pendingAction) return;
+
+    // MANDATORY SECURITY VERIFICATION BEFORE WRITE
+    if (!permittedRoleIds.includes(pendingAction.roleId)) {
+        alert("SECURITY REJECTION: Target role falls outside permitted RC scope.");
+        closeModal();
+        return;
+    }
+
+    const btnConfirm = document.getElementById("btnConfirmAction");
+    btnConfirm.disabled = true;
+    btnConfirm.textContent = "Writing...";
+
+    try {
+        const studentRef = doc(db, "users", selectedStudentDoc.id);
+        const previousHouseRoles = Array.isArray(selectedStudentDoc.houseRoles) ? [...selectedStudentDoc.houseRoles] : [];
+
+        // 1. Update Student's houseRoles Array (Preserving non-managed roles)
+        if (pendingAction.type === 'ASSIGN') {
+            await updateDoc(studentRef, {
+                houseRoles: arrayUnion(pendingAction.roleId)
+            });
+        } else if (pendingAction.type === 'REMOVE') {
+            await updateDoc(studentRef, {
+                houseRoles: arrayRemove(pendingAction.roleId)
+            });
+        }
+
+        // Calculate state for audit log
+        let updatedHouseRoles = [...previousHouseRoles];
+        if (pendingAction.type === 'ASSIGN') {
+            if (!updatedHouseRoles.includes(pendingAction.roleId)) updatedHouseRoles.push(pendingAction.roleId);
+        } else {
+            updatedHouseRoles = updatedHouseRoles.filter(r => r !== pendingAction.roleId);
+        }
+
+        // 2. Log Activity to audit trail
+        await addDoc(collection(db, "activityLogs"), {
+            category: "HOUSE_ROLE",
+            action: pendingAction.type === 'ASSIGN' ? "ASSIGNED" : "REMOVED",
+            role: pendingAction.roleId,
+            actorUid: currentUser.uid,
+            actorName: currentUserRecord.name || currentUser.displayName || "Admin/RC",
+            actorRole: currentRcKey,
+            subjectUid: selectedStudentDoc.id,
+            subjectName: selectedStudentDoc.name || selectedStudentDoc.fullName || "Housemate",
+            subjectStudentNumber: selectedStudentDoc.studentnumber || selectedStudentDoc.studentNumber || "",
+            previousState: previousHouseRoles,
+            newState: updatedHouseRoles,
+            timestamp: serverTimestamp()
+        });
+
+        // 3. Update local state & refresh view
+        selectedStudentDoc.houseRoles = updatedHouseRoles;
+        displayStudentDetails();
+
+        alert(`Successfully ${pendingAction.type === 'ASSIGN' ? 'assigned' : 'removed'} ${pendingAction.roleLabel}!`);
+        closeModal();
+
+    } catch (err) {
+        console.error("Firestore Write Error:", err);
+        alert("Operation failed: " + err.message);
+    } finally {
+        btnConfirm.disabled = false;
+        btnConfirm.textContent = "Confirm & Write";
+    }
+});
+
+/* ==========================================================================
+   NAVIGATION
+   ========================================================================== */
+document.getElementById("btnDashboard").addEventListener("click", () => {
+    window.location.href = "admin.html";
+});
+
+document.getElementById("btnDeniedReturn").addEventListener("click", () => {
+    window.location.href = "admin.html";
+});
+
+document.getElementById("btnLogout").addEventListener("click", async () => {
+    try {
+        await signOut(auth);
+        window.location.href = "index.html";
+    } catch (err) {
+        alert("Logout failed: " + err.message);
+    }
+});
+
+</script>
+</body>
+</html>
