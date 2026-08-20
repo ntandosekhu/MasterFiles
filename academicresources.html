@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>House Beyers Naude - Academic Resources</title>
+<title>House Beyers Naude - Resources Hub</title>
 
 <style>
 /* =========================
@@ -134,12 +134,6 @@ body {
     animation: spin 0.8s linear infinite;
 }
 
-.spinner-sm {
-    width: 20px;
-    height: 20px;
-    border-width: 2px;
-}
-
 @keyframes spin {
     to { transform: rotate(360deg); }
 }
@@ -179,97 +173,7 @@ body {
 }
 
 /* =========================
-   PROGRAM DIRECTOR PANEL
-========================= */
-.pd-panel {
-    background: var(--card-bg);
-    border-radius: 12px;
-    padding: 22px 26px;
-    margin-bottom: 32px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    border-left: 5px solid var(--space-blue);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 20px;
-}
-
-.pd-info-group {
-    display: flex;
-    align-items: flex-start;
-    gap: 16px;
-}
-
-.pd-avatar-badge {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background-color: var(--space-blue);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 22px;
-    flex-shrink: 0;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-}
-
-.pd-details h3 {
-    font-size: 18px;
-    color: var(--space-blue);
-    font-weight: 700;
-    margin-bottom: 2px;
-}
-
-.pd-title-label {
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    color: var(--text-muted);
-    margin-bottom: 4px;
-}
-
-.pd-subtext {
-    font-size: 13px;
-    color: var(--text-muted);
-    line-height: 1.4;
-}
-
-.btn-primary {
-    background: var(--space-blue);
-    color: white;
-    border: none;
-    padding: 11px 20px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    text-align: center;
-    transition: background 0.15s ease;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    white-space: nowrap;
-}
-
-.btn-primary:hover {
-    background: var(--space-blue-hover);
-}
-
-.btn-disabled {
-    background: #cbd5e1;
-    cursor: not-allowed;
-}
-
-.btn-disabled:hover {
-    background: #cbd5e1;
-}
-
-/* =========================
-   SEARCH & FILTER BAR
+   SEARCH BAR
 ========================= */
 .search-section {
     margin-bottom: 24px;
@@ -313,7 +217,7 @@ body {
 }
 
 /* =========================
-   FACULTY ACCORDION HIERARCHY
+   CATEGORY BUTTONS & ACCORDION
 ========================= */
 .section-heading {
     font-size: 12px;
@@ -324,14 +228,13 @@ body {
     margin-bottom: 14px;
 }
 
-.faculty-list {
+.category-list {
     display: flex;
     flex-direction: column;
     gap: 16px;
 }
 
-/* Level 1: Faculty Card */
-.faculty-card {
+.category-card {
     background: var(--card-bg);
     border: 1px solid var(--border);
     border-radius: 12px;
@@ -340,12 +243,12 @@ body {
     transition: box-shadow 0.15s ease, border-color 0.15s ease;
 }
 
-.faculty-card:hover {
+.category-card:hover {
     border-color: #cbd5e1;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
-.faculty-header {
+.category-header {
     padding: 20px 24px;
     display: flex;
     align-items: center;
@@ -356,37 +259,41 @@ body {
     transition: background-color 0.15s ease;
 }
 
-.faculty-header:hover {
+.category-header:hover {
     background-color: var(--accent-bg);
 }
 
-.faculty-title-group {
+.category-title-group {
     display: flex;
     align-items: center;
     gap: 14px;
 }
 
-.faculty-icon-badge {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background-color: var(--space-blue);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    flex-shrink: 0;
-}
-
-.faculty-name {
-    font-size: 18px;
+.category-name {
+    font-size: 16px;
     font-weight: 700;
     color: var(--space-blue);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.category-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.category-count {
+    background: var(--badge-bg);
+    color: var(--badge-text);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 12px;
 }
 
 .accordion-chevron {
-    font-size: 14px;
+    font-size: 12px;
     color: var(--text-muted);
     transition: transform 0.2s ease;
     width: 28px;
@@ -398,93 +305,26 @@ body {
     background: #f1f5f9;
 }
 
-.faculty-card.open .faculty-chevron {
+.category-card.open .accordion-chevron {
     transform: rotate(180deg);
 }
 
-.faculty-body {
+.category-body {
     display: none;
-    padding: 0 24px 24px 24px;
+    padding: 0 24px 20px 24px;
     border-top: 1px solid var(--border);
     background: #fdfdfd;
 }
 
-.faculty-card.open .faculty-body {
+.category-card.open .category-body {
     display: block;
 }
 
-/* Level 2: Course Card */
-.courses-container {
-    padding-top: 18px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.course-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    overflow: hidden;
-    transition: border-color 0.15s ease;
-}
-
-.course-card:hover {
-    border-color: #cbd5e1;
-}
-
-.course-header {
-    padding: 14px 18px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    cursor: pointer;
-    background: var(--accent-bg);
-    user-select: none;
-}
-
-.course-header:hover {
-    background: #f1f5f9;
-}
-
-.course-title-group {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.course-code-badge {
-    background: var(--badge-bg);
-    color: var(--badge-text);
-    padding: 3px 8px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 700;
-}
-
-.course-name {
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--text-primary);
-}
-
-.course-card.open .course-chevron {
-    transform: rotate(180deg);
-}
-
-.course-body {
-    display: none;
-    padding: 16px 18px;
-    border-top: 1px solid var(--border);
-    background: var(--card-bg);
-}
-
-.course-card.open .course-body {
-    display: block;
-}
-
-/* Level 3: Resource Items */
-.resources-list {
+/* =========================
+   RESOURCE ITEM DISPLAY
+========================= */
+.resources-container {
+    padding-top: 16px;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -494,7 +334,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 16px;
+    padding: 14px 18px;
     background: var(--accent-bg);
     border: 1px solid var(--border);
     border-radius: 8px;
@@ -507,46 +347,20 @@ body {
     background: #ffffff;
 }
 
-.resource-main {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    min-width: 0;
-}
-
-.resource-icon {
-    font-size: 18px;
-    flex-shrink: 0;
-}
-
-.resource-text {
-    min-width: 0;
-}
-
-.resource-title {
-    font-size: 14px;
+.resource-name {
+    font-size: 15px;
     font-weight: 600;
     color: var(--space-blue);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    min-width: 0;
+    word-break: break-word;
 }
 
-.resource-desc {
-    font-size: 12px;
-    color: var(--text-muted);
-    margin-top: 1px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.btn-resource {
+.btn-website {
     background: var(--space-blue);
     color: white;
-    padding: 7px 14px;
+    padding: 7px 16px;
     border-radius: 6px;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 700;
     text-decoration: none;
     transition: background 0.15s ease;
@@ -556,21 +370,15 @@ body {
     gap: 4px;
 }
 
-.btn-resource:hover {
+.btn-website:hover {
     background: var(--space-blue-hover);
 }
 
-.btn-resource.disabled {
-    background: #e2e8f0;
-    color: #94a3b8;
-    cursor: not-allowed;
-}
-
 /* =========================
-   EMPTY & INFORMATIONAL STATES
+   EMPTY STATES
 ========================= */
 .empty-state {
-    padding: 24px;
+    padding: 20px;
     text-align: center;
     color: var(--text-muted);
     font-size: 13px;
@@ -601,31 +409,22 @@ body {
         justify-content: space-between;
     }
 
-    .pd-panel {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .btn-primary {
-        width: 100%;
-        justify-content: center;
-    }
-
     .resource-item {
         flex-direction: column;
         align-items: flex-start;
+        gap: 10px;
     }
 
-    .btn-resource {
+    .btn-website {
         width: 100%;
         justify-content: center;
     }
 
-    .faculty-header {
+    .category-header {
         padding: 16px;
     }
 
-    .faculty-body {
+    .category-body {
         padding: 0 16px 16px 16px;
     }
 }
@@ -639,8 +438,8 @@ body {
 ========================= -->
 <header class="header">
     <div class="header-branding">
-        <h1>Academic Resources</h1>
-        <p>Academic support and resources</p>
+        <h1>Resources Hub</h1>
+        <p>Dynamic UFS Resource Directory</p>
     </div>
     <div class="header-actions">
         <a href="clienthub.html" class="btn-secondary">← Back to Dashboard</a>
@@ -655,7 +454,7 @@ body {
     ========================= -->
     <div id="loadingState" class="loading-container">
         <div class="spinner"></div>
-        <p>Loading academic resources portal...</p>
+        <p>Loading UFS resource directory...</p>
     </div>
 
     <div id="errorBanner" class="error-banner"></div>
@@ -667,39 +466,24 @@ body {
 
         <!-- TITLE SECTION -->
         <section class="page-title">
-            <h2>Academic Resources</h2>
-            <p>Access academic resources organised by faculty and course.</p>
-        </section>
-
-        <!-- PROGRAM DIRECTOR PANEL -->
-        <section class="pd-panel" id="pdPanel">
-            <div class="pd-info-group">
-                <div class="pd-avatar-badge">🎓</div>
-                <div class="pd-details">
-                    <div class="pd-title-label">Program Director</div>
-                    <h3 id="pdName">Checking Program Director...</h3>
-                    <p class="pd-subtext" id="pdCourseContext">Loading course association...</p>
-                </div>
-            </div>
-            <div id="pdActionArea">
-                <button class="btn-primary btn-disabled" id="pdContactBtn" disabled>Contact Program Director</button>
-            </div>
+            <h2>Resources Hub</h2>
+            <p>Choose an area to explore available academic and general university services.</p>
         </section>
 
         <!-- SEARCH BAR -->
         <section class="search-section">
             <div class="search-input-wrapper">
                 <span class="search-icon">🔍</span>
-                <input type="text" id="searchInput" class="search-input" placeholder="Search faculties, courses, or resource titles...">
+                <input type="text" id="searchInput" class="search-input" placeholder="Search resources or category names...">
             </div>
         </section>
 
-        <!-- FACULTY ACCORDION BROWSER -->
+        <!-- CATEGORY ACCORDION DIRECTORY -->
         <section class="services-group">
-            <h4 class="section-heading">Academic Faculties</h4>
+            <h4 class="section-heading">Resource Categories</h4>
             
-            <div id="facultiesContainer" class="faculty-list">
-                <!-- Faculties loaded dynamically via JS -->
+            <div id="categoriesContainer" class="category-list">
+                <!-- 10 Category buttons rendered dynamically -->
             </div>
         </section>
 
@@ -729,8 +513,6 @@ import {
 
 import {
     getFirestore,
-    doc,
-    getDoc,
     collection,
     getDocs
 } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
@@ -748,15 +530,38 @@ const firebaseConfig = {
     measurementId: "G-4GNVR5EBJX"
 };
 
+// Initialize Firebase App
 const app = initializeApp(firebaseConfig);
 
-const appCheck = initializeAppCheck(app, {
-    provider: new ReCaptchaV3Provider('6LfAPn8tAAAAAOa1QF1-NqwCu6aPsGWyOep3mo2s'),
-    isTokenAutoRefreshEnabled: true
-});
+// Initialize Firebase App Check with reCAPTCHA v3
+try {
+    initializeAppCheck(app, {
+        provider: new ReCaptchaV3Provider('6Ld_Your_ReCaptcha_Site_Key_Here'),
+        isTokenAutoRefreshEnabled: true
+    });
+} catch (acErr) {
+    console.warn("[AppCheck] Skipping or already initialized:", acErr);
+}
 
 const auth = getAuth(app);
 const db = getFirestore(app);
+
+/* =========================
+   DEFINED CATEGORY STRUCTURE (10 BUTTONS)
+   Matches the Firestore classification field values.
+========================= */
+const DEFINED_CATEGORIES = [
+    { key: "ECONOMIC_AND_MANAGEMENT_SCIENCES", label: "Economic and Management Sciences" },
+    { key: "EDUCATION", label: "Education" },
+    { key: "HEALTH_SCIENCES", label: "Health Sciences" },
+    { key: "HUMANITIES", label: "Humanities" },
+    { key: "LAW", label: "Law" },
+    { key: "NATURAL_AND_AGRICULTURAL_SCIENCES", label: "Natural and Agricultural Sciences" },
+    { key: "THEOLOGY_AND_RELIGION", label: "Theology and Religion" },
+    { key: "UFS_BUSINESS_SCHOOL", label: "UFS Business School" },
+    { key: "OTHER_FACULTY", label: "Other Faculty Services" },
+    { key: "GENERAL_UFS", label: "General UFS Resources" }
+];
 
 /* =========================
    DOM REFERENCES
@@ -765,19 +570,13 @@ const loadingState = document.getElementById("loadingState");
 const dashboardContent = document.getElementById("dashboardContent");
 const errorBanner = document.getElementById("errorBanner");
 const logoutButton = document.getElementById("logoutButton");
-
-const pdNameEl = document.getElementById("pdName");
-const pdCourseContextEl = document.getElementById("pdCourseContext");
-const pdActionAreaEl = document.getElementById("pdActionArea");
-
 const searchInput = document.getElementById("searchInput");
-const facultiesContainer = document.getElementById("facultiesContainer");
+const categoriesContainer = document.getElementById("categoriesContainer");
 
 /* =========================
-   GLOBAL STATE
+   GLOBAL DATA STORE
 ========================= */
-let facultiesData = [];
-let userCourse = "";
+let rawResources = [];
 
 /* =========================
    HELPERS & ERROR HANDLING
@@ -789,7 +588,7 @@ function showError(message) {
 }
 
 function logError(context, err) {
-    console.error(`[AcademicResources] ${context}:`, err);
+    console.error(`[ResourcesHub] ${context}:`, err);
 }
 
 /* =========================
@@ -815,263 +614,164 @@ onAuthStateChanged(auth, async (user) => {
     }
 
     try {
-        // 1. Fetch authenticated user's profile
-        const userRef = doc(db, "users", user.uid);
-        const userSnap = await getDoc(userRef);
+        // Retrieve dynamic Firestore documents
+        await loadFirestoreResources();
 
-        if (userSnap.exists()) {
-            const userData = userSnap.data();
-            userCourse = userData.course || userData.program || userData.courseCode || "";
-        }
-
-        // 2. Load complete faculties hierarchy
-        await loadFacultiesHierarchy();
-
-        // 3. Resolve Program Director details based on user's course
-        resolveProgramDirector();
-
-        // 4. Reveal UI
+        // Reveal UI
         loadingState.style.display = "none";
         dashboardContent.style.display = "block";
 
     } catch (error) {
         logError("Page initialization error", error);
-        showError("We could not load the academic resources portal. Please try refreshing the page.");
+        showError("Could not load the UFS Resources Directory. Please check your connection or permissions.");
     }
 });
 
 /* =========================
-   PROGRAM DIRECTOR RESOLUTION
+   DYNAMIC FIRESTORE RETRIEVAL
 ========================= */
-function resolveProgramDirector() {
-    if (!userCourse) {
-        pdNameEl.textContent = "Program Director information is currently unavailable.";
-        pdCourseContextEl.textContent = "No course recorded for your account profile.";
-        pdActionAreaEl.innerHTML = `<button class="btn-primary btn-disabled" disabled>Contact Program Director</button>`;
-        return;
-    }
+async function loadFirestoreResources() {
+    rawResources = [];
 
-    let foundDirector = null;
-    let matchingCourseName = userCourse;
+    // Path: StudentResources / Academic / NAS
+    const nasRef = collection(db, "StudentResources", "Academic", "NAS");
+    const snap = await getDocs(nasRef);
 
-    const normalizedUserCourse = userCourse.trim().toLowerCase();
+    snap.forEach(docSnap => {
+        const data = docSnap.data();
 
-    // Traverse loaded faculties and courses to find matching program director
-    for (const faculty of facultiesData) {
-        for (const course of faculty.courses) {
-            const codeMatch = course.code && course.code.trim().toLowerCase() === normalizedUserCourse;
-            const nameMatch = course.name && course.name.trim().toLowerCase().includes(normalizedUserCourse);
-            
-            if (codeMatch || nameMatch) {
-                matchingCourseName = course.code ? `${course.code} — ${course.name || ''}` : course.name;
-                if (course.programDirector) {
-                    foundDirector = course.programDirector;
-                    break;
-                }
-            }
-        }
-        if (foundDirector) break;
-    }
+        // entry name: Use stored field or fall back to Firestore document ID
+        const entryName = data["entry name"] || data.entryName || data.name || docSnap.id;
+        const website = data.website || data.url || "";
 
-    if (foundDirector) {
-        const directorName = typeof foundDirector === 'object' ? (foundDirector.name || "Program Director") : foundDirector;
-        const directorEmail = typeof foundDirector === 'object' ? (foundDirector.email || "") : "";
-        
-        pdNameEl.textContent = directorName;
-        pdCourseContextEl.textContent = `Course: ${matchingCourseName}`;
+        // Read classification fields directly from document
+        const isGeneral = data.isGeneral === true || data.isGeneralResource === true || data.classificationType === "GENERAL";
+        const facultyCategory = data.facultyCategory || data.faculty || data.category || "";
 
-        if (directorEmail) {
-            pdActionAreaEl.innerHTML = `
-                <a href="mailto:${directorEmail}?subject=Academic Inquiry - House Beyers Naude" class="btn-primary">
-                    ✉️ Contact Program Director
-                </a>`;
-        } else {
-            pdActionAreaEl.innerHTML = `
-                <button class="btn-primary" onclick="alert('Program Director Email: ${directorEmail || 'Contact residence management for assistance.'}')">
-                    Contact Program Director
-                </button>`;
-        }
-    } else {
-        pdNameEl.textContent = "Program Director information is currently unavailable.";
-        pdCourseContextEl.textContent = `Course: ${userCourse}`;
-        pdActionAreaEl.innerHTML = `<button class="btn-primary btn-disabled" disabled>Contact Program Director</button>`;
-    }
+        rawResources.push({
+            id: docSnap.id,
+            entryName: entryName,
+            website: website,
+            isGeneral: isGeneral,
+            facultyCategory: facultyCategory
+        });
+    });
+
+    renderDirectory(rawResources);
 }
 
 /* =========================
-   FIREBASE DATA RETRIEVAL
+   CLASSIFICATION LOGIC
 ========================= */
-async function loadFacultiesHierarchy() {
-    facultiesData = [];
-    facultiesContainer.innerHTML = "";
-
-    try {
-        const facultiesRef = collection(db, "faculties");
-        const facultiesSnap = await getDocs(facultiesRef);
-
-        if (facultiesSnap.empty) {
-            facultiesContainer.innerHTML = `
-                <div class="empty-state empty-state-main">
-                    📁 No academic faculties are currently available.
-                </div>`;
-            return;
-        }
-
-        // Fetch courses for each faculty
-        for (const facultyDoc of facultiesSnap.docs) {
-            const fData = facultyDoc.data();
-            const facultyObj = {
-                id: facultyDoc.id,
-                name: fData.name || fData.facultyName || fData.title || `Faculty (${facultyDoc.id})`,
-                courses: []
-            };
-
-            // Fetch course subcollection
-            try {
-                const coursesRef = collection(db, "faculties", facultyDoc.id, "courses");
-                const coursesSnap = await getDocs(coursesRef);
-
-                for (const courseDoc of coursesSnap.docs) {
-                    const cData = courseDoc.data();
-                    const courseObj = {
-                        id: courseDoc.id,
-                        code: cData.code || cData.courseCode || courseDoc.id.toUpperCase(),
-                        name: cData.name || cData.courseName || cData.title || "",
-                        programDirector: cData.programDirector || cData.director || null,
-                        resources: []
-                    };
-
-                    // Handle resources stored as array inside doc or in subcollection
-                    if (Array.isArray(cData.resources)) {
-                        courseObj.resources = cData.resources;
-                    } else {
-                        try {
-                            const resourcesRef = collection(db, "faculties", facultyDoc.id, "courses", courseDoc.id, "resources");
-                            const resourcesSnap = await getDocs(resourcesRef);
-                            resourcesSnap.forEach(resDoc => {
-                                courseObj.resources.push({ id: resDoc.id, ...resDoc.data() });
-                            });
-                        } catch (resErr) {
-                            logError(`Could not fetch resources subcollection for ${courseDoc.id}`, resErr);
-                        }
-                    }
-
-                    facultyObj.courses.push(courseObj);
-                }
-            } catch (courseErr) {
-                logError(`Could not fetch courses for faculty ${facultyDoc.id}`, courseErr);
-            }
-
-            facultiesData.push(facultyObj);
-        }
-
-        renderFaculties(facultiesData);
-
-    } catch (error) {
-        logError("Firestore query error", error);
-        facultiesContainer.innerHTML = `
-            <div class="empty-state empty-state-main">
-                ⚠️ Academic resources could not be loaded at this time. Please check your connection.
-            </div>`;
+function classifyResource(res) {
+    // 1. GENERAL UFS RESOURCE
+    if (res.isGeneral) {
+        return "GENERAL_UFS";
     }
+
+    // 2. FACULTY RESOURCE MATCHING
+    const val = (res.facultyCategory || "").toUpperCase().replace(/[^A-Z]/g, "_");
+
+    if (val.includes("NAS") || val.includes("NATURAL")) return "NATURAL_AND_AGRICULTURAL_SCIENCES";
+    if (val.includes("EMS") || val.includes("ECONOMIC")) return "ECONOMIC_AND_MANAGEMENT_SCIENCES";
+    if (val.includes("EDU")) return "EDUCATION";
+    if (val.includes("HEALTH") || val.includes("MED")) return "HEALTH_SCIENCES";
+    if (val.includes("HUMAN") || val.includes("ARTS")) return "HUMANITIES";
+    if (val.includes("LAW")) return "LAW";
+    if (val.includes("THEO")) return "THEOLOGY_AND_RELIGION";
+    if (val.includes("BUSINESS")) return "UFS_BUSINESS_SCHOOL";
+
+    // Direct key matches if exactly matching category key
+    const exactMatch = DEFINED_CATEGORIES.find(c => c.key === val);
+    if (exactMatch) return exactMatch.key;
+
+    return "OTHER_FACULTY";
 }
 
 /* =========================
    UI RENDERING FUNCTIONS
 ========================= */
-function renderFaculties(faculties) {
-    facultiesContainer.innerHTML = "";
+function renderDirectory(resources, searchQuery = "") {
+    categoriesContainer.innerHTML = "";
 
-    if (!faculties || faculties.length === 0) {
-        facultiesContainer.innerHTML = `
-            <div class="empty-state empty-state-main">
-                No matching academic faculties or resources found.
-            </div>`;
-        return;
-    }
+    // Map resources to defined categories
+    const categoriesMap = {};
+    DEFINED_CATEGORIES.forEach(cat => {
+        categoriesMap[cat.key] = {
+            ...cat,
+            items: []
+        };
+    });
 
-    faculties.forEach((faculty, fIndex) => {
-        const facultyCard = document.createElement("div");
-        facultyCard.className = "faculty-card";
-        facultyCard.id = `faculty-card-${fIndex}`;
+    // Populate items using document classification fields
+    resources.forEach(res => {
+        // Filter by search query if active
+        if (searchQuery) {
+            const matchesName = res.entryName.toLowerCase().includes(searchQuery);
+            const catKey = classifyResource(res);
+            const matchesCategory = categoriesMap[catKey]?.label.toLowerCase().includes(searchQuery);
 
-        const coursesCount = faculty.courses.length;
+            if (!matchesName && !matchesCategory) return;
+        }
 
-        facultyCard.innerHTML = `
-            <div class="faculty-header" onclick="toggleFaculty(${fIndex})">
-                <div class="faculty-title-group">
-                    <span class="faculty-icon-badge">🏛️</span>
-                    <div>
-                        <div class="faculty-name">${escapeHtml(faculty.name)}</div>
-                    </div>
+        const catKey = classifyResource(res);
+        if (categoriesMap[catKey]) {
+            categoriesMap[catKey].items.push(res);
+        }
+    });
+
+    // Render each category button
+    DEFINED_CATEGORIES.forEach((catDef, index) => {
+        const catData = categoriesMap[catDef.key];
+        const count = catData.items.length;
+
+        const card = document.createElement("div");
+        card.className = "category-card";
+        if (searchQuery && count > 0) {
+            card.classList.add("open"); // Auto expand during search
+        }
+        card.id = `category-card-${index}`;
+
+        card.innerHTML = `
+            <div class="category-header" onclick="toggleCategory(${index})">
+                <div class="category-title-group">
+                    <span class="category-name">${escapeHtml(catDef.label)}</span>
                 </div>
-                <div class="accordion-chevron faculty-chevron">▼</div>
+                <div class="category-meta">
+                    <span class="category-count">${count}</span>
+                    <div class="accordion-chevron">▼</div>
+                </div>
             </div>
-            <div class="faculty-body">
-                <div class="courses-container" id="courses-container-${fIndex}">
-                    ${renderCoursesHTML(faculty.courses, fIndex)}
+            <div class="category-body">
+                <div class="resources-container">
+                    ${renderResourceList(catData.items)}
                 </div>
             </div>
         `;
 
-        facultiesContainer.appendChild(facultyCard);
+        categoriesContainer.appendChild(card);
     });
 }
 
-function renderCoursesHTML(courses, fIndex) {
-    if (!courses || courses.length === 0) {
-        return `<div class="empty-state">No courses are currently available for this faculty.</div>`;
+function renderResourceList(items) {
+    if (!items || items.length === 0) {
+        return `<div class="empty-state">No resources currently available in this category.</div>`;
     }
 
-    return courses.map((course, cIndex) => {
-        const resourceCount = course.resources ? course.resources.length : 0;
-        const displayName = course.name ? `${course.name}` : "";
-
-        return `
-            <div class="course-card" id="course-card-${fIndex}-${cIndex}">
-                <div class="course-header" onclick="toggleCourse(${fIndex}, ${cIndex}, event)">
-                    <div class="course-title-group">
-                        <span class="course-code-badge">${escapeHtml(course.code)}</span>
-                        ${displayName ? `<span class="course-name">${escapeHtml(displayName)}</span>` : ''}
-                    </div>
-                    <div class="accordion-chevron course-chevron">▼</div>
-                </div>
-                <div class="course-body">
-                    <div class="resources-list">
-                        ${renderResourcesHTML(course.resources)}
-                    </div>
-                </div>
-            </div>
-        `;
-    }).join("");
-}
-
-function renderResourcesHTML(resources) {
-    if (!resources || resources.length === 0) {
-        return `<div class="empty-state">No academic resources are currently available for this course.</div>`;
-    }
-
-    return resources.map(res => {
-        const title = res.title || res.name || "Academic Document";
-        const desc = res.description || res.type || "";
-        const rawUrl = res.url || res.link || "";
-        const isValidUrl = rawUrl && rawUrl.trim() !== "";
+    return items.map(item => {
+        const rawUrl = (item.website || "").trim();
+        const hasUrl = rawUrl.length > 0;
+        const href = hasUrl ? (rawUrl.startsWith("http") ? rawUrl : `https://${rawUrl}`) : "#";
 
         return `
             <div class="resource-item">
-                <div class="resource-main">
-                    <span class="resource-icon">📄</span>
-                    <div class="resource-text">
-                        <div class="resource-title">${escapeHtml(title)}</div>
-                        ${desc ? `<div class="resource-desc">${escapeHtml(desc)}</div>` : ''}
-                    </div>
-                </div>
-                ${isValidUrl ? `
-                    <a href="${escapeHtml(rawUrl)}" target="_blank" rel="noopener noreferrer" class="btn-resource">
-                        Open Resource ↗
+                <div class="resource-name">${escapeHtml(item.entryName)}</div>
+                ${hasUrl ? `
+                    <a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer" class="btn-website">
+                        Website ↗
                     </a>
                 ` : `
-                    <button class="btn-resource disabled" disabled>Link Unavailable</button>
+                    <span class="btn-website" style="background:#cbd5e1; cursor:default;">No Link</span>
                 `}
             </div>
         `;
@@ -1079,18 +779,10 @@ function renderResourcesHTML(resources) {
 }
 
 /* =========================
-   ACCORDION INTERACTION LOGIC
+   CATEGORY TOGGLE INTERACTION
 ========================= */
-window.toggleFaculty = function(fIndex) {
-    const card = document.getElementById(`faculty-card-${fIndex}`);
-    if (card) {
-        card.classList.toggle("open");
-    }
-};
-
-window.toggleCourse = function(fIndex, cIndex, event) {
-    event.stopPropagation();
-    const card = document.getElementById(`course-card-${fIndex}-${cIndex}`);
+window.toggleCategory = function(index) {
+    const card = document.getElementById(`category-card-${index}`);
     if (card) {
         card.classList.toggle("open");
     }
@@ -1101,51 +793,7 @@ window.toggleCourse = function(fIndex, cIndex, event) {
 ========================= */
 searchInput.addEventListener("input", (e) => {
     const query = e.target.value.trim().toLowerCase();
-
-    if (!query) {
-        // Reset view
-        renderFaculties(facultiesData);
-        return;
-    }
-
-    // Filter faculties, courses, or resource titles
-    const filteredFaculties = facultiesData.map(faculty => {
-        const facultyMatches = faculty.name.toLowerCase().includes(query);
-
-        const filteredCourses = faculty.courses.map(course => {
-            const courseMatches = course.code.toLowerCase().includes(query) || course.name.toLowerCase().includes(query);
-
-            const filteredResources = course.resources.filter(res => {
-                const title = (res.title || res.name || "").toLowerCase();
-                const desc = (res.description || "").toLowerCase();
-                return title.includes(query) || desc.includes(query);
-            });
-
-            if (courseMatches || filteredResources.length > 0) {
-                return {
-                    ...course,
-                    resources: courseMatches ? course.resources : filteredResources,
-                    _forceOpen: true
-                };
-            }
-            return null;
-        }).filter(c => c !== null);
-
-        if (facultyMatches || filteredCourses.length > 0) {
-            return {
-                ...faculty,
-                courses: facultyMatches ? faculty.courses : filteredCourses,
-                _forceOpen: true
-            };
-        }
-        return null;
-    }).filter(f => f !== null);
-
-    renderFaculties(filteredFaculties);
-
-    // Automatically expand all matched accordions for easy viewing
-    document.querySelectorAll('.faculty-card').forEach(card => card.classList.add('open'));
-    document.querySelectorAll('.course-card').forEach(card => card.classList.add('open'));
+    renderDirectory(rawResources, query);
 });
 
 /* =========================
