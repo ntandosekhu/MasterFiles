@@ -723,11 +723,6 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
 
 import {
-    initializeAppCheck,
-    ReCaptchaV3Provider
-} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app-check.js";
-
-import {
     getAuth,
     onAuthStateChanged,
     signOut
@@ -742,11 +737,12 @@ import {
     addDoc,
     updateDoc,
     query,
-    orderBy
+    orderBy,
+    serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
 
 /* =========================
-   FIREBASE CONFIG & APP CHECK
+   FIREBASE CONFIG
 ========================= */
 const firebaseConfig = {
     apiKey: "AIzaSyDW6IArj2dZiqbf00Ix3SPPSqvxTKG0GgE",
@@ -759,12 +755,6 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-
-const appCheck = initializeAppCheck(app, {
-    provider: new ReCaptchaV3Provider('6LfAPn8tAAAAAOa1QF1-NqwCu6aPsGWyOep3mo2s'),
-    isTokenAutoRefreshEnabled: true
-});
-
 const auth = getAuth(app);
 const db = getFirestore(app);
 
@@ -1049,7 +1039,7 @@ bookingForm.addEventListener("submit", async (e) => {
         const bookerType = currentUserRecord.accountType || "HOUSE_MEMBER";
         const initialStatus = (bookerType === "ALUMNI") ? "PENDING" : "APPROVED";
 
-        await addDoc(collection(db, "bookings"), {
+        const bookingDocData = {
             venueId: currentVenueId,
             venueName: currentVenueName,
             bookerId: currentUser.uid,
@@ -1058,7 +1048,45 @@ bookingForm.addEventListener("submit", async (e) => {
             endTime: selectedEnd.toISOString(),
             status: initialStatus,
             createdAt: new Date().toISOString()
-        });
+        };
+
+        const docRef = await addDoc(collection(db, "bookings"), bookingDocData);
+
+        // Activity Logging on Success
+        try {
+            await addDoc(collection(db, "activityLogs"), {
+                category: "BOOKING",
+                action: "CREATED",
+                eventType: "BOOKING_CREATED",
+                recordId: docRef.id,
+                actorUid: currentUser.uid,
+                actorName: currentUserRecord?.name || currentUser.displayName || "Unknown",
+                actorRole: currentUserRecord?.role || "Resident",
+                actorType: bookerType,
+                subjectUid: currentUser.uid,
+                subjectName: currentUserRecord?.name || currentUser.displayName || "Unknown",
+                subjectStudentNumber: currentUserRecord?.studentNumber || null,
+                timestamp: serverTimestamp(),
+                newState: {
+                    bookingId: docRef.id,
+                    venueId: currentVenueId,
+                    venueName: currentVenueName,
+                    startTime: selectedSlotStart.toISOString(),
+                    endTime: selectedEnd.toISOString(),
+                    date: formatDateShort(selectedSlotStart),
+                    status: initialStatus
+                },
+                metadata: {
+                    venueId: currentVenueId,
+                    venueName: currentVenueName,
+                    date: formatDateShort(selectedSlotStart),
+                    startTime: formatTime(selectedSlotStart),
+                    endTime: formatTime(selectedEnd)
+                }
+            });
+        } catch (logErr) {
+            console.error("Failed to write activity log:", logErr);
+        }
 
         showMessage(`Booking created successfully (${initialStatus}).`);
         resetForm();
@@ -1131,11 +1159,41 @@ myBookingsList.addEventListener("click", async (e) => {
     const confirmCancel = window.confirm("Are you sure you want to cancel this booking?");
     if (!confirmCancel) return;
 
+    const existingBooking = bookings.find(b => b.id === bookingId);
+
     try {
         const bookingRef = doc(db, "bookings", bookingId);
         await updateDoc(bookingRef, {
             status: "CANCELLED"
         });
+
+        // Activity Logging on Success
+        try {
+            await addDoc(collection(db, "activityLogs"), {
+                category: "BOOKING",
+                action: "CANCELLED",
+                eventType: "BOOKING_CANCELLED",
+                recordId: bookingId,
+                actorUid: currentUser.uid,
+                actorName: currentUserRecord?.name || currentUser.displayName || "Unknown",
+                actorRole: currentUserRecord?.role || "Resident",
+                actorType: currentUserRecord?.accountType || "HOUSE_MEMBER",
+                subjectUid: currentUser.uid,
+                subjectName: currentUserRecord?.name || currentUser.displayName || "Unknown",
+                subjectStudentNumber: currentUserRecord?.studentNumber || null,
+                timestamp: serverTimestamp(),
+                previousState: existingBooking ? { status: existingBooking.status || "APPROVED" } : null,
+                newState: { status: "CANCELLED" },
+                metadata: {
+                    venueId: existingBooking?.venueId || null,
+                    venueName: existingBooking?.venueName || null,
+                    startTime: existingBooking?.startTime || null,
+                    endTime: existingBooking?.endTime || null
+                }
+            });
+        } catch (logErr) {
+            console.error("Failed to write activity log:", logErr);
+        }
 
         showMessage("Booking cancelled successfully.");
         await loadBookings();
