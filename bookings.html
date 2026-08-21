@@ -723,6 +723,11 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
 
 import {
+    initializeAppCheck,
+    ReCaptchaV3Provider
+} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app-check.js";
+
+import {
     getAuth,
     onAuthStateChanged,
     signOut
@@ -755,6 +760,13 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+
+// Initialize Firebase App Check with reCAPTCHA v3
+const appCheck = initializeAppCheck(app, {
+    provider: new ReCaptchaV3Provider('6LfAPn8tAAAAAOa1QF1-NqwCu6aPsGWyOep3mo2s'),
+    isTokenAutoRefreshEnabled: true
+});
+
 const auth = getAuth(app);
 const db = getFirestore(app);
 
