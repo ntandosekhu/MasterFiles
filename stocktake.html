@@ -1,0 +1,1434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Files - Sports & First Aid Stocktake</title>
+
+    <style>
+        :root {
+            --primary: #1d2951;
+            --primary-hover: #151f3d;
+            --primary-light: #3b82f6;
+            --background-dark: #0b1329;
+            --card-bg: #ffffff;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --error-color: #dc2626;
+            --error-bg: #fef2f2;
+            --error-border: #fecaca;
+            --success-color: #166534;
+            --success-bg: #f0fdf4;
+            --success-border: #bbf7d0;
+            --warning-color: #d97706;
+            --warning-bg: #fffbeb;
+            --warning-border: #fde68a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: radial-gradient(circle at 80% 20%, #1e3a8a 0%, #0f172a 50%, var(--background-dark) 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 32px 20px;
+            color: var(--text-dark);
+            line-height: 1.5;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        /* Header Navigation */
+        .app-header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            color: #ffffff;
+        }
+
+        .app-header h1 {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .app-header p {
+            font-size: 13px;
+            color: #94a3b8;
+        }
+
+        .main-card {
+            width: 100%;
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 32px 28px;
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.1);
+        }
+
+        /* Navigation Tabs */
+        .tab-nav {
+            display: flex;
+            gap: 12px;
+            border-bottom: 2px solid var(--border-color);
+            margin-bottom: 24px;
+        }
+
+        .tab-btn {
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-muted);
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: -2px;
+        }
+
+        .tab-btn:hover {
+            color: var(--primary-light);
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        /* Summary Cards Grid */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .summary-card {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .summary-card .label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+        }
+
+        .summary-card .value {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-top: 4px;
+        }
+
+        /* Controls / Search & Actions */
+        .controls-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .search-filter-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            flex: 1;
+            min-width: 280px;
+        }
+
+        input, select, textarea {
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            background-color: #f8fafc;
+            color: var(--text-dark);
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            background-color: #ffffff;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 8px;
+            padding: 10px 18px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(29, 41, 81, 0.2);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #334155;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e1;
+        }
+
+        .btn-danger {
+            background: var(--error-color);
+            color: #ffffff;
+        }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+        }
+
+        .btn:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Table & Data Container */
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th {
+            background: #f1f5f9;
+            padding: 12px 16px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #475569;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+            color: #334155;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background-color: #f8fafc;
+        }
+
+        /* Status & Condition Badges */
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .badge-good, .badge-valid {
+            background: var(--success-bg);
+            color: var(--success-color);
+            border: 1px solid var(--success-border);
+        }
+
+        .badge-fair, .badge-expiring {
+            background: var(--warning-bg);
+            color: var(--warning-color);
+            border: 1px solid var(--warning-border);
+        }
+
+        .badge-damaged, .badge-expired, .badge-low, .badge-unusable, .badge-missing {
+            background: var(--error-bg);
+            color: var(--error-color);
+            border: 1px solid var(--error-border);
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: #ffffff;
+            width: 100%;
+            max-width: 650px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+        }
+
+        .modal-header h2 {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #334155;
+            margin-bottom: 6px;
+        }
+
+        .modal-footer {
+            margin-top: 24px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        /* Message Box */
+        .message {
+            display: none;
+            margin-top: 16px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .message.error {
+            display: block;
+            background: var(--error-bg);
+            border: 1px solid var(--error-border);
+            color: var(--error-color);
+        }
+
+        .message.success {
+            display: block;
+            background: var(--success-bg);
+            border: 1px solid var(--success-border);
+            color: var(--success-color);
+        }
+
+        /* History List */
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .history-item {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 13px;
+        }
+
+        .history-item .meta {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 16px; }
+            .main-card { padding: 20px 16px; }
+            .form-grid { grid-template-columns: 1fr; }
+            .form-group.full { grid-column: auto; }
+            .controls-bar { flex-direction: column; align-items: stretch; }
+            .search-filter-group { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="appCheckLoading" style="color: #ffffff; font-size: 16px; font-weight: 600; text-align: center;">
+    Initializing Application...
+</div>
+
+<div class="container" id="appContent" style="display: none;">
+
+    <div class="app-header">
+        <div>
+            <h1>Sports & First Aid Stocktake</h1>
+            <p>Residence Inventory Management System</p>
+        </div>
+    </div>
+
+    <div class="main-card">
+        
+        <!-- Navigation Tabs -->
+        <div class="tab-nav">
+            <button class="tab-btn active" id="tabBtnSports" onclick="switchTab('SPORTS')">SPORTS STOCKTAKE</button>
+            <button class="tab-btn" id="tabBtnFirstAid" onclick="switchTab('FIRST_AID')">FIRST AID</button>
+        </div>
+
+        <!-- SPORTS SECTION -->
+        <div id="sportsSection">
+            <!-- Summary Grid -->
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <div class="label">Total Items</div>
+                    <div class="value" id="sportsSummaryTotalItems">0</div>
+                </div>
+                <div class="summary-card">
+                    <div class="label">Total Quantity</div>
+                    <div class="value" id="sportsSummaryTotalQty">0</div>
+                </div>
+                <div class="summary-card">
+                    <div class="label">Damaged</div>
+                    <div class="value" id="sportsSummaryDamaged">0</div>
+                </div>
+                <div class="summary-card">
+                    <div class="label">Missing</div>
+                    <div class="value" id="sportsSummaryMissing">0</div>
+                </div>
+                <div class="summary-card">
+                    <div class="label">Needs Attention</div>
+                    <div class="value" id="sportsSummaryAttention">0</div>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="controls-bar">
+                <div class="search-filter-group">
+                    <input type="text" id="sportsSearch" class="search-input" placeholder="Search equipment, sport, location..." oninput="renderSportsTable()">
+                    <select id="sportsCategoryFilter" onchange="renderSportsTable()">
+                        <option value="">All Categories</option>
+                        <option value="FOOTBALL">Football</option>
+                        <option value="RUGBY">Rugby</option>
+                        <option value="BASKETBALL">Basketball</option>
+                        <option value="NETBALL">Netball</option>
+                        <option value="VOLLEYBALL">Volleyball</option>
+                        <option value="TENNIS">Tennis</option>
+                        <option value="BADMINTON">Badminton</option>
+                        <option value="CRICKET">Cricket</option>
+                        <option value="HOCKEY">Hockey</option>
+                        <option value="TABLE TENNIS">Table Tennis</option>
+                        <option value="CHESS">Chess</option>
+                        <option value="ATHLETICS">Athletics</option>
+                        <option value="GENERAL TRAINING">General Training</option>
+                        <option value="GENERAL SPORTS">General Sports</option>
+                    </select>
+                    <select id="sportsConditionFilter" onchange="renderSportsTable()">
+                        <option value="">All Conditions</option>
+                        <option value="GOOD">Good</option>
+                        <option value="FAIR">Fair</option>
+                        <option value="DAMAGED">Damaged</option>
+                        <option value="UNUSABLE">Unusable</option>
+                        <option value="MISSING">Missing</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" id="addSportsBtn" onclick="openAddSportsModal()">+ ADD SPORTS EQUIPMENT</button>
+            </div>
+
+            <!-- Table -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Equipment</th>
+                            <th>Category</th>
+                            <th>Sport</th>
+                            <th>Qty (Total / Good / Fair / Damaged / Missing)</th>
+                            <th>Location</th>
+                            <th>Last Stocktake</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sportsTableBody">
+                        <tr><td colspan="7" style="text-align: center; padding: 20px;">Loading sports inventory...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- FIRST AID SECTION -->
+        <div id="firstAidSection" style="display: none;">
+            <!-- Summary Grid -->
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <div class="label">Total Items</div>
+                    <div class="value" id="faSummaryTotalItems">0</div>
+                </div>
+                <div class="summary-card">
+                    <div class="label">Total Quantity</div>
+                    <div class="value" id="faSummaryTotalQty">0</div>
+                </div>
+                <div class="summary-card">
+                    <div class="label">Low Stock</div>
+                    <div class="value" id="faSummaryLowStock">0</div>
+                </div>
+                <div class="summary-card">
+                    <div class="label">Expiring Soon</div>
+                    <div class="value" id="faSummaryExpiring">0</div>
+                </div>
+                <div class="summary-card">
+                    <div class="label">Expired</div>
+                    <div class="value" id="faSummaryExpired">0</div>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="controls-bar">
+                <div class="search-filter-group">
+                    <input type="text" id="faSearch" class="search-input" placeholder="Search supplies, category, location..." oninput="renderFirstAidTable()">
+                    <select id="faCategoryFilter" onchange="renderFirstAidTable()">
+                        <option value="">All Categories</option>
+                        <option value="BANDAGES & DRESSINGS">Bandages & Dressings</option>
+                        <option value="ANTISEPTICS & CLEANING">Antiseptics & Cleaning</option>
+                        <option value="PROTECTIVE EQUIPMENT">Protective Equipment</option>
+                        <option value="TOOLS & INSTRUMENTS">Tools & Instruments</option>
+                        <option value="FIRST AID KITS">First Aid Kits</option>
+                        <option value="OTHER">Other</option>
+                    </select>
+                    <select id="faStatusFilter" onchange="renderFirstAidTable()">
+                        <option value="">All Statuses</option>
+                        <option value="LOW_STOCK">Low Stock</option>
+                        <option value="EXPIRING_SOON">Expiring Soon</option>
+                        <option value="EXPIRED">Expired</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" id="addFaBtn" onclick="openAddFirstAidModal()">+ ADD FIRST AID ITEM</button>
+            </div>
+
+            <!-- Table -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Supply</th>
+                            <th>Category</th>
+                            <th>Quantity</th>
+                            <th>Minimum</th>
+                            <th>Expiry Date</th>
+                            <th>Location</th>
+                            <th>Status</th>
+                            <th>Last Stocktake</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="firstAidTableBody">
+                        <tr><td colspan="9" style="text-align: center; padding: 20px;">Loading first aid inventory...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- SPORTS ITEM MODAL (ADD / EDIT) -->
+<div class="modal-overlay" id="sportsModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2 id="sportsModalTitle">Add Sports Equipment</h2>
+            <button class="close-modal" onclick="closeModal('sportsModal')">&times;</button>
+        </div>
+        <form id="sportsForm">
+            <input type="hidden" id="sportsItemId">
+            <div class="form-grid">
+                <div class="form-group full">
+                    <label>Item Name *</label>
+                    <input type="text" id="sportsName" required placeholder="e.g., Match Soccer Balls">
+                </div>
+                <div class="form-group">
+                    <label>Category *</label>
+                    <select id="sportsCategory" required>
+                        <option value="FOOTBALL">Football</option>
+                        <option value="RUGBY">Rugby</option>
+                        <option value="BASKETBALL">Basketball</option>
+                        <option value="NETBALL">Netball</option>
+                        <option value="VOLLEYBALL">Volleyball</option>
+                        <option value="TENNIS">Tennis</option>
+                        <option value="BADMINTON">Badminton</option>
+                        <option value="CRICKET">Cricket</option>
+                        <option value="HOCKEY">Hockey</option>
+                        <option value="TABLE TENNIS">Table Tennis</option>
+                        <option value="CHESS">Chess</option>
+                        <option value="ATHLETICS">Athletics</option>
+                        <option value="GENERAL TRAINING">General Training</option>
+                        <option value="GENERAL SPORTS">General Sports</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Assigned Sport *</label>
+                    <input type="text" id="sportsSport" required placeholder="e.g., Soccer">
+                </div>
+                <div class="form-group">
+                    <label>Good Quantity</label>
+                    <input type="number" id="sportsQtyGood" min="0" value="0" onchange="calculateSportsTotal()">
+                </div>
+                <div class="form-group">
+                    <label>Fair Quantity</label>
+                    <input type="number" id="sportsQtyFair" min="0" value="0" onchange="calculateSportsTotal()">
+                </div>
+                <div class="form-group">
+                    <label>Damaged Quantity</label>
+                    <input type="number" id="sportsQtyDamaged" min="0" value="0" onchange="calculateSportsTotal()">
+                </div>
+                <div class="form-group">
+                    <label>Missing Quantity</label>
+                    <input type="number" id="sportsQtyMissing" min="0" value="0" onchange="calculateSportsTotal()">
+                </div>
+                <div class="form-group full">
+                    <label>Total Calculated Quantity</label>
+                    <input type="number" id="sportsQtyTotal" readonly value="0">
+                </div>
+                <div class="form-group full">
+                    <label>Storage Location *</label>
+                    <input type="text" id="sportsLocation" required placeholder="e.g., Sports Store Room - Shelf A">
+                </div>
+                <div class="form-group full">
+                    <label>Notes</label>
+                    <textarea id="sportsNotes" rows="2" placeholder="Condition details or general notes..."></textarea>
+                </div>
+            </div>
+            <div id="sportsModalMsg" class="message"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('sportsModal')">Cancel</button>
+                <button type="submit" class="btn btn-primary" id="saveSportsBtn">Save Equipment</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- FIRST AID ITEM MODAL (ADD / EDIT) -->
+<div class="modal-overlay" id="firstAidModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2 id="faModalTitle">Add First Aid Item</h2>
+            <button class="close-modal" onclick="closeModal('firstAidModal')">&times;</button>
+        </div>
+        <form id="firstAidForm">
+            <input type="hidden" id="faItemId">
+            <div class="form-grid">
+                <div class="form-group full">
+                    <label>Item Name *</label>
+                    <input type="text" id="faName" required placeholder="e.g., Sterile Gauze Pads">
+                </div>
+                <div class="form-group">
+                    <label>Category *</label>
+                    <select id="faCategory" required>
+                        <option value="BANDAGES & DRESSINGS">Bandages & Dressings</option>
+                        <option value="ANTISEPTICS & CLEANING">Antiseptics & Cleaning</option>
+                        <option value="PROTECTIVE EQUIPMENT">Protective Equipment</option>
+                        <option value="TOOLS & INSTRUMENTS">Tools & Instruments</option>
+                        <option value="FIRST AID KITS">First Aid Kits</option>
+                        <option value="OTHER">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Unit *</label>
+                    <input type="text" id="faUnit" required placeholder="e.g., Boxes, Packs, Rolls, Bottles">
+                </div>
+                <div class="form-group">
+                    <label>Current Quantity *</label>
+                    <input type="number" id="faQty" min="0" required value="0">
+                </div>
+                <div class="form-group">
+                    <label>Minimum Stock Level</label>
+                    <input type="number" id="faMinQty" min="0" value="0" placeholder="Optional threshold">
+                </div>
+                <div class="form-group">
+                    <label>Expiry Date</label>
+                    <input type="date" id="faExpiry">
+                </div>
+                <div class="form-group">
+                    <label>Batch / Lot Info</label>
+                    <input type="text" id="faBatch" placeholder="Optional batch code">
+                </div>
+                <div class="form-group full">
+                    <label>Condition</label>
+                    <select id="faCondition">
+                        <option value="GOOD">Good / Sealed</option>
+                        <option value="FAIR">Fair</option>
+                        <option value="DAMAGED">Damaged Package</option>
+                    </select>
+                </div>
+                <div class="form-group full">
+                    <label>Storage Location *</label>
+                    <input type="text" id="faLocation" required placeholder="e.g., First Aid Kit - Cabinet B">
+                </div>
+                <div class="form-group full">
+                    <label>Notes</label>
+                    <textarea id="faNotes" rows="2" placeholder="Storage conditions or notes..."></textarea>
+                </div>
+            </div>
+            <div id="faModalMsg" class="message"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('firstAidModal')">Cancel</button>
+                <button type="submit" class="btn btn-primary" id="saveFaBtn">Save Item</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- HISTORY / LOGS MODAL -->
+<div class="modal-overlay" id="historyModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2 id="historyModalTitle">Stocktake History</h2>
+            <button class="close-modal" onclick="closeModal('historyModal')">&times;</button>
+        </div>
+        <div id="historyModalContent">
+            <div class="history-list" id="historyList">Loading history...</div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('historyModal')">Close</button>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+    import { initializeAppCheck, ReCaptchaV3Provider, getToken } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app-check.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+    import { getFirestore, collection, doc, setDoc, getDoc, getDocs, updateDoc, addDoc, query, where, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDW6IArj2dZiqbf00Ix3SPPSqvxTKG0GgE",
+        authDomain: "master-files-95f6b.firebaseapp.com",
+        projectId: "master-files-95f6b",
+        storageBucket: "master-files-95f6b.firebasestorage.app",
+        messagingSenderId: "537891510061",
+        appId: "1:537891510061:web:fb46c8d1abae02b9e725a4",
+        measurementId: "G-4GNVR5EBJX"
+    };
+
+    const app = initializeApp(firebaseConfig);
+
+    const appCheck = initializeAppCheck(app, {
+        provider: new ReCaptchaV3Provider('6LfAPn8tAAAAAOa1QF1-NqwCu6aPsGWyOep3mo2s'),
+        isTokenAutoRefreshEnabled: true
+    });
+
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let currentUser = null;
+    let currentUserProfile = null;
+    let isAdminUser = false;
+
+    let rawSportsData = [];
+    let rawFirstAidData = [];
+
+    async function initializeGate() {
+        try {
+            await getToken(appCheck, false);
+            document.getElementById("appCheckLoading").style.display = "none";
+            document.getElementById("appContent").style.display = "block";
+        } catch (error) {
+            console.error("App Check failed:", error);
+            document.getElementById("appCheckLoading").textContent = "Access denied: Failed App Check verification.";
+        }
+    }
+
+    initializeGate();
+
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            currentUser = user;
+            await verifyAdminAuthorization(user.uid);
+            await loadAllStock();
+        } else {
+            currentUser = null;
+            isAdminUser = false;
+            disableAdminControls();
+        }
+    });
+
+    async function verifyAdminAuthorization(uid) {
+        try {
+            const adminDoc = await getDoc(doc(db, "admins", uid));
+            if (adminDoc.exists()) {
+                isAdminUser = true;
+                const userDoc = await getDoc(doc(db, "users", uid));
+                if (userDoc.exists()) {
+                    currentUserProfile = userDoc.data();
+                }
+            } else {
+                isAdminUser = false;
+                disableAdminControls();
+            }
+        } catch (err) {
+            console.error("Admin verification error:", err);
+            isAdminUser = false;
+            disableAdminControls();
+        }
+    }
+
+    function disableAdminControls() {
+        document.getElementById("addSportsBtn").style.display = isAdminUser ? "inline-flex" : "none";
+        document.getElementById("addFaBtn").style.display = isAdminUser ? "inline-flex" : "none";
+    }
+
+    // TAB SWITCHING
+    window.switchTab = function(tab) {
+        const sportsTab = document.getElementById("tabBtnSports");
+        const faTab = document.getElementById("tabBtnFirstAid");
+        const sportsSec = document.getElementById("sportsSection");
+        const faSec = document.getElementById("firstAidSection");
+
+        if (tab === "SPORTS") {
+            sportsTab.classList.add("active");
+            faTab.classList.remove("active");
+            sportsSec.style.display = "block";
+            faSec.style.display = "none";
+        } else {
+            faTab.classList.add("active");
+            sportsTab.classList.remove("active");
+            faSec.style.display = "block";
+            sportsSec.style.display = "none";
+        }
+    };
+
+    // FETCH DATA
+    async function loadAllStock() {
+        await Promise.all([loadSportsStock(), loadFirstAidStock()]);
+    }
+
+    async function loadSportsStock() {
+        try {
+            const q = query(collection(db, "sportsStock"), where("archived", "==", false));
+            const snap = await getDocs(q);
+            rawSportsData = [];
+            snap.forEach(d => {
+                rawSportsData.push({ id: d.id, ...d.data() });
+            });
+            renderSportsTable();
+        } catch (err) {
+            console.error("Error loading sports stock:", err);
+        }
+    }
+
+    async function loadFirstAidStock() {
+        try {
+            const q = query(collection(db, "firstAidStock"), where("archived", "==", false));
+            const snap = await getDocs(q);
+            rawFirstAidData = [];
+            snap.forEach(d => {
+                rawFirstAidData.push({ id: d.id, ...d.data() });
+            });
+            renderFirstAidTable();
+        } catch (err) {
+            console.error("Error loading first aid stock:", err);
+        }
+    }
+
+    // RENDER SPORTS
+    window.renderSportsTable = function() {
+        const search = document.getElementById("sportsSearch").value.toLowerCase();
+        const categoryFilter = document.getElementById("sportsCategoryFilter").value;
+        const conditionFilter = document.getElementById("sportsConditionFilter").value;
+
+        let filtered = rawSportsData.filter(item => {
+            const matchesSearch = (item.name || "").toLowerCase().includes(search) ||
+                                  (item.sport || "").toLowerCase().includes(search) ||
+                                  (item.location || "").toLowerCase().includes(search);
+            const matchesCat = !categoryFilter || item.category === categoryFilter;
+            
+            let matchesCond = true;
+            if (conditionFilter === "GOOD") matchesCond = (item.qtyGood || 0) > 0;
+            if (conditionFilter === "FAIR") matchesCond = (item.qtyFair || 0) > 0;
+            if (conditionFilter === "DAMAGED") matchesCond = (item.qtyDamaged || 0) > 0;
+            if (conditionFilter === "UNUSABLE") matchesCond = (item.qtyUnusable || 0) > 0;
+            if (conditionFilter === "MISSING") matchesCond = (item.qtyMissing || 0) > 0;
+
+            return matchesSearch && matchesCat && matchesCond;
+        });
+
+        // Summary Calculations
+        let totItems = rawSportsData.length;
+        let totQty = 0;
+        let totDamaged = 0;
+        let totMissing = 0;
+        let totAttention = 0;
+
+        rawSportsData.forEach(item => {
+            const qGood = item.qtyGood || 0;
+            const qFair = item.qtyFair || 0;
+            const qDmg = item.qtyDamaged || 0;
+            const qMis = item.qtyMissing || 0;
+            const itemTotal = item.quantity || (qGood + qFair + qDmg + qMis);
+
+            totQty += itemTotal;
+            totDamaged += qDmg;
+            totMissing += qMis;
+
+            if (qDmg > 0 || qMis > 0) totAttention++;
+        });
+
+        document.getElementById("sportsSummaryTotalItems").textContent = totItems;
+        document.getElementById("sportsSummaryTotalQty").textContent = totQty;
+        document.getElementById("sportsSummaryDamaged").textContent = totDamaged;
+        document.getElementById("sportsSummaryMissing").textContent = totMissing;
+        document.getElementById("sportsSummaryAttention").textContent = totAttention;
+
+        const tbody = document.getElementById("sportsTableBody");
+        if (filtered.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 20px;">No sports equipment found.</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = filtered.map(item => {
+            const lastDate = item.lastStocktakeDate ? new Date(item.lastStocktakeDate).toLocaleDateString() : 'N/A';
+            const admin = item.lastStocktakeAdmin || 'N/A';
+
+            const qGood = item.qtyGood || 0;
+            const qFair = item.qtyFair || 0;
+            const qDmg = item.qtyDamaged || 0;
+            const qMis = item.qtyMissing || 0;
+            const itemTotal = item.quantity || (qGood + qFair + qDmg + qMis);
+
+            return `
+                <tr>
+                    <td><strong>${escapeHtml(item.name)}</strong></td>
+                    <td><span class="badge" style="background:#f1f5f9; color:#334155;">${escapeHtml(item.category || 'N/A')}</span></td>
+                    <td>${escapeHtml(item.sport || 'N/A')}</td>
+                    <td>
+                        <strong>${itemTotal}</strong> Total
+                        <br><small style="color:var(--text-muted)">Good: ${qGood} | Fair: ${qFair} | Damaged: ${qDmg} | Missing: ${qMis}</small>
+                    </td>
+                    <td>${escapeHtml(item.location || 'N/A')}</td>
+                    <td>${lastDate}<br><small style="color:var(--text-muted)">by ${escapeHtml(admin)}</small></td>
+                    <td>
+                        ${isAdminUser ? `
+                            <button class="btn btn-secondary" style="padding:4px 8px; font-size:12px;" onclick="openEditSportsModal('${item.id}')">Edit</button>
+                            <button class="btn btn-secondary" style="padding:4px 8px; font-size:12px;" onclick="viewHistory('sportsStock', '${item.id}', '${escapeHtml(item.name)}')">History</button>
+                            <button class="btn btn-danger" style="padding:4px 8px; font-size:12px;" onclick="archiveItem('sportsStock', '${item.id}', '${escapeHtml(item.name)}')">Archive</button>
+                        ` : `
+                            <button class="btn btn-secondary" style="padding:4px 8px; font-size:12px;" onclick="viewHistory('sportsStock', '${item.id}', '${escapeHtml(item.name)}')">History</button>
+                        `}
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    };
+
+    // RENDER FIRST AID
+    window.renderFirstAidTable = function() {
+        const search = document.getElementById("faSearch").value.toLowerCase();
+        const categoryFilter = document.getElementById("faCategoryFilter").value;
+        const statusFilter = document.getElementById("faStatusFilter").value;
+
+        const now = new Date();
+        const thirtyDaysAhead = new Date();
+        thirtyDaysAhead.setDate(now.getDate() + 30);
+
+        let filtered = rawFirstAidData.filter(item => {
+            const matchesSearch = (item.name || "").toLowerCase().includes(search) ||
+                                  (item.location || "").toLowerCase().includes(search);
+            const matchesCat = !categoryFilter || item.category === categoryFilter;
+
+            let isLow = (item.minQuantity && item.quantity <= item.minQuantity);
+            let isExp = false;
+            let isExpSoon = false;
+
+            if (item.expiryDate) {
+                const expDate = new Date(item.expiryDate);
+                if (expDate < now) isExp = true;
+                else if (expDate <= thirtyDaysAhead) isExpSoon = true;
+            }
+
+            let matchesStat = true;
+            if (statusFilter === "LOW_STOCK") matchesStat = isLow;
+            if (statusFilter === "EXPIRING_SOON") matchesStat = isExpSoon;
+            if (statusFilter === "EXPIRED") matchesStat = isExp;
+
+            return matchesSearch && matchesCat && matchesStat;
+        });
+
+        // Summary Calculations
+        let totItems = rawFirstAidData.length;
+        let totQty = 0;
+        let totLow = 0;
+        let totExpiring = 0;
+        let totExpired = 0;
+
+        rawFirstAidData.forEach(item => {
+            totQty += (item.quantity || 0);
+
+            if (item.minQuantity && item.quantity <= item.minQuantity) totLow++;
+
+            if (item.expiryDate) {
+                const expDate = new Date(item.expiryDate);
+                if (expDate < now) totExpired++;
+                else if (expDate <= thirtyDaysAhead) totExpiring++;
+            }
+        });
+
+        document.getElementById("faSummaryTotalItems").textContent = totItems;
+        document.getElementById("faSummaryTotalQty").textContent = totQty;
+        document.getElementById("faSummaryLowStock").textContent = totLow;
+        document.getElementById("faSummaryExpiring").textContent = totExpiring;
+        document.getElementById("faSummaryExpired").textContent = totExpired;
+
+        const tbody = document.getElementById("firstAidTableBody");
+        if (filtered.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; padding: 20px;">No first aid supplies found.</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = filtered.map(item => {
+            const lastDate = item.lastStocktakeDate ? new Date(item.lastStocktakeDate).toLocaleDateString() : 'N/A';
+            const admin = item.lastStocktakeAdmin || 'N/A';
+
+            let statusBadge = '<span class="badge badge-good">Valid</span>';
+            if (item.minQuantity && item.quantity <= item.minQuantity) {
+                statusBadge = '<span class="badge badge-low">Low Stock</span>';
+            }
+
+            let expDisplay = item.expiryDate ? new Date(item.expiryDate).toLocaleDateString() : 'N/A';
+            if (item.expiryDate) {
+                const expDate = new Date(item.expiryDate);
+                if (expDate < now) {
+                    statusBadge += ' <span class="badge badge-expired">Expired</span>';
+                } else if (expDate <= thirtyDaysAhead) {
+                    statusBadge += ' <span class="badge badge-expiring">Expiring Soon</span>';
+                }
+            }
+
+            return `
+                <tr>
+                    <td><strong>${escapeHtml(item.name)}</strong></td>
+                    <td><span class="badge" style="background:#f1f5f9; color:#334155;">${escapeHtml(item.category || 'N/A')}</span></td>
+                    <td><strong>${item.quantity || 0}</strong> ${escapeHtml(item.unit || '')}</td>
+                    <td>${item.minQuantity || 'N/A'}</td>
+                    <td>${expDisplay}</td>
+                    <td>${escapeHtml(item.location || 'N/A')}</td>
+                    <td>${statusBadge}</td>
+                    <td>${lastDate}<br><small style="color:var(--text-muted)">by ${escapeHtml(admin)}</small></td>
+                    <td>
+                        ${isAdminUser ? `
+                            <button class="btn btn-secondary" style="padding:4px 8px; font-size:12px;" onclick="openEditFirstAidModal('${item.id}')">Edit</button>
+                            <button class="btn btn-secondary" style="padding:4px 8px; font-size:12px;" onclick="viewHistory('firstAidStock', '${item.id}', '${escapeHtml(item.name)}')">History</button>
+                            <button class="btn btn-danger" style="padding:4px 8px; font-size:12px;" onclick="archiveItem('firstAidStock', '${item.id}', '${escapeHtml(item.name)}')">Archive</button>
+                        ` : `
+                            <button class="btn btn-secondary" style="padding:4px 8px; font-size:12px;" onclick="viewHistory('firstAidStock', '${item.id}', '${escapeHtml(item.name)}')">History</button>
+                        `}
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    };
+
+    // SPORTS MODAL ACTIONS
+    window.calculateSportsTotal = function() {
+        const qGood = parseInt(document.getElementById("sportsQtyGood").value) || 0;
+        const qFair = parseInt(document.getElementById("sportsQtyFair").value) || 0;
+        const qDmg = parseInt(document.getElementById("sportsQtyDamaged").value) || 0;
+        const qMis = parseInt(document.getElementById("sportsQtyMissing").value) || 0;
+        document.getElementById("sportsQtyTotal").value = qGood + qFair + qDmg + qMis;
+    };
+
+    window.openAddSportsModal = function() {
+        if (!isAdminUser) return;
+        document.getElementById("sportsForm").reset();
+        document.getElementById("sportsItemId").value = "";
+        document.getElementById("sportsModalTitle").textContent = "Add Sports Equipment";
+        document.getElementById("sportsModalMsg").className = "message";
+        document.getElementById("sportsModal").classList.add("active");
+    };
+
+    window.openEditSportsModal = function(id) {
+        if (!isAdminUser) return;
+        const item = rawSportsData.find(i => i.id === id);
+        if (!item) return;
+
+        document.getElementById("sportsItemId").value = item.id;
+        document.getElementById("sportsName").value = item.name || "";
+        document.getElementById("sportsCategory").value = item.category || "FOOTBALL";
+        document.getElementById("sportsSport").value = item.sport || "";
+        document.getElementById("sportsQtyGood").value = item.qtyGood || 0;
+        document.getElementById("sportsQtyFair").value = item.qtyFair || 0;
+        document.getElementById("sportsQtyDamaged").value = item.qtyDamaged || 0;
+        document.getElementById("sportsQtyMissing").value = item.qtyMissing || 0;
+        document.getElementById("sportsLocation").value = item.location || "";
+        document.getElementById("sportsNotes").value = item.notes || "";
+        calculateSportsTotal();
+
+        document.getElementById("sportsModalTitle").textContent = "Edit Sports Equipment";
+        document.getElementById("sportsModalMsg").className = "message";
+        document.getElementById("sportsModal").classList.add("active");
+    };
+
+    document.getElementById("sportsForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (!isAdminUser) return;
+
+        const id = document.getElementById("sportsItemId").value;
+        const name = document.getElementById("sportsName").value.trim();
+        const category = document.getElementById("sportsCategory").value;
+        const sport = document.getElementById("sportsSport").value.trim();
+        const qtyGood = parseInt(document.getElementById("sportsQtyGood").value) || 0;
+        const qtyFair = parseInt(document.getElementById("sportsQtyFair").value) || 0;
+        const qtyDamaged = parseInt(document.getElementById("sportsQtyDamaged").value) || 0;
+        const qtyMissing = parseInt(document.getElementById("sportsQtyMissing").value) || 0;
+        const total = qtyGood + qtyFair + qtyDamaged + qtyMissing;
+        const location = document.getElementById("sportsLocation").value.trim();
+        const notes = document.getElementById("sportsNotes").value.trim();
+
+        const adminName = currentUserProfile ? `${currentUserProfile.name || ''} ${currentUserProfile.surname || ''}`.trim() : currentUser.email;
+
+        const payload = {
+            name, category, sport, qtyGood, qtyFair, qtyDamaged, qtyMissing, quantity: total,
+            location, notes, lastStocktakeDate: new Date().toISOString(), lastStocktakeAdmin: adminName,
+            archived: false
+        };
+
+        const saveBtn = document.getElementById("saveSportsBtn");
+        saveBtn.disabled = true;
+
+        try {
+            if (id) {
+                const oldItem = rawSportsData.find(i => i.id === id);
+                await updateDoc(doc(db, "sportsStock", id), payload);
+
+                await logStocktakeHistory("sportsStock", id, {
+                    previousQuantity: oldItem ? oldItem.quantity : 0,
+                    newQuantity: total,
+                    previousState: oldItem,
+                    newState: payload,
+                    adminName
+                });
+
+                await logActivity("SPORTS_STOCK_UPDATED", {
+                    itemId: id, name, category, previousQty: oldItem ? oldItem.quantity : 0, newQty: total
+                });
+            } else {
+                payload.createdAt = new Date().toISOString();
+                payload.createdBy = adminName;
+                const docRef = await addDoc(collection(db, "sportsStock"), payload);
+
+                await logStocktakeHistory("sportsStock", docRef.id, {
+                    previousQuantity: 0,
+                    newQuantity: total,
+                    previousState: null,
+                    newState: payload,
+                    adminName
+                });
+
+                await logActivity("SPORTS_STOCK_CREATED", {
+                    itemId: docRef.id, name, category, initialQty: total
+                });
+            }
+
+            closeModal("sportsModal");
+            await loadSportsStock();
+        } catch (err) {
+            console.error("Save sports stock error:", err);
+            showModalMessage("sportsModalMsg", err.message, true);
+        } finally {
+            saveBtn.disabled = false;
+        }
+    });
+
+    // FIRST AID MODAL ACTIONS
+    window.openAddFirstAidModal = function() {
+        if (!isAdminUser) return;
+        document.getElementById("firstAidForm").reset();
+        document.getElementById("faItemId").value = "";
+        document.getElementById("faModalTitle").textContent = "Add First Aid Item";
+        document.getElementById("faModalMsg").className = "message";
+        document.getElementById("firstAidModal").classList.add("active");
+    };
+
+    window.openEditFirstAidModal = function(id) {
+        if (!isAdminUser) return;
+        const item = rawFirstAidData.find(i => i.id === id);
+        if (!item) return;
+
+        document.getElementById("faItemId").value = item.id;
+        document.getElementById("faName").value = item.name || "";
+        document.getElementById("faCategory").value = item.category || "BANDAGES & DRESSINGS";
+        document.getElementById("faUnit").value = item.unit || "";
+        document.getElementById("faQty").value = item.quantity || 0;
+        document.getElementById("faMinQty").value = item.minQuantity || 0;
+        document.getElementById("faExpiry").value = item.expiryDate || "";
+        document.getElementById("faBatch").value = item.batchInfo || "";
+        document.getElementById("faCondition").value = item.condition || "GOOD";
+        document.getElementById("faLocation").value = item.location || "";
+        document.getElementById("faNotes").value = item.notes || "";
+
+        document.getElementById("faModalTitle").textContent = "Edit First Aid Item";
+        document.getElementById("faModalMsg").className = "message";
+        document.getElementById("firstAidModal").classList.add("active");
+    };
+
+    document.getElementById("firstAidForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (!isAdminUser) return;
+
+        const id = document.getElementById("faItemId").value;
+        const name = document.getElementById("faName").value.trim();
+        const category = document.getElementById("faCategory").value;
+        const unit = document.getElementById("faUnit").value.trim();
+        const quantity = parseInt(document.getElementById("faQty").value) || 0;
+        const minQuantity = parseInt(document.getElementById("faMinQty").value) || 0;
+        const expiryDate = document.getElementById("faExpiry").value;
+        const batchInfo = document.getElementById("faBatch").value.trim();
+        const condition = document.getElementById("faCondition").value;
+        const location = document.getElementById("faLocation").value.trim();
+        const notes = document.getElementById("faNotes").value.trim();
+
+        const adminName = currentUserProfile ? `${currentUserProfile.name || ''} ${currentUserProfile.surname || ''}`.trim() : currentUser.email;
+
+        const payload = {
+            name, category, unit, quantity, minQuantity, expiryDate, batchInfo, condition,
+            location, notes, lastStocktakeDate: new Date().toISOString(), lastStocktakeAdmin: adminName,
+            archived: false
+        };
+
+        const saveBtn = document.getElementById("saveFaBtn");
+        saveBtn.disabled = true;
+
+        try {
+            if (id) {
+                const oldItem = rawFirstAidData.find(i => i.id === id);
+                await updateDoc(doc(db, "firstAidStock", id), payload);
+
+                await logStocktakeHistory("firstAidStock", id, {
+                    previousQuantity: oldItem ? oldItem.quantity : 0,
+                    newQuantity: quantity,
+                    previousState: oldItem,
+                    newState: payload,
+                    adminName
+                });
+
+                await logActivity("FIRST_AID_STOCK_UPDATED", {
+                    itemId: id, name, category, previousQty: oldItem ? oldItem.quantity : 0, newQty: quantity
+                });
+            } else {
+                payload.createdAt = new Date().toISOString();
+                payload.createdBy = adminName;
+                const docRef = await addDoc(collection(db, "firstAidStock"), payload);
+
+                await logStocktakeHistory("firstAidStock", docRef.id, {
+                    previousQuantity: 0,
+                    newQuantity: quantity,
+                    previousState: null,
+                    newState: payload,
+                    adminName
+                });
+
+                await logActivity("FIRST_AID_STOCK_CREATED", {
+                    itemId: docRef.id, name, category, initialQty: quantity
+                });
+            }
+
+            closeModal("firstAidModal");
+            await loadFirstAidStock();
+        } catch (err) {
+            console.error("Save first aid stock error:", err);
+            showModalMessage("faModalMsg", err.message, true);
+        } finally {
+            saveBtn.disabled = false;
+        }
+    });
+
+    // ARCHIVE ITEM
+    window.archiveItem = async function(collectionName, id, itemName) {
+        if (!isAdminUser) return;
+        if (!confirm(`Are you sure you want to archive "${itemName}"? Historical records will be preserved.`)) return;
+
+        try {
+            await updateDoc(doc(db, collectionName, id), { archived: true });
+
+            const eventType = collectionName === "sportsStock" ? "SPORTS_STOCK_UPDATED" : "FIRST_AID_STOCK_UPDATED";
+            await logActivity(eventType, { itemId: id, name: itemName, archived: true });
+
+            if (collectionName === "sportsStock") await loadSportsStock();
+            else await loadFirstAidStock();
+        } catch (err) {
+            alert("Failed to archive item: " + err.message);
+        }
+    };
+
+    // HISTORY VIEW
+    window.viewHistory = async function(collectionName, itemId, itemName) {
+        document.getElementById("historyModalTitle").textContent = `Stocktake History - ${itemName}`;
+        const container = document.getElementById("historyList");
+        container.innerHTML = "Loading history logs...";
+        document.getElementById("historyModal").classList.add("active");
+
+        try {
+            const historyRef = collection(db, collectionName, itemId, "history");
+            const q = query(historyRef, orderBy("timestamp", "desc"));
+            const snap = await getDocs(q);
+
+            if (snap.empty) {
+                container.innerHTML = "<p>No previous stocktake history recorded for this item.</p>";
+                return;
+            }
+
+            container.innerHTML = snap.docs.map(d => {
+                const h = d.data();
+                const dt = h.timestamp ? new Date(h.timestamp.toDate()).toLocaleString() : 'N/A';
+                return `
+                    <div class="history-item">
+                        <div class="meta">Date: ${dt} | Admin: ${escapeHtml(h.adminName || 'Unknown')}</div>
+                        <div><strong>Quantity Change:</strong> ${h.previousQuantity} &rarr; ${h.newQuantity}</div>
+                        ${h.notes ? `<div><strong>Notes:</strong> ${escapeHtml(h.notes)}</div>` : ''}
+                    </div>
+                `;
+            }).join('');
+        } catch (err) {
+            container.innerHTML = `<p style="color:var(--error-color)">Error loading history: ${escapeHtml(err.message)}</p>`;
+        }
+    };
+
+    // LOGGING HELPERS
+    async function logStocktakeHistory(parentCollection, itemId, data) {
+        const historyRef = collection(db, parentCollection, itemId, "history");
+        await addDoc(historyRef, {
+            previousQuantity: data.previousQuantity,
+            newQuantity: data.newQuantity,
+            adminName: data.adminName,
+            previousState: data.previousState || null,
+            newState: data.newState || null,
+            timestamp: serverTimestamp()
+        });
+    }
+
+    async function logActivity(eventType, details) {
+        try {
+            const adminName = currentUserProfile ? `${currentUserProfile.name || ''} ${currentUserProfile.surname || ''}`.trim() : currentUser.email;
+            await addDoc(collection(db, "activityLogs"), {
+                eventType,
+                actorUid: currentUser.uid,
+                actorName: adminName,
+                actorRole: "ADMIN",
+                details,
+                timestamp: serverTimestamp()
+            });
+        } catch (err) {
+            console.error("Failed to append activity log:", err);
+        }
+    }
+
+    // UTILS
+    window.closeModal = function(modalId) {
+        document.getElementById(modalId).classList.remove("active");
+    };
+
+    function showModalMessage(elementId, text, isError) {
+        const el = document.getElementById(elementId);
+        el.textContent = text;
+        el.className = "message " + (isError ? "error" : "success");
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+</script>
+
+</body>
+</html>
