@@ -125,6 +125,12 @@
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
         }
 
+        select:disabled {
+            background-color: #e2e8f0;
+            color: #94a3b8;
+            cursor: not-allowed;
+        }
+
         .account-fields {
             margin-top: 24px;
             padding-top: 20px;
@@ -329,6 +335,40 @@
                 </select>
             </div>
 
+            <div class="form-group full">
+                <label for="faculty">Faculty</label>
+                <select id="faculty" required>
+                    <option value="">Select your faculty</option>
+                    <option value="Faculty of Economic and Management Sciences">Faculty of Economic and Management Sciences</option>
+                    <option value="Faculty of Education">Faculty of Education</option>
+                    <option value="Faculty of Health Sciences">Faculty of Health Sciences</option>
+                    <option value="Faculty of Law">Faculty of Law</option>
+                    <option value="Faculty of Natural and Agricultural Sciences">Faculty of Natural and Agricultural Sciences</option>
+                    <option value="Faculty of the Humanities">Faculty of the Humanities</option>
+                    <option value="Faculty of Theology and Religion">Faculty of Theology and Religion</option>
+                </select>
+            </div>
+
+            <div class="form-group full">
+                <label for="academicProgramme">Academic Programme</label>
+                <select id="academicProgramme" required disabled>
+                    <option value="">Select your faculty first</option>
+                </select>
+            </div>
+
+            <div class="form-group full">
+                <label for="corridor">Corridor</label>
+                <select id="corridor" required>
+                    <option value="">Select your corridor</option>
+                    <option value="1">Corridor 1</option>
+                    <option value="2">Corridor 2</option>
+                    <option value="3">Corridor 3</option>
+                    <option value="4">Corridor 4</option>
+                    <option value="5">Corridor 5</option>
+                    <option value="6">Corridor 6</option>
+                </select>
+            </div>
+
         </div>
 
         <!-- HOUSE MEMBER FIELDS -->
@@ -427,13 +467,155 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
+    const UFS_FACULTIES = {
+        EMS: "Faculty of Economic and Management Sciences",
+        EDU: "Faculty of Education",
+        HS: "Faculty of Health Sciences",
+        LAW: "Faculty of Law",
+        NAS: "Faculty of Natural and Agricultural Sciences",
+        HUM: "Faculty of the Humanities",
+        THEO: "Faculty of Theology and Religion"
+    };
+
+    const PROGRAMMES_DATASET = [
+        // Faculty of Economic and Management Sciences
+        { code: "BC630011", name: "Bachelor of Administration (BAdmin)", faculty: UFS_FACULTIES.EMS },
+        { code: "BC630012", name: "Bachelor of Commerce (BCom)", faculty: UFS_FACULTIES.EMS },
+        { code: "BC630013", name: "BCom in Accounting", faculty: UFS_FACULTIES.EMS },
+        { code: "BC630014", name: "BCom with specialisation in Financial Accounting", faculty: UFS_FACULTIES.EMS },
+        { code: "BC630020", name: "BCom with specialisation in Business Management", faculty: UFS_FACULTIES.EMS },
+        { code: "BC630021", name: "BCom with specialisation in Economics", faculty: UFS_FACULTIES.EMS },
+        { code: "BC630022", name: "BCom with specialisation in Investment Management and Banking", faculty: UFS_FACULTIES.EMS },
+        { code: "BC630023", name: "BCom with specialisation in Marketing", faculty: UFS_FACULTIES.EMS },
+        { code: "BC630024", name: "BCom with specialisation in Human Resource Management", faculty: UFS_FACULTIES.EMS },
+        { code: "BC630025", name: "BCom with specialisation in Law", faculty: UFS_FACULTIES.EMS },
+        { code: "BC630026", name: "BCom with specialisation in Information Technology", faculty: UFS_FACULTIES.EMS },
+        { code: "BC630060", name: "Bachelor of Accounting (BAcc)", faculty: UFS_FACULTIES.EMS },
+
+        // Faculty of Education
+        { code: "BC731100", name: "Bachelor of Education in Foundation Phase Teaching", faculty: UFS_FACULTIES.EDU },
+        { code: "BC731200", name: "Bachelor of Education in Intermediate Phase Teaching (General)", faculty: UFS_FACULTIES.EDU },
+        { code: "BC731300", name: "Bachelor of Education in Senior Phase and FET Teaching (Humanities & Social Sciences)", faculty: UFS_FACULTIES.EDU },
+        { code: "BC731400", name: "Bachelor of Education in Senior Phase and FET Teaching (Economic & Management Sciences)", faculty: UFS_FACULTIES.EDU },
+        { code: "BC731500", name: "Bachelor of Education in Senior Phase and FET Teaching (Natural Sciences & Mathematics)", faculty: UFS_FACULTIES.EDU },
+        { code: "BC731600", name: "Bachelor of Education in Senior Phase and FET Teaching (Technology)", faculty: UFS_FACULTIES.EDU },
+
+        // Faculty of Health Sciences
+        { code: "BC830000", name: "Bachelor of Medicine and Bachelor of Surgery (MBChB)", faculty: UFS_FACULTIES.HS },
+        { code: "BC831000", name: "Bachelor of Science in Dietetics", faculty: UFS_FACULTIES.HS },
+        { code: "BC832000", name: "Bachelor of Science in Physiotherapy", faculty: UFS_FACULTIES.HS },
+        { code: "BC833000", name: "Bachelor of Optometry", faculty: UFS_FACULTIES.HS },
+        { code: "BC834000", name: "Bachelor of Occupational Therapy", faculty: UFS_FACULTIES.HS },
+        { code: "BC835000", name: "Bachelor of Biokinetics", faculty: UFS_FACULTIES.HS },
+        { code: "BC835500", name: "Bachelor of Sports Coaching", faculty: UFS_FACULTIES.HS },
+        { code: "BC835600", name: "Bachelor of Nursing", faculty: UFS_FACULTIES.HS },
+        { code: "BC835700", name: "Bachelor of Medical Science (BMedSc) Radiation Sciences", faculty: UFS_FACULTIES.HS },
+
+        // Faculty of Law
+        { code: "BC230000", name: "Bachelor of Laws (LLB) - 4 Year Programme", faculty: UFS_FACULTIES.LAW },
+
+        // Faculty of Natural and Agricultural Sciences
+        { code: "BC430001", name: "Bachelor of Agriculture (BAgric) in Agricultural Management", faculty: UFS_FACULTIES.NAS },
+        { code: "BC430002", name: "Bachelor of Agriculture (BAgric) in Animal Production Management", faculty: UFS_FACULTIES.NAS },
+        { code: "BC430003", name: "Bachelor of Agriculture (BAgric) in Crop Production Management", faculty: UFS_FACULTIES.NAS },
+        { code: "BC430004", name: "Bachelor of Science in Agriculture (BScAgric) in Agricultural Economics", faculty: UFS_FACULTIES.NAS },
+        { code: "BC430005", name: "Bachelor of Science in Agriculture (BScAgric) in Animal Science", faculty: UFS_FACULTIES.NAS },
+        { code: "BC430006", name: "Bachelor of Science in Agriculture (BScAgric) in Agronomy", faculty: UFS_FACULTIES.NAS },
+        { code: "BC430007", name: "Bachelor of Science in Agriculture (BScAgric) in Soil Science", faculty: UFS_FACULTIES.NAS },
+        { code: "BC430008", name: "Bachelor of Science in Agriculture (BScAgric) in Plant Pathology", faculty: UFS_FACULTIES.NAS },
+        { code: "BC431010", name: "Bachelor of Science (BSc) majoring in Actuarial Science", faculty: UFS_FACULTIES.NAS },
+        { code: "BC431020", name: "Bachelor of Science (BSc) majoring in Applied Mathematics and Chemistry", faculty: UFS_FACULTIES.NAS },
+        { code: "BC431021", name: "Bachelor of Science (BSc) majoring in Applied Mathematics and Physics", faculty: UFS_FACULTIES.NAS },
+        { code: "BC431030", name: "Bachelor of Science (BSc) majoring in Biochemistry and Botany", faculty: UFS_FACULTIES.NAS },
+        { code: "BC431031", name: "Bachelor of Science (BSc) majoring in Biochemistry and Chemistry", faculty: UFS_FACULTIES.NAS },
+        { code: "BC431032", name: "Bachelor of Science (BSc) majoring in Biochemistry and Food Science", faculty: UFS_FACULTIES.NAS },
+        { code: "BC431033", name: "Bachelor of Science (BSc) majoring in Biochemistry and Genetics", faculty: UFS_FACULTIES.NAS },
+        { code: "BC431034", name: "Bachelor of Science (BSc) majoring in Biochemistry and Microbiology", faculty: UFS_FACULTIES.NAS },
+        { code: "BC431035", name: "Bachelor of Science (BSc) majoring in Biochemistry and Physiology", faculty: UFS_FACULTIES.NAS },
+        { code: "BC431036", name: "Bachelor of Science (BSc) majoring in Biochemistry and Statistics", faculty: UFS_FACULTIES.NAS },
+        { code: "BC431040", name: "Bachelor of Science (BSc) majoring in Botany and Chemistry", faculty: UFS_FACULTIES.NAS },
+        { code: "BC431041", name: "Bachelor of Science (BSc) majoring in Botany and Genetics", faculty: UFS_FACULTIES.NAS },
+        { code: "BC431042", name: "Bachelor of Science (BSc) majoring in Botany and Microbiology", faculty: UFS_FACULTIES.NAS },
+        { code: "BC431043", name: "Bachelor of Science (BSc) majoring in Botany and Plant Breeding", faculty: UFS_FACULTIES.NAS },
+        { code: "BC431044", name: "Bachelor of Science (BSc) majoring in Botany and Plant Pathology", faculty: UFS_FACULTIES.NAS },
+        { code: "BC431045", name: "Bachelor of Science (BSc) majoring in Botany and Zoology", faculty: UFS_FACULTIES.NAS },
+        { code: "BC431050", name: "Bachelor of Science (BSc) majoring in Chemistry and Physics", faculty: UFS_FACULTIES.NAS },
+        { code: "BC431051", name: "Bachelor of Science (BSc) majoring in Chemistry and Mathematics", faculty: UFS_FACULTIES.NAS },
+        { code: "BC431060", name: "Bachelor of Science (BSc) majoring in Computer Science and Chemistry", faculty: UFS_FACULTIES.NAS },
+        { code: "BC431061", name: "Bachelor of Science (BSc) majoring in Computer Science and Mathematics", faculty: UFS_FACULTIES.NAS },
+        { code: "BC431062", name: "Bachelor of Science (BSc) majoring in Computer Science and Mathematical Statistics", faculty: UFS_FACULTIES.NAS },
+        { code: "BC431063", name: "Bachelor of Science (BSc) majoring in Computer Science and Physics", faculty: UFS_FACULTIES.NAS },
+        { code: "BC431070", name: "Bachelor of Science (BSc) majoring in Geology and Chemistry", faculty: UFS_FACULTIES.NAS },
+        { code: "BC431071", name: "Bachelor of Science (BSc) majoring in Geology and Physics", faculty: UFS_FACULTIES.NAS },
+        { code: "BC431072", name: "Bachelor of Science (BSc) majoring in Geology and Environmental Science", faculty: UFS_FACULTIES.NAS },
+        { code: "BC431080", name: "Bachelor of Science (BSc) Information Technology majoring in Computer Science and Business", faculty: UFS_FACULTIES.NAS },
+        { code: "BC431081", name: "Bachelor of Science (BSc) Information Technology majoring in Computer Science and Chemistry", faculty: UFS_FACULTIES.NAS },
+        { code: "BC431082", name: "Bachelor of Science (BSc) Information Technology majoring in Computer Science and Management", faculty: UFS_FACULTIES.NAS },
+        { code: "BC431083", name: "Bachelor of Science (BSc) Information Technology majoring in Computer Science and Physics", faculty: UFS_FACULTIES.NAS },
+        { code: "BC432000", name: "Bachelor of Science in Construction Management", faculty: UFS_FACULTIES.NAS },
+        { code: "BC432100", name: "Bachelor of Science in Quantity Surveying", faculty: UFS_FACULTIES.NAS },
+
+        // Faculty of the Humanities
+        { code: "BC130000", name: "Bachelor of Arts (BA)", faculty: UFS_FACULTIES.HUM },
+        { code: "BC130001", name: "BA majoring in Communication Sciences", faculty: UFS_FACULTIES.HUM },
+        { code: "BC130002", name: "BA majoring in Governance and Political Transformation", faculty: UFS_FACULTIES.HUM },
+        { code: "BC130003", name: "BA majoring in Language Practice", faculty: UFS_FACULTIES.HUM },
+        { code: "BC130010", name: "Bachelor of Journalism", faculty: UFS_FACULTIES.HUM },
+        { code: "BC130011", name: "Bachelor of Social Science (BSocSci)", faculty: UFS_FACULTIES.HUM },
+        { code: "BC130012", name: "BSocSci majoring in Criminology and Psychology", faculty: UFS_FACULTIES.HUM },
+        { code: "BC130020", name: "Bachelor of Social Work (BSW)", faculty: UFS_FACULTIES.HUM },
+        { code: "BC130030", name: "Bachelor of Music (BMus)", faculty: UFS_FACULTIES.HUM },
+        { code: "BC130040", name: "Bachelor of Drama and Theatre Arts", faculty: UFS_FACULTIES.HUM },
+        { code: "BC130050", name: "Bachelor of Fine Arts (BFA)", faculty: UFS_FACULTIES.HUM },
+
+        // Faculty of Theology and Religion
+        { code: "BC930000", name: "Bachelor of Theology (BTh)", faculty: UFS_FACULTIES.THEO },
+        { code: "BC930001", name: "Bachelor of Divinity (BDiv)", faculty: UFS_FACULTIES.THEO }
+    ];
+
     const form = document.getElementById("registrationForm");
     const accountType = document.getElementById("accountType");
+    const facultySelect = document.getElementById("faculty");
+    const academicProgrammeSelect = document.getElementById("academicProgramme");
+    const corridorSelect = document.getElementById("corridor");
     const houseMemberFields = document.getElementById("houseMemberFields");
     const alumniFields = document.getElementById("alumniFields");
     const organisationFields = document.getElementById("organisationFields");
     const registerButton = document.getElementById("registerButton");
     const message = document.getElementById("message");
+
+    facultySelect.addEventListener("change", () => {
+        const selectedFaculty = facultySelect.value;
+
+        academicProgrammeSelect.innerHTML = "";
+
+        if (!selectedFaculty) {
+            academicProgrammeSelect.disabled = true;
+            const defaultOption = document.createElement("option");
+            defaultOption.value = "";
+            defaultOption.textContent = "Select your faculty first";
+            academicProgrammeSelect.appendChild(defaultOption);
+            return;
+        }
+
+        const placeholderOption = document.createElement("option");
+        placeholderOption.value = "";
+        placeholderOption.textContent = "Select your academic programme";
+        academicProgrammeSelect.appendChild(placeholderOption);
+
+        const filteredProgrammes = PROGRAMMES_DATASET.filter(
+            prog => prog.faculty === selectedFaculty
+        );
+
+        filteredProgrammes.forEach(prog => {
+            const option = document.createElement("option");
+            option.value = prog.code;
+            option.textContent = prog.name;
+            academicProgrammeSelect.appendChild(option);
+        });
+
+        academicProgrammeSelect.disabled = false;
+    });
 
     accountType.addEventListener("change", () => {
         const type = accountType.value;
@@ -459,6 +641,9 @@
         const password = document.getElementById("password").value;
         const confirmPassword = document.getElementById("confirmPassword").value;
         const type = accountType.value;
+        const selectedFaculty = facultySelect.value;
+        const selectedProgrammeCode = academicProgrammeSelect.value;
+        const selectedCorridor = corridorSelect.value;
 
         if (password !== confirmPassword) {
             showMessage("The passwords do not match.", true);
@@ -467,6 +652,27 @@
 
         if (!type) {
             showMessage("Please select an account type.", true);
+            return;
+        }
+
+        if (!selectedFaculty) {
+            showMessage("Please select your faculty.", true);
+            return;
+        }
+
+        if (!selectedProgrammeCode) {
+            showMessage("Please select your academic programme.", true);
+            return;
+        }
+
+        if (!selectedCorridor) {
+            showMessage("Please select your residence corridor.", true);
+            return;
+        }
+
+        const progObj = PROGRAMMES_DATASET.find(p => p.code === selectedProgrammeCode);
+        if (!progObj || progObj.faculty !== selectedFaculty) {
+            showMessage("Invalid faculty and academic programme selection.", true);
             return;
         }
 
@@ -484,6 +690,9 @@
                 surname: surname,
                 email: email,
                 accountType: type,
+                faculty: selectedFaculty,
+                academicProgramme: selectedProgrammeCode,
+                corridor: selectedCorridor,
                 status: type === "ORGANISATION" ? "ACTIVE" : "PENDING",
                 createdAt: new Date().toISOString()
             };
@@ -514,6 +723,9 @@
             );
 
             form.reset();
+
+            academicProgrammeSelect.innerHTML = '<option value="">Select your faculty first</option>';
+            academicProgrammeSelect.disabled = true;
 
             houseMemberFields.style.display = "none";
             alumniFields.style.display = "none";
