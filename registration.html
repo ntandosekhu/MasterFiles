@@ -335,10 +335,11 @@
                 </select>
             </div>
 
+            <!-- NEW ACADEMIC & RESIDENCE FIELDS -->
             <div class="form-group full">
                 <label for="faculty">Faculty</label>
                 <select id="faculty" required>
-                    <option value="">Select your faculty</option>
+                    <option value="" disabled selected>Select your faculty</option>
                     <option value="Faculty of Economic and Management Sciences">Faculty of Economic and Management Sciences</option>
                     <option value="Faculty of Education">Faculty of Education</option>
                     <option value="Faculty of Health Sciences">Faculty of Health Sciences</option>
@@ -352,20 +353,21 @@
             <div class="form-group full">
                 <label for="academicProgramme">Academic Programme</label>
                 <select id="academicProgramme" required disabled>
-                    <option value="">Select your faculty first</option>
+                    <option value="" disabled selected>Select your faculty first</option>
                 </select>
             </div>
 
             <div class="form-group full">
-                <label for="corridor">Corridor</label>
+                <label for="corridor">Residence Corridor</label>
                 <select id="corridor" required>
-                    <option value="">Select your corridor</option>
-                    <option value="1">Corridor 1</option>
-                    <option value="2">Corridor 2</option>
-                    <option value="3">Corridor 3</option>
-                    <option value="4">Corridor 4</option>
-                    <option value="5">Corridor 5</option>
-                    <option value="6">Corridor 6</option>
+                    <option value="" disabled selected>Select your corridor</option>
+                    <option value="Ground Floor North">Ground Floor North</option>
+                    <option value="Ground Floor South">Ground Floor South</option>
+                    <option value="First Floor East">First Floor East</option>
+                    <option value="First Floor West">First Floor West</option>
+                    <option value="Second Floor East">Second Floor East</option>
+                    <option value="Second Floor West">Second Floor West</option>
+                    <option value="Third Floor Central">Third Floor Central</option>
                 </select>
             </div>
 
@@ -434,6 +436,72 @@
     import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
     import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
 
+    // 2026 UFS Official Faculty Rule Book Undergraduate Dataset
+    const UFS_2026_PROGRAMMES = {
+        "Faculty of Economic and Management Sciences": [
+            { programmeCode: "B63001", programmeName: "Bachelor of Administration (BAdmin)", qualification: "BAdmin", programmeType: "Standard", campus: "Bloemfontein" },
+            { programmeCode: "B63002", programmeName: "Bachelor of Commerce (BCom)", qualification: "BCom", programmeType: "Standard", campus: "Bloemfontein" },
+            { programmeCode: "B63003", programmeName: "Bachelor of Commerce in Accounting (BCom Accounting)", qualification: "BCom", programmeType: "Standard", campus: "Bloemfontein" },
+            { programmeCode: "B63004", programmeName: "Bachelor of Accounting (BAcc)", qualification: "BAcc", programmeType: "Standard", campus: "Bloemfontein" },
+            { programmeCode: "B63005", programmeName: "Bachelor of Commerce in Business Management", qualification: "BCom", programmeType: "Standard", campus: "Bloemfontein" },
+            { programmeCode: "B63006", programmeName: "Bachelor of Commerce in Economics", qualification: "BCom", programmeType: "Standard", campus: "Bloemfontein" },
+            { programmeCode: "B63007", programmeName: "Bachelor of Commerce in Law (BCom Law)", qualification: "BCom", programmeType: "Standard", campus: "Bloemfontein" },
+            { programmeCode: "B63008", programmeName: "Bachelor of Commerce — Extended Programme", qualification: "BCom Extended", programmeType: "Extended", campus: "South Campus / Bloemfontein" },
+            { programmeCode: "B63009", programmeName: "Bachelor of Administration — Extended Programme", qualification: "BAdmin Extended", programmeType: "Extended", campus: "South Campus / Bloemfontein" }
+        ],
+        "Faculty of Education": [
+            { programmeCode: "B73001", programmeName: "Bachelor of Education in Foundation Phase Teaching", qualification: "BEd", programmeType: "Standard", campus: "Bloemfontein" },
+            { programmeCode: "B73002", programmeName: "Bachelor of Education in Intermediate Phase Teaching", qualification: "BEd", programmeType: "Standard", campus: "Bloemfontein" },
+            { programmeCode: "B73003", programmeName: "Bachelor of Education in Senior Phase and FET Teaching", qualification: "BEd", programmeType: "Standard", campus: "Bloemfontein" },
+            { programmeCode: "B73004", programmeName: "Bachelor of Education in Foundation Phase Teaching — Extended Programme", qualification: "BEd Extended", programmeType: "Extended", campus: "South Campus / Bloemfontein" },
+            { programmeCode: "B73005", programmeName: "Bachelor of Education in Intermediate Phase Teaching — Extended Programme", qualification: "BEd Extended", programmeType: "Extended", campus: "South Campus / Bloemfontein" }
+        ],
+        "Faculty of Health Sciences": [
+            { programmeCode: "B83001", programmeName: "Bachelor of Medicine and Bachelor of Surgery (MBChB)", qualification: "MBChB", programmeType: "Standard", campus: "Bloemfontein" },
+            { programmeCode: "B83002", programmeName: "Bachelor of Science in Dietetics", qualification: "BSc Dietetics", programmeType: "Standard", campus: "Bloemfontein" },
+            { programmeCode: "B83003", programmeName: "Bachelor of Nursing", qualification: "BNurs", programmeType: "Standard", campus: "Bloemfontein" },
+            { programmeCode: "B83004", programmeName: "Bachelor of Occupational Therapy", qualification: "BOccTher", programmeType: "Standard", campus: "Bloemfontein" },
+            { programmeCode: "B83005", programmeName: "Bachelor of Optometry", qualification: "BOptom", programmeType: "Standard", campus: "Bloemfontein" },
+            { programmeCode: "B83006", programmeName: "Bachelor of Science in Physiotherapy", qualification: "BSc Physiotherapy", programmeType: "Standard", campus: "Bloemfontein" },
+            { programmeCode: "B83007", programmeName: "Bachelor of Biokinetics", qualification: "BBiok", programmeType: "Standard", campus: "Bloemfontein" },
+            { programmeCode: "B83008", programmeName: "Bachelor of Medical Science (BMedSc)", qualification: "BMedSc", programmeType: "Standard", campus: "Bloemfontein" }
+        ],
+        "Faculty of Law": [
+            { programmeCode: "B34001", programmeName: "Bachelor of Laws (LLB) — 4 Year", qualification: "LLB", programmeType: "Standard", campus: "Bloemfontein" },
+            { programmeCode: "B35002", programmeName: "Bachelor of Laws (LLB) — 5 Year Extended Programme", qualification: "LLB Extended", programmeType: "Extended", campus: "Bloemfontein" }
+        ],
+        "Faculty of Natural and Agricultural Sciences": [
+            { programmeCode: "B43001", programmeName: "Bachelor of Agriculture (BAgric)", qualification: "BAgric", programmeType: "Standard", campus: "Bloemfontein" },
+            { programmeCode: "B43002", programmeName: "Bachelor of Science in Agriculture (BScAgric)", qualification: "BScAgric", programmeType: "Standard", campus: "Bloemfontein" },
+            { programmeCode: "B43003", programmeName: "Bachelor of Science majoring in Actuarial Science", qualification: "BSc", programmeType: "Standard", campus: "Bloemfontein" },
+            { programmeCode: "B43004", programmeName: "Bachelor of Science majoring in Biological Sciences", qualification: "BSc", programmeType: "Standard", campus: "Bloemfontein" },
+            { programmeCode: "B43005", programmeName: "Bachelor of Science majoring in Chemical and Physical Sciences", qualification: "BSc", programmeType: "Standard", campus: "Bloemfontein" },
+            { programmeCode: "B43006", programmeName: "Bachelor of Science majoring in Computer Science and Informatics", qualification: "BSc", programmeType: "Standard", campus: "Bloemfontein" },
+            { programmeCode: "B43007", programmeName: "Bachelor of Science majoring in Geosciences", qualification: "BSc", programmeType: "Standard", campus: "Bloemfontein" },
+            { programmeCode: "B43008", programmeName: "Bachelor of Science majoring in Mathematical Sciences", qualification: "BSc", programmeType: "Standard", campus: "Bloemfontein" },
+            { programmeCode: "B43009", programmeName: "Bachelor of Science Construction Management", qualification: "BSc Construction Management", programmeType: "Standard", campus: "Bloemfontein" },
+            { programmeCode: "B43010", programmeName: "Bachelor of Science Quantity Surveying", qualification: "BSc Quantity Surveying", programmeType: "Standard", campus: "Bloemfontein" },
+            { programmeCode: "B43011", programmeName: "Bachelor of Science — Extended Programme", qualification: "BSc Extended", programmeType: "Extended", campus: "South Campus / Bloemfontein" },
+            { programmeCode: "B43012", programmeName: "Bachelor of Agriculture — Extended Programme", qualification: "BAgric Extended", programmeType: "Extended", campus: "South Campus / Bloemfontein" }
+        ],
+        "Faculty of the Humanities": [
+            { programmeCode: "B13001", programmeName: "Bachelor of Arts (BA)", qualification: "BA", programmeType: "Standard", campus: "Bloemfontein" },
+            { programmeCode: "B13002", programmeName: "Bachelor of Arts in Communication Studies", qualification: "BA Communication", programmeType: "Standard", campus: "Bloemfontein" },
+            { programmeCode: "B13003", programmeName: "Bachelor of Arts in Journalism", qualification: "BA Journalism", programmeType: "Standard", campus: "Bloemfontein" },
+            { programmeCode: "B13004", programmeName: "Bachelor of Arts in Fine Arts", qualification: "BA Fine Arts", programmeType: "Standard", campus: "Bloemfontein" },
+            { programmeCode: "B13005", programmeName: "Bachelor of Music (BMus)", qualification: "BMus", programmeType: "Standard", campus: "Bloemfontein" },
+            { programmeCode: "B13006", programmeName: "Bachelor of Social Science (BSocSci)", qualification: "BSocSci", programmeType: "Standard", campus: "Bloemfontein" },
+            { programmeCode: "B13007", programmeName: "Bachelor of Social Work (BSW)", qualification: "BSW", programmeType: "Standard", campus: "Bloemfontein" },
+            { programmeCode: "B13008", programmeName: "Bachelor of Arts — Extended Programme", qualification: "BA Extended", programmeType: "Extended", campus: "South Campus / Bloemfontein" },
+            { programmeCode: "B13009", programmeName: "Bachelor of Social Science — Extended Programme", qualification: "BSocSci Extended", programmeType: "Extended", campus: "South Campus / Bloemfontein" }
+        ],
+        "Faculty of Theology and Religion": [
+            { programmeCode: "B53001", programmeName: "Bachelor of Divinity (BDiv)", qualification: "BDiv", programmeType: "Standard", campus: "Bloemfontein" },
+            { programmeCode: "B53002", programmeName: "Bachelor of Theology (BTh)", qualification: "BTh", programmeType: "Standard", campus: "Bloemfontein" },
+            { programmeCode: "B53003", programmeName: "Higher Certificate in Theology", qualification: "HCert Theology", programmeType: "Standard", campus: "Bloemfontein" }
+        ]
+    };
+
     const firebaseConfig = {
         apiKey: "AIzaSyDW6IArj2dZiqbf00Ix3SPPSqvxTKG0GgE",
         authDomain: "master-files-95f6b.firebaseapp.com",
@@ -467,154 +535,48 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    const UFS_FACULTIES = {
-        EMS: "Faculty of Economic and Management Sciences",
-        EDU: "Faculty of Education",
-        HS: "Faculty of Health Sciences",
-        LAW: "Faculty of Law",
-        NAS: "Faculty of Natural and Agricultural Sciences",
-        HUM: "Faculty of the Humanities",
-        THEO: "Faculty of Theology and Religion"
-    };
-
-    const PROGRAMMES_DATASET = [
-        // Faculty of Economic and Management Sciences
-        { code: "BC630011", name: "Bachelor of Administration (BAdmin)", faculty: UFS_FACULTIES.EMS },
-        { code: "BC630012", name: "Bachelor of Commerce (BCom)", faculty: UFS_FACULTIES.EMS },
-        { code: "BC630013", name: "BCom in Accounting", faculty: UFS_FACULTIES.EMS },
-        { code: "BC630014", name: "BCom with specialisation in Financial Accounting", faculty: UFS_FACULTIES.EMS },
-        { code: "BC630020", name: "BCom with specialisation in Business Management", faculty: UFS_FACULTIES.EMS },
-        { code: "BC630021", name: "BCom with specialisation in Economics", faculty: UFS_FACULTIES.EMS },
-        { code: "BC630022", name: "BCom with specialisation in Investment Management and Banking", faculty: UFS_FACULTIES.EMS },
-        { code: "BC630023", name: "BCom with specialisation in Marketing", faculty: UFS_FACULTIES.EMS },
-        { code: "BC630024", name: "BCom with specialisation in Human Resource Management", faculty: UFS_FACULTIES.EMS },
-        { code: "BC630025", name: "BCom with specialisation in Law", faculty: UFS_FACULTIES.EMS },
-        { code: "BC630026", name: "BCom with specialisation in Information Technology", faculty: UFS_FACULTIES.EMS },
-        { code: "BC630060", name: "Bachelor of Accounting (BAcc)", faculty: UFS_FACULTIES.EMS },
-
-        // Faculty of Education
-        { code: "BC731100", name: "Bachelor of Education in Foundation Phase Teaching", faculty: UFS_FACULTIES.EDU },
-        { code: "BC731200", name: "Bachelor of Education in Intermediate Phase Teaching (General)", faculty: UFS_FACULTIES.EDU },
-        { code: "BC731300", name: "Bachelor of Education in Senior Phase and FET Teaching (Humanities & Social Sciences)", faculty: UFS_FACULTIES.EDU },
-        { code: "BC731400", name: "Bachelor of Education in Senior Phase and FET Teaching (Economic & Management Sciences)", faculty: UFS_FACULTIES.EDU },
-        { code: "BC731500", name: "Bachelor of Education in Senior Phase and FET Teaching (Natural Sciences & Mathematics)", faculty: UFS_FACULTIES.EDU },
-        { code: "BC731600", name: "Bachelor of Education in Senior Phase and FET Teaching (Technology)", faculty: UFS_FACULTIES.EDU },
-
-        // Faculty of Health Sciences
-        { code: "BC830000", name: "Bachelor of Medicine and Bachelor of Surgery (MBChB)", faculty: UFS_FACULTIES.HS },
-        { code: "BC831000", name: "Bachelor of Science in Dietetics", faculty: UFS_FACULTIES.HS },
-        { code: "BC832000", name: "Bachelor of Science in Physiotherapy", faculty: UFS_FACULTIES.HS },
-        { code: "BC833000", name: "Bachelor of Optometry", faculty: UFS_FACULTIES.HS },
-        { code: "BC834000", name: "Bachelor of Occupational Therapy", faculty: UFS_FACULTIES.HS },
-        { code: "BC835000", name: "Bachelor of Biokinetics", faculty: UFS_FACULTIES.HS },
-        { code: "BC835500", name: "Bachelor of Sports Coaching", faculty: UFS_FACULTIES.HS },
-        { code: "BC835600", name: "Bachelor of Nursing", faculty: UFS_FACULTIES.HS },
-        { code: "BC835700", name: "Bachelor of Medical Science (BMedSc) Radiation Sciences", faculty: UFS_FACULTIES.HS },
-
-        // Faculty of Law
-        { code: "BC230000", name: "Bachelor of Laws (LLB) - 4 Year Programme", faculty: UFS_FACULTIES.LAW },
-
-        // Faculty of Natural and Agricultural Sciences
-        { code: "BC430001", name: "Bachelor of Agriculture (BAgric) in Agricultural Management", faculty: UFS_FACULTIES.NAS },
-        { code: "BC430002", name: "Bachelor of Agriculture (BAgric) in Animal Production Management", faculty: UFS_FACULTIES.NAS },
-        { code: "BC430003", name: "Bachelor of Agriculture (BAgric) in Crop Production Management", faculty: UFS_FACULTIES.NAS },
-        { code: "BC430004", name: "Bachelor of Science in Agriculture (BScAgric) in Agricultural Economics", faculty: UFS_FACULTIES.NAS },
-        { code: "BC430005", name: "Bachelor of Science in Agriculture (BScAgric) in Animal Science", faculty: UFS_FACULTIES.NAS },
-        { code: "BC430006", name: "Bachelor of Science in Agriculture (BScAgric) in Agronomy", faculty: UFS_FACULTIES.NAS },
-        { code: "BC430007", name: "Bachelor of Science in Agriculture (BScAgric) in Soil Science", faculty: UFS_FACULTIES.NAS },
-        { code: "BC430008", name: "Bachelor of Science in Agriculture (BScAgric) in Plant Pathology", faculty: UFS_FACULTIES.NAS },
-        { code: "BC431010", name: "Bachelor of Science (BSc) majoring in Actuarial Science", faculty: UFS_FACULTIES.NAS },
-        { code: "BC431020", name: "Bachelor of Science (BSc) majoring in Applied Mathematics and Chemistry", faculty: UFS_FACULTIES.NAS },
-        { code: "BC431021", name: "Bachelor of Science (BSc) majoring in Applied Mathematics and Physics", faculty: UFS_FACULTIES.NAS },
-        { code: "BC431030", name: "Bachelor of Science (BSc) majoring in Biochemistry and Botany", faculty: UFS_FACULTIES.NAS },
-        { code: "BC431031", name: "Bachelor of Science (BSc) majoring in Biochemistry and Chemistry", faculty: UFS_FACULTIES.NAS },
-        { code: "BC431032", name: "Bachelor of Science (BSc) majoring in Biochemistry and Food Science", faculty: UFS_FACULTIES.NAS },
-        { code: "BC431033", name: "Bachelor of Science (BSc) majoring in Biochemistry and Genetics", faculty: UFS_FACULTIES.NAS },
-        { code: "BC431034", name: "Bachelor of Science (BSc) majoring in Biochemistry and Microbiology", faculty: UFS_FACULTIES.NAS },
-        { code: "BC431035", name: "Bachelor of Science (BSc) majoring in Biochemistry and Physiology", faculty: UFS_FACULTIES.NAS },
-        { code: "BC431036", name: "Bachelor of Science (BSc) majoring in Biochemistry and Statistics", faculty: UFS_FACULTIES.NAS },
-        { code: "BC431040", name: "Bachelor of Science (BSc) majoring in Botany and Chemistry", faculty: UFS_FACULTIES.NAS },
-        { code: "BC431041", name: "Bachelor of Science (BSc) majoring in Botany and Genetics", faculty: UFS_FACULTIES.NAS },
-        { code: "BC431042", name: "Bachelor of Science (BSc) majoring in Botany and Microbiology", faculty: UFS_FACULTIES.NAS },
-        { code: "BC431043", name: "Bachelor of Science (BSc) majoring in Botany and Plant Breeding", faculty: UFS_FACULTIES.NAS },
-        { code: "BC431044", name: "Bachelor of Science (BSc) majoring in Botany and Plant Pathology", faculty: UFS_FACULTIES.NAS },
-        { code: "BC431045", name: "Bachelor of Science (BSc) majoring in Botany and Zoology", faculty: UFS_FACULTIES.NAS },
-        { code: "BC431050", name: "Bachelor of Science (BSc) majoring in Chemistry and Physics", faculty: UFS_FACULTIES.NAS },
-        { code: "BC431051", name: "Bachelor of Science (BSc) majoring in Chemistry and Mathematics", faculty: UFS_FACULTIES.NAS },
-        { code: "BC431060", name: "Bachelor of Science (BSc) majoring in Computer Science and Chemistry", faculty: UFS_FACULTIES.NAS },
-        { code: "BC431061", name: "Bachelor of Science (BSc) majoring in Computer Science and Mathematics", faculty: UFS_FACULTIES.NAS },
-        { code: "BC431062", name: "Bachelor of Science (BSc) majoring in Computer Science and Mathematical Statistics", faculty: UFS_FACULTIES.NAS },
-        { code: "BC431063", name: "Bachelor of Science (BSc) majoring in Computer Science and Physics", faculty: UFS_FACULTIES.NAS },
-        { code: "BC431070", name: "Bachelor of Science (BSc) majoring in Geology and Chemistry", faculty: UFS_FACULTIES.NAS },
-        { code: "BC431071", name: "Bachelor of Science (BSc) majoring in Geology and Physics", faculty: UFS_FACULTIES.NAS },
-        { code: "BC431072", name: "Bachelor of Science (BSc) majoring in Geology and Environmental Science", faculty: UFS_FACULTIES.NAS },
-        { code: "BC431080", name: "Bachelor of Science (BSc) Information Technology majoring in Computer Science and Business", faculty: UFS_FACULTIES.NAS },
-        { code: "BC431081", name: "Bachelor of Science (BSc) Information Technology majoring in Computer Science and Chemistry", faculty: UFS_FACULTIES.NAS },
-        { code: "BC431082", name: "Bachelor of Science (BSc) Information Technology majoring in Computer Science and Management", faculty: UFS_FACULTIES.NAS },
-        { code: "BC431083", name: "Bachelor of Science (BSc) Information Technology majoring in Computer Science and Physics", faculty: UFS_FACULTIES.NAS },
-        { code: "BC432000", name: "Bachelor of Science in Construction Management", faculty: UFS_FACULTIES.NAS },
-        { code: "BC432100", name: "Bachelor of Science in Quantity Surveying", faculty: UFS_FACULTIES.NAS },
-
-        // Faculty of the Humanities
-        { code: "BC130000", name: "Bachelor of Arts (BA)", faculty: UFS_FACULTIES.HUM },
-        { code: "BC130001", name: "BA majoring in Communication Sciences", faculty: UFS_FACULTIES.HUM },
-        { code: "BC130002", name: "BA majoring in Governance and Political Transformation", faculty: UFS_FACULTIES.HUM },
-        { code: "BC130003", name: "BA majoring in Language Practice", faculty: UFS_FACULTIES.HUM },
-        { code: "BC130010", name: "Bachelor of Journalism", faculty: UFS_FACULTIES.HUM },
-        { code: "BC130011", name: "Bachelor of Social Science (BSocSci)", faculty: UFS_FACULTIES.HUM },
-        { code: "BC130012", name: "BSocSci majoring in Criminology and Psychology", faculty: UFS_FACULTIES.HUM },
-        { code: "BC130020", name: "Bachelor of Social Work (BSW)", faculty: UFS_FACULTIES.HUM },
-        { code: "BC130030", name: "Bachelor of Music (BMus)", faculty: UFS_FACULTIES.HUM },
-        { code: "BC130040", name: "Bachelor of Drama and Theatre Arts", faculty: UFS_FACULTIES.HUM },
-        { code: "BC130050", name: "Bachelor of Fine Arts (BFA)", faculty: UFS_FACULTIES.HUM },
-
-        // Faculty of Theology and Religion
-        { code: "BC930000", name: "Bachelor of Theology (BTh)", faculty: UFS_FACULTIES.THEO },
-        { code: "BC930001", name: "Bachelor of Divinity (BDiv)", faculty: UFS_FACULTIES.THEO }
-    ];
-
     const form = document.getElementById("registrationForm");
     const accountType = document.getElementById("accountType");
-    const facultySelect = document.getElementById("faculty");
-    const academicProgrammeSelect = document.getElementById("academicProgramme");
-    const corridorSelect = document.getElementById("corridor");
     const houseMemberFields = document.getElementById("houseMemberFields");
     const alumniFields = document.getElementById("alumniFields");
     const organisationFields = document.getElementById("organisationFields");
     const registerButton = document.getElementById("registerButton");
     const message = document.getElementById("message");
 
+    const facultySelect = document.getElementById("faculty");
+    const academicProgrammeSelect = document.getElementById("academicProgramme");
+    const corridorSelect = document.getElementById("corridor");
+
     facultySelect.addEventListener("change", () => {
         const selectedFaculty = facultySelect.value;
-
         academicProgrammeSelect.innerHTML = "";
 
-        if (!selectedFaculty) {
+        if (!selectedFaculty || !UFS_2026_PROGRAMMES[selectedFaculty]) {
             academicProgrammeSelect.disabled = true;
-            const defaultOption = document.createElement("option");
-            defaultOption.value = "";
-            defaultOption.textContent = "Select your faculty first";
-            academicProgrammeSelect.appendChild(defaultOption);
+            const placeholder = document.createElement("option");
+            placeholder.value = "";
+            placeholder.textContent = "Select your faculty first";
+            placeholder.disabled = true;
+            placeholder.selected = true;
+            academicProgrammeSelect.appendChild(placeholder);
             return;
         }
 
-        const placeholderOption = document.createElement("option");
-        placeholderOption.value = "";
-        placeholderOption.textContent = "Select your academic programme";
-        academicProgrammeSelect.appendChild(placeholderOption);
+        academicProgrammeSelect.disabled = false;
+        const placeholder = document.createElement("option");
+        placeholder.value = "";
+        placeholder.textContent = "Select your academic programme";
+        placeholder.disabled = true;
+        placeholder.selected = true;
+        academicProgrammeSelect.appendChild(placeholder);
 
-        const filteredProgrammes = PROGRAMMES_DATASET.filter(
-            prog => prog.faculty === selectedFaculty
-        );
-
-        filteredProgrammes.forEach(prog => {
+        const programmes = UFS_2026_PROGRAMMES[selectedFaculty];
+        programmes.forEach((prog) => {
             const option = document.createElement("option");
-            option.value = prog.code;
-            option.textContent = prog.name;
+            option.value = prog.programmeName;
+            option.textContent = prog.programmeName;
             academicProgrammeSelect.appendChild(option);
         });
-
-        academicProgrammeSelect.disabled = false;
     });
 
     accountType.addEventListener("change", () => {
@@ -641,8 +603,9 @@
         const password = document.getElementById("password").value;
         const confirmPassword = document.getElementById("confirmPassword").value;
         const type = accountType.value;
+
         const selectedFaculty = facultySelect.value;
-        const selectedProgrammeCode = academicProgrammeSelect.value;
+        const selectedProgramme = academicProgrammeSelect.value;
         const selectedCorridor = corridorSelect.value;
 
         if (password !== confirmPassword) {
@@ -660,7 +623,7 @@
             return;
         }
 
-        if (!selectedProgrammeCode) {
+        if (!selectedProgramme) {
             showMessage("Please select your academic programme.", true);
             return;
         }
@@ -670,9 +633,12 @@
             return;
         }
 
-        const progObj = PROGRAMMES_DATASET.find(p => p.code === selectedProgrammeCode);
-        if (!progObj || progObj.faculty !== selectedFaculty) {
-            showMessage("Invalid faculty and academic programme selection.", true);
+        // Cross-validation of Faculty vs Programme
+        const validFacultyProgrammes = UFS_2026_PROGRAMMES[selectedFaculty] || [];
+        const isValidProgramme = validFacultyProgrammes.some(p => p.programmeName === selectedProgramme);
+
+        if (!isValidProgramme) {
+            showMessage("Invalid academic programme selection for the chosen faculty.", true);
             return;
         }
 
@@ -691,7 +657,7 @@
                 email: email,
                 accountType: type,
                 faculty: selectedFaculty,
-                academicProgramme: selectedProgrammeCode,
+                academicProgramme: selectedProgramme,
                 corridor: selectedCorridor,
                 status: type === "ORGANISATION" ? "ACTIVE" : "PENDING",
                 createdAt: new Date().toISOString()
@@ -724,7 +690,7 @@
 
             form.reset();
 
-            academicProgrammeSelect.innerHTML = '<option value="">Select your faculty first</option>';
+            academicProgrammeSelect.innerHTML = '<option value="" disabled selected>Select your faculty first</option>';
             academicProgrammeSelect.disabled = true;
 
             houseMemberFields.style.display = "none";
