@@ -395,6 +395,11 @@ body {
     display: none;
 }
 
+/* Hide Secretary section by default */
+#secretarySection {
+    display: none;
+}
+
 /* =========================
    RESPONSIVE DESIGN
 ========================= */
@@ -543,6 +548,18 @@ body {
                     </button>
                 </div>
 
+                <!-- 5. Food Bank -->
+                <div class="service-card">
+                    <div class="card-top">
+                        <span class="card-icon">
+                            <img src="images/foodbank.png" alt="Food Bank">
+                        </span>
+                        <h3 class="card-title">Food Bank</h3>
+                        <p class="card-description">Request food or donate food to support members of the residence.</p>
+                    </div>
+                    <button class="card-button" data-link="foodbank.html">Access Food Bank</button>
+                </div>
+
             </div>
         </div>
 
@@ -560,6 +577,25 @@ body {
                         <p class="card-description">Manage corridor-related residence matters and view corridor information.</p>
                     </div>
                     <button class="card-button" data-link="corridor.html">Manage Corridor</button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- SECRETARY SECTION (CONDITIONAL FOR SECRETARY ROLES) -->
+        <div class="services-group" id="secretarySection">
+            <h4 class="section-heading">Secretary Duties</h4>
+            <div class="card-grid">
+                
+                <div class="service-card" id="secretaryCard">
+                    <div class="card-top">
+                        <span class="card-icon">
+                            <img src="images/secretary.png" alt="Secretary Notetaking / Minutes">
+                        </span>
+                        <h3 class="card-title">Secretary Notetaking / Minutes</h3>
+                        <p class="card-description">Record, manage, and submit official meeting minutes and notes for residence portfolios.</p>
+                    </div>
+                    <button class="card-button" data-link="secretaryminutes.html">Manage Minutes</button>
                 </div>
 
             </div>
@@ -632,6 +668,7 @@ const roomNumberBadge = document.getElementById("roomNumberBadge");
 const roleBadge = document.getElementById("roleBadge");
 
 const leadershipSection = document.getElementById("leadershipSection");
+const secretarySection = document.getElementById("secretarySection");
 const logoutButton = document.getElementById("logoutButton");
 
 /* =========================
@@ -653,7 +690,8 @@ function formatAccountType(type) {
 ========================= */
 document.querySelectorAll(".card-button").forEach(button => {
     button.addEventListener("click", (e) => {
-        const targetPage = e.target.getAttribute("data-link");
+        const buttonEl = e.currentTarget || e.target;
+        const targetPage = buttonEl.getAttribute("data-link");
         if (targetPage) {
             window.location.href = targetPage;
         }
@@ -720,13 +758,22 @@ onAuthStateChanged(auth, async (user) => {
             roleBadge.style.display = "inline-block";
         }
 
+        // Check for any role containing 'secretary' (case-insensitive)
+        const isSecretary = houseRoles.some(role => 
+            typeof role === "string" && role.toLowerCase().includes("secretary")
+        );
+
+        if (isSecretary) {
+            secretarySection.style.display = "block";
+        }
+
         // Reveal dashboard only after all security checks & data loading complete
         loadingState.style.display = "none";
         dashboardContent.style.display = "block";
 
     } catch (error) {
         console.error("Error retrieving user document:", error);
-        showError("We could not load your residence profile. Please try again.");
+        showError("We could not load your residence profile. Please contact an administrator.");
     }
 });
 
