@@ -297,14 +297,16 @@ body {
 }
 
 /* =========================
-   BREAKAGE CARD CENTERED WATERMARK
+   CARD LOGO WATERMARKS (every card, same treatment as the breakage card)
+   Each card sets its own logo through --card-icon.
 ========================= */
-.service-card.breakage-card {
+.service-card.watermark-card {
     position: relative;
     overflow: hidden;
 }
 
-.service-card.breakage-card::after {
+/* Large, faint logo centred behind the card content */
+.service-card.watermark-card::after {
     content: "";
     position: absolute;
     top: 50%;
@@ -313,8 +315,8 @@ body {
     width: 220px;
     height: 220px;
     background-color: #94a3b8; /* Soft light grey tone */
-    -webkit-mask-image: url('images/breakageswrench.png');
-    mask-image: url('images/breakageswrench.png');
+    -webkit-mask-image: var(--card-icon);
+    mask-image: var(--card-icon);
     -webkit-mask-size: contain;
     mask-size: contain;
     -webkit-mask-repeat: no-repeat;
@@ -326,15 +328,15 @@ body {
     z-index: 0;
 }
 
-.service-card.breakage-card > * {
+.service-card.watermark-card > * {
     position: relative;
     z-index: 1;
 }
 
 /* =========================
-   BREAKAGE BUTTON WATERMARK
+   BUTTON LOGO WATERMARK
 ========================= */
-.card-button.btn-breakage {
+.card-button.btn-watermark {
     position: relative;
     overflow: hidden;
     display: flex;
@@ -343,50 +345,44 @@ body {
 }
 
 /* Keeps button text sitting above the watermark */
-.card-button.btn-breakage span {
+.card-button.btn-watermark span {
     position: relative;
     z-index: 2;
 }
 
-/* Watermark pseudo-element rendered on top of the solid blue background */
-.card-button.btn-breakage::before {
+/* Logo rendered in a lighter blue on the solid blue button */
+.card-button.btn-watermark::before {
     content: "";
     position: absolute;
     right: -4px;
     bottom: -8px;
     width: 55px;
     height: 55px;
-    z-index: 1; /* Sits in front of button backdrop, behind text */
+    z-index: 1;
     pointer-events: none;
-
-    /* Lighter blue shade so it contrasts clearly against var(--space-blue) */
     background-color: #5B75B8;
-
-    -webkit-mask-image: url('images/breakageswrench.png');
-    mask-image: url('images/breakageswrench.png');
+    -webkit-mask-image: var(--card-icon);
+    mask-image: var(--card-icon);
     -webkit-mask-size: contain;
     mask-size: contain;
     -webkit-mask-repeat: no-repeat;
     mask-repeat: no-repeat;
     -webkit-mask-position: center;
     mask-position: center;
-
-    /* Drop shadows to keep fine vector lines prominent */
-    filter: 
-        drop-shadow(0.8px 0 0 #5B75B8) 
-        drop-shadow(-0.8px 0 0 #5B75B8) 
-        drop-shadow(0 0.8px 0 #5B75B8) 
+    filter:
+        drop-shadow(0.8px 0 0 #5B75B8)
+        drop-shadow(-0.8px 0 0 #5B75B8)
+        drop-shadow(0 0.8px 0 #5B75B8)
         drop-shadow(0 -0.8px 0 #5B75B8);
-
     transition: background-color 0.15s ease, filter 0.15s ease;
 }
 
-.card-button.btn-breakage:hover::before {
+.card-button.btn-watermark:hover::before {
     background-color: #7993D6;
-    filter: 
-        drop-shadow(0.8px 0 0 #7993D6) 
-        drop-shadow(-0.8px 0 0 #7993D6) 
-        drop-shadow(0 0.8px 0 #7993D6) 
+    filter:
+        drop-shadow(0.8px 0 0 #7993D6)
+        drop-shadow(-0.8px 0 0 #7993D6)
+        drop-shadow(0 0.8px 0 #7993D6)
         drop-shadow(0 -0.8px 0 #7993D6);
 }
 
@@ -490,7 +486,7 @@ body {
         <div class="services-group">
             <h4 class="section-heading">Personal</h4>
             <div class="card-grid">
-                <div class="service-card">
+                <div class="service-card watermark-card" style="--card-icon: url('images/myinfo.png');">
                     <div class="card-top">
                         <span class="card-icon">
                             <img src="images/myinfo.png" alt="My Info">
@@ -498,7 +494,7 @@ body {
                         <h3 class="card-title">My Info</h3>
                         <p class="card-description">View your residence and personal information.</p>
                     </div>
-                    <button class="card-button" data-link="myinfo.html">View My Info</button>
+                    <button class="card-button btn-watermark" data-link="myinfo.html"><span>View My Info</span></button>
                 </div>
             </div>
         </div>
@@ -509,7 +505,7 @@ body {
             <div class="card-grid">
                 
                 <!-- 1. Venue Bookings -->
-                <div class="service-card">
+                <div class="service-card watermark-card" style="--card-icon: url('images/bookings.png');">
                     <div class="card-top">
                         <span class="card-icon">
                             <img src="images/bookings.png" alt="Venue Bookings">
@@ -517,11 +513,11 @@ body {
                         <h3 class="card-title">Venue Bookings</h3>
                         <p class="card-description">View venue availability and make or manage bookings.</p>
                     </div>
-                    <button class="card-button" data-link="bookings.html">Manage Bookings</button>
+                    <button class="card-button btn-watermark" data-link="bookings.html"><span>Manage Bookings</span></button>
                 </div>
 
                 <!-- 2. Academic Resources -->
-                <div class="service-card">
+                <div class="service-card watermark-card" style="--card-icon: url('images/academics.png');">
                     <div class="card-top">
                         <span class="card-icon">
                             <img src="images/academics.png" alt="Academic Resources">
@@ -529,11 +525,11 @@ body {
                         <h3 class="card-title">Academic Resources</h3>
                         <p class="card-description">Access academic support materials, study resources, and learning tools for residents.</p>
                     </div>
-                    <button class="card-button" data-link="academicresources.html">View Academic Resources</button>
+                    <button class="card-button btn-watermark" data-link="academicresources.html"><span>View Academic Resources</span></button>
                 </div>
 
                 <!-- 3. My Fines -->
-                <div class="service-card">
+                <div class="service-card watermark-card" style="--card-icon: url('images/fines.png');">
                     <div class="card-top">
                         <span class="card-icon">
                             <img src="images/fines.png" alt="My Fines">
@@ -541,11 +537,11 @@ body {
                         <h3 class="card-title">My Fines</h3>
                         <p class="card-description">View current, disputed and paid fines.</p>
                     </div>
-                    <button class="card-button" data-link="myfines.html">View My Fines</button>
+                    <button class="card-button btn-watermark" data-link="myfines.html"><span>View My Fines</span></button>
                 </div>
 
                 <!-- 4. Report a Breakage -->
-                <div class="service-card breakage-card">
+                <div class="service-card watermark-card" style="--card-icon: url('images/breakageswrench.png');">
                     <div class="card-top">
                         <span class="card-icon">
                             <img src="images/breakageswrench.png" alt="Report a Breakage">
@@ -553,13 +549,11 @@ body {
                         <h3 class="card-title">Report a Breakage</h3>
                         <p class="card-description">Report damage or a maintenance-related breakage in your room.</p>
                     </div>
-                    <button class="card-button btn-breakage" data-link="mybreakages.html">
-                        <span>Report Breakage</span>
-                    </button>
+                    <button class="card-button btn-watermark" data-link="mybreakages.html"><span>Report Breakage</span></button>
                 </div>
 
                 <!-- 5. Food Bank -->
-                <div class="service-card">
+                <div class="service-card watermark-card" style="--card-icon: url('images/foodbank.png');">
                     <div class="card-top">
                         <span class="card-icon">
                             <img src="images/foodbank.png" alt="Food Bank">
@@ -567,7 +561,7 @@ body {
                         <h3 class="card-title">Food Bank</h3>
                         <p class="card-description">Request food or donate food to support members of the residence.</p>
                     </div>
-                    <button class="card-button" data-link="foodbank.html">Access Food Bank</button>
+                    <button class="card-button btn-watermark" data-link="foodbank.html"><span>Access Food Bank</span></button>
                 </div>
 
             </div>
@@ -578,7 +572,7 @@ body {
             <h4 class="section-heading">Leadership</h4>
             <div class="card-grid">
                 
-                <div class="service-card" id="corridorCard">
+                <div class="service-card watermark-card" style="--card-icon: url('images/corridor.png');" id="corridorCard">
                     <div class="card-top">
                         <span class="card-icon">
                             <img src="images/corridor.png" alt="Manage My Corridor">
@@ -586,7 +580,7 @@ body {
                         <h3 class="card-title">Manage My Corridor</h3>
                         <p class="card-description">Manage corridor-related residence matters and view corridor information.</p>
                     </div>
-                    <button class="card-button" data-link="corridor.html">Manage Corridor</button>
+                    <button class="card-button btn-watermark" data-link="corridor.html"><span>Manage Corridor</span></button>
                 </div>
 
             </div>
@@ -597,7 +591,7 @@ body {
             <h4 class="section-heading">Secretary Duties</h4>
             <div class="card-grid">
                 
-                <div class="service-card" id="secretaryCard">
+                <div class="service-card watermark-card" style="--card-icon: url('images/secretary.png');" id="secretaryCard">
                     <div class="card-top">
                         <span class="card-icon">
                             <img src="images/secretary.png" alt="Secretary Notetaking / Minutes">
@@ -605,7 +599,7 @@ body {
                         <h3 class="card-title">Secretary Notetaking / Minutes</h3>
                         <p class="card-description">Record, manage, and submit official meeting minutes and notes for residence portfolios.</p>
                     </div>
-                    <button class="card-button" data-link="secretaryminutes.html">Manage Minutes</button>
+                    <button class="card-button btn-watermark" data-link="secretaryminutes.html"><span>Manage Minutes</span></button>
                 </div>
 
             </div>
@@ -616,7 +610,7 @@ body {
             <h4 class="section-heading">Mentor Duties</h4>
             <div class="card-grid">
 
-                <div class="service-card" id="mentorCard">
+                <div class="service-card watermark-card" style="--card-icon: url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20viewBox=%270%200%2024%2024%27%3E%3Cpath%20d=%27M16%2011c1.66%200%202.99-1.34%202.99-3S17.66%205%2016%205c-1.66%200-3%201.34-3%203s1.34%203%203%203zm-8%200c1.66%200%202.99-1.34%202.99-3S9.66%205%208%205C6.34%205%205%206.34%205%208s1.34%203%203%203zm0%202c-2.33%200-7%201.17-7%203.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8%200c-.29%200-.62.02-.97.05%201.16.84%201.97%201.97%201.97%203.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z%27/%3E%3C/svg%3E');" id="mentorCard">
                     <div class="card-top">
                         <span class="card-icon">
                             <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor" aria-label="Mentor Tools"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
@@ -624,7 +618,7 @@ body {
                         <h3 class="card-title">Mentor Tools</h3>
                         <p class="card-description">Record first-year curfew signings and theme discussions for your corridor.</p>
                     </div>
-                    <button class="card-button" data-link="mentors.html">Open Mentor Tools</button>
+                    <button class="card-button btn-watermark" data-link="mentors.html"><span>Open Mentor Tools</span></button>
                 </div>
 
             </div>
@@ -635,7 +629,7 @@ body {
             <h4 class="section-heading">ACTS Subcommittee</h4>
             <div class="card-grid">
 
-                <div class="service-card">
+                <div class="service-card watermark-card" style="--card-icon: url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20viewBox=%270%200%2024%2024%27%3E%3Cpath%20d=%27M12%2021.35l-1.45-1.32C5.4%2015.36%202%2012.28%202%208.5%202%205.42%204.42%203%207.5%203c1.74%200%203.41.81%204.5%202.09C13.09%203.81%2014.76%203%2016.5%203%2019.58%203%2022%205.42%2022%208.5c0%203.78-3.4%206.86-8.55%2011.54L12%2021.35z%27/%3E%3C/svg%3E');">
                     <div class="card-top">
                         <span class="card-icon">
                             <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor" aria-label="Kovsie Acts"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
@@ -643,7 +637,7 @@ body {
                         <h3 class="card-title">Kovsie Acts</h3>
                         <p class="card-description">See the Community Garden schedule and debate information published by RC ACTS.</p>
                     </div>
-                    <button class="card-button" data-link="kovsieacts.html">Open Kovsie Acts</button>
+                    <button class="card-button btn-watermark" data-link="kovsieacts.html"><span>Open Kovsie Acts</span></button>
                 </div>
 
             </div>
