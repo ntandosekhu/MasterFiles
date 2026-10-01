@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Beyers Naude - ACTS</title>
+    <style>
+        :root {
+            --space-blue-primary: #1D2951;
+            --space-blue-hover: #141C38;
+            --space-blue-light: #EFF3F9;
+            --space-blue-border: #D0DCED;
+            --space-blue-accent: #3B5295;
+            --bg-page: #F4F6F9;
+            --bg-card: #FFFFFF;
+            --text-main: #0F172A;
+            --text-muted: #475569;
+            --text-subtle: #64748B;
+            --danger-red: #DC2626;
+            --danger-red-hover: #B91C1C;
+            --ok-green: #15803D;
+            --ok-bg: #DCFCE7;
+            --warn-amber: #B45309;
+            --warn-bg: #FEF3C7;
+            --bad-bg: #FEE2E2;
+            --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+            --shadow-md: 0 4px 12px rgba(29, 41, 81, 0.08);
+            --shadow-lg: 0 10px 25px rgba(29, 41, 81, 0.12);
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* HEADER */
+        .header {
+            background-color: var(--space-blue-primary);
+            color: #FFFFFF;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            gap: 12px;
+        }
+        .brand { display: flex; flex-direction: column; }
+        .brand h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
+        .brand p { color: #A0B2D6; font-size: 13px; font-weight: 500; letter-spacing: 0.01em; margin-top: 2px; }
+        .header-actions { display: flex; gap: 10px; align-items: center; }
+
+        .logout-button, .back-button {
+            border: none;
+            color: #FFFFFF;
+            padding: 9px 18px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: background-color 0.15s ease, transform 0.1s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .logout-button { background-color: var(--danger-red); }
+        .logout-button:hover { background-color: var(--danger-red-hover); }
+        .back-button { background-color: var(--space-blue-accent); }
+        .back-button:hover { background-color: var(--space-blue-hover); }
+        .logout-button:active, .back-button:active { transform: scale(0.98); }
+
+        /* LAYOUT */
+        .container { max-width: 1200px; width: 100%; margin: 0 auto; padding: 32px 24px 60px; flex: 1; }
+        .dashboard-welcome { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--space-blue-border); }
+        .dashboard-welcome h2 { font-size: 26px; font-weight: 800; color: var(--space-blue-primary); letter-spacing: -0.02em; margin-bottom: 6px; }
+        .dashboard-welcome p { color: var(--text-muted); font-size: 15px; max-width: 800px; }
+
+        .admin-card {
+            background-color: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: 20px 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--space-blue-border);
+            border-left: 5px solid var(--space-blue-primary);
+            box-shadow: var(--shadow-sm);
+        }
+        .admin-label { color: var(--text-subtle); font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+        .admin-name { font-size: 17px; font-weight: 700; color: var(--text-main); }
+        .role-container { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; }
+        .role-badge {
+            display: inline-flex; align-items: center;
+            background-color: var(--space-blue-light); color: var(--space-blue-primary);
+            border: 1px solid var(--space-blue-border);
+            padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;
+        }
+
+        /* TABS */
+        .tab-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; border-bottom: 1px solid var(--space-blue-border); }
+        .tab-button {
+            background: none; border: none; cursor: pointer;
+            padding: 12px 18px; font-size: 14px; font-weight: 700;
+            color: var(--text-subtle); border-bottom: 3px solid transparent; margin-bottom: -1px;
+        }
+        .tab-button:hover { color: var(--space-blue-primary); }
+        .tab-button.active { color: var(--space-blue-primary); border-bottom-color: var(--space-blue-primary); }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        /* PANELS, FORMS, BUTTONS */
+        .panel {
+            background: var(--bg-card); border: 1px solid #E2E8F0; border-radius: var(--radius-lg);
+            padding: 22px; box-shadow: var(--shadow-sm); margin-bottom: 20px; position: relative; overflow: hidden;
+        }
+        .panel::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--space-blue-primary); opacity: .85; }
+        .panel h3 { font-size: 17px; font-weight: 700; color: var(--space-blue-primary); margin-bottom: 4px; letter-spacing: -0.01em; }
+        .panel .sub { color: var(--text-subtle); font-size: 13px; margin-bottom: 16px; }
+
+        .filter-row { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end; margin-bottom: 18px; }
+        .field { display: flex; flex-direction: column; gap: 4px; min-width: 160px; }
+        .field.grow { flex: 1; }
+        .field label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--text-subtle); }
+        input[type=text], input[type=date], select, textarea {
+            font: inherit; font-size: 14px; padding: 9px 12px; border: 1px solid var(--space-blue-border);
+            border-radius: var(--radius-sm); background: #fff; color: var(--text-main); width: 100%;
+        }
+        textarea { min-height: 90px; resize: vertical; }
+        input:focus, select:focus, textarea:focus { outline: 2px solid var(--space-blue-accent); outline-offset: 1px; }
+
+        .btn {
+            border: none; background: var(--space-blue-primary); color: #fff; padding: 10px 18px;
+            border-radius: var(--radius-sm); cursor: pointer; font-size: 13px; font-weight: 700;
+            transition: background-color .15s ease, transform .1s ease;
+        }
+        .btn:hover { background: var(--space-blue-hover); }
+        .btn:active { transform: scale(.98); }
+        .btn:disabled { opacity: .55; cursor: not-allowed; }
+        .btn.secondary { background: var(--space-blue-light); color: var(--space-blue-primary); border: 1px solid var(--space-blue-border); }
+        .btn.secondary:hover { background: var(--space-blue-border); }
+        .btn.danger { background: var(--danger-red); }
+        .btn.danger:hover { background: var(--danger-red-hover); }
+        .btn.small { padding: 6px 12px; font-size: 12px; }
+
+        /* LISTS & TABLES */
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th { text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-subtle); padding: 10px 12px; border-bottom: 2px solid var(--space-blue-border); white-space: nowrap; }
+        td { padding: 10px 12px; border-bottom: 1px solid #F1F5F9; vertical-align: top; }
+        tr.clickable { cursor: pointer; }
+        tr.clickable:hover td { background: var(--space-blue-light); }
+
+        .pill { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; }
+        .pill.ok { background: var(--ok-bg); color: var(--ok-green); }
+        .pill.warn { background: var(--warn-bg); color: var(--warn-amber); }
+        .pill.bad { background: var(--bad-bg); color: var(--danger-red); }
+        .pill.info { background: var(--space-blue-light); color: var(--space-blue-primary); }
+
+        .student-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 10px 0; border-bottom: 1px solid #F1F5F9; }
+        .student-name { font-weight: 600; }
+        .student-meta { color: var(--text-subtle); font-size: 12px; }
+        .seg { display: inline-flex; border: 1px solid var(--space-blue-border); border-radius: var(--radius-sm); overflow: hidden; }
+        .seg button { border: none; background: #fff; padding: 6px 12px; font-size: 12px; font-weight: 700; cursor: pointer; color: var(--text-muted); border-right: 1px solid var(--space-blue-border); }
+        .seg button:last-child { border-right: none; }
+        .seg button.on-present { background: var(--ok-green); color: #fff; }
+        .seg button.on-absent { background: var(--danger-red); color: #fff; }
+        .seg button.on-excused { background: var(--space-blue-accent); color: #fff; }
+
+        .kpi-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-bottom: 20px; }
+        .kpi { background: var(--bg-card); border: 1px solid #E2E8F0; border-radius: var(--radius-md); padding: 16px 18px; box-shadow: var(--shadow-sm); }
+        .kpi .num { font-size: 26px; font-weight: 800; color: var(--space-blue-primary); line-height: 1.1; }
+        .kpi .lbl { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-subtle); font-weight: 600; margin-top: 4px; }
+
+        .card-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+        .corr-card { background: var(--bg-card); border: 1px solid #E2E8F0; border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow-sm); position: relative; overflow: hidden; cursor: pointer; transition: all .2s ease-in-out; }
+        .corr-card::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--space-blue-primary); opacity: .85; }
+        .corr-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+        .corr-card h4 { font-size: 17px; font-weight: 700; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+        .corr-card .mentor { color: var(--text-subtle); font-size: 12px; margin-bottom: 12px; }
+        .stat-line { display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0; border-top: 1px solid #F1F5F9; color: var(--text-muted); }
+        .stat-line b { color: var(--text-main); }
+        .drill { margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--space-blue-border); font-size: 13px; display: none; }
+        .drill.open { display: block; }
+        .drill div { padding: 2px 0; }
+
+        .notice { padding: 12px 16px; border-radius: var(--radius-md); font-size: 14px; margin-bottom: 16px; display: none; }
+        .notice.show { display: block; }
+        .notice.ok { background: var(--ok-bg); color: var(--ok-green); }
+        .notice.err { background: var(--bad-bg); color: var(--danger-red); }
+        .notice.info { background: var(--space-blue-light); color: var(--space-blue-primary); }
+        .empty { color: var(--text-subtle); font-size: 14px; padding: 18px 0; text-align: center; }
+
+        #loadingState, #accessDeniedState { text-align: center; padding: 80px 20px; color: var(--text-muted); }
+        #accessDeniedState { display: none; }
+        #accessDeniedState h2 { color: var(--danger-red); margin-bottom: 8px; }
+        #mainContent { display: none; }
+
+        .footer { text-align: center; color: var(--text-subtle); font-size: 13px; font-weight: 500; padding: 24px 16px; border-top: 1px solid var(--space-blue-border); background: #fff; margin-top: auto; }
+
+        @media (max-width: 1024px) { .card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+        @media (max-width: 640px) {
+            .header { padding: 16px 20px; }
+            .brand h1 { font-size: 18px; }
+            .container { padding: 20px 16px 40px; }
+            .card-grid, .kpi-grid { grid-template-columns: 1fr; }
+            .dashboard-welcome h2 { font-size: 22px; }
+            .field { min-width: 100%; }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="brand">
+            <h1>House Beyers Naude</h1>
+            <p>House of Masters • ACTS</p>
+        </div>
+        <div class="header-actions">
+            <a class="back-button" href="admin.html">&larr; Administration</a>
+            <button class="logout-button" id="logoutButton">Log Out</button>
+        </div>
+    </header>
+
+    <main class="container">
+        <div id="loadingState">Loading ACTS...</div>
+        <div id="accessDeniedState">
+            <h2>Access Restricted</h2>
+            <p>The ACTS control centre is only available to RC ACTS.</p>
+        </div>
+
+        <div id="mainContent">
+            <section class="dashboard-welcome">
+                <h2>ACTS</h2>
+                <p>Manage the Foodbank, donation campaigns and the ACTS subcommittee. Each tab loads only when you open it.</p>
+            </section>
+
+            <section class="admin-card">
+                <div class="admin-label">Authenticated Administrator</div>
+                <div id="adminName" class="admin-name">Loading...</div>
+                <div id="adminRoles" class="role-container"></div>
+            </section>
+
+            <div id="globalNotice" class="notice"></div>
+
+            <div class="tab-bar">
+                <button class="tab-button active" data-tab="tabFood">Foodbank</button>
+                <button class="tab-button" data-tab="tabDon">Donations</button>
+                <button class="tab-button" data-tab="tabSub">ACTS / Subcommittee</button>
+            </div>
+
+            <!-- ============ FOODBANK ============ -->
+            <div class="tab-panel active" id="tabFood">
+                <div class="kpi-grid" id="fbKpis"></div>
+
+                <div class="panel">
+                    <h3>Capacity</h3>
+                    <p class="sub">The maximum number of food items the Foodbank holds. Students only ever see the status (Full, Moderate, Running Low, Empty). Fewer than 30 items in total is always Running Low.</p>
+                    <div class="filter-row" style="margin-bottom:0;">
+                        <div class="field"><label for="capInput">Maximum capacity</label><input type="text" id="capInput" inputmode="numeric"></div>
+                        <button class="btn" id="saveCap">Save Capacity</button>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3>Record Food Received</h3>
+                    <p class="sub">Food only, and non-perishable only. Fresh, dairy, meat and cooked food cannot be accepted.</p>
+                    <div id="addNotice" class="notice"></div>
+                    <div class="filter-row">
+                        <div class="field"><label for="aCat">Category</label>
+                            <select id="aCat">
+                                <option value="CANNED">Canned</option><option value="STARCH">Starch</option>
+                                <option value="GRAINS">Grains</option><option value="DRY_GOODS">Dry Goods</option>
+                                <option value="BREAKFAST">Breakfast</option><option value="OTHER_NON_PERISHABLE">Other Non-Perishable</option>
+                            </select></div>
+                        <div class="field grow"><label for="aItem">Item / type</label><input type="text" id="aItem" maxlength="80" placeholder="e.g. Baked beans 410g"></div>
+                        <div class="field" style="min-width:110px;"><label for="aQty">Quantity</label><input type="text" id="aQty" inputmode="numeric" placeholder="e.g. 12"></div>
+                    </div>
+                    <div class="filter-row">
+                        <div class="field"><label for="aBest">Best-before date</label><input type="date" id="aBest"></div>
+                        <div class="field"><label for="aRecv">Date received</label><input type="date" id="aRecv"></div>
+                        <div class="field grow"><label for="aContrib">Contributor (private)</label><input type="text" id="aContrib" maxlength="80" placeholder="Name of person or group"></div>
+                        <div class="field"><label for="aContribNo">Student number (optional)</label><input type="text" id="aContribNo" maxlength="20"></div>
+                    </div>
+                    <div class="filter-row" style="align-items:center;">
+                        <label style="display:flex;gap:8px;align-items:center;font-size:14px;cursor:pointer;">
+                            <input type="checkbox" id="aPerish" style="width:auto;"> This item is perishable (fresh, dairy, meat, cooked, frozen)
+                        </label>
+                        <button class="btn" id="saveFood">Add to Inventory</button>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3>Pending Requests</h3>
+                    <p class="sub">Food requests and food contribution offers waiting for review, oldest first.</p>
+                    <div id="fbRequests" class="table-wrap"></div>
+                    <div style="margin-top:12px;"><button class="btn secondary small" id="fbHistoryBtn">Load recent history</button></div>
+                    <div id="fbHistory" class="table-wrap" style="margin-top:12px;"></div>
+                </div>
+
+                <div class="panel">
+                    <h3>Inventory</h3>
+                    <p class="sub">Private. Use the filters, then Apply. At most 100 items are loaded at a time.</p>
+                    <div class="filter-row">
+                        <div class="field"><label for="fStatus">Status</label>
+                            <select id="fStatus"><option value="AVAILABLE">Available</option><option value="DISTRIBUTED">Distributed</option><option value="REMOVED">Removed</option></select></div>
+                        <div class="field"><label for="fCat">Category</label>
+                            <select id="fCat"><option value="">All</option>
+                                <option value="CANNED">Canned</option><option value="STARCH">Starch</option><option value="GRAINS">Grains</option>
+                                <option value="DRY_GOODS">Dry Goods</option><option value="BREAKFAST">Breakfast</option><option value="OTHER_NON_PERISHABLE">Other Non-Perishable</option></select></div>
+                        <div class="field"><label for="fContrib">Contributor</label><select id="fContrib"><option value="">All</option></select></div>
+                        <div class="field"><label for="fBest">Best-before on or before</label><input type="date" id="fBest"></div>
+                        <button class="btn" id="fApply">Apply</button>
+                    </div>
+                    <div id="invList" class="table-wrap"></div>
+                </div>
+            </div>
+
+            <!-- ============ DONATIONS ============ -->
+            <div class="tab-panel" id="tabDon">
+                <div class="panel">
+                    <h3>Donation Campaigns</h3>
+                    <p class="sub">R5 Bread, clothing, sanitary products and other drives. Separate from the Foodbank inventory. A reminder email is sent automatically once a month on the chosen day.</p>
+                    <div id="campNotice" class="notice"></div>
+                    <div class="filter-row">
+                        <div class="field"><label for="cType">Type</label>
+                            <select id="cType">
+                                <option value="R5_BREAD">R5 Bread</option><option value="CLOTHING">Clothing</option>
+                                <option value="SANITARY">Sanitary Products</option><option value="TOILETRIES">Toiletries</option><option value="OTHER">Other</option>
+                            </select></div>
+                        <div class="field grow"><label for="cTitle">Title</label><input type="text" id="cTitle" maxlength="80"></div>
+                        <div class="field" style="min-width:110px;"><label for="cDay">Reminder day</label><input type="text" id="cDay" inputmode="numeric" value="1" placeholder="1-28"></div>
+                    </div>
+                    <div class="field" style="margin-bottom:14px;"><label for="cDesc">Description shown to students</label><textarea id="cDesc" maxlength="600"></textarea></div>
+                    <div class="filter-row" style="align-items:center;">
+                        <label style="display:flex;gap:8px;align-items:center;font-size:14px;"><input type="checkbox" id="cNotify" style="width:auto;" checked> Send monthly reminder email</label>
+                        <button class="btn" id="saveCamp">Create Campaign</button>
+                    </div>
+                    <div id="campList" class="table-wrap"></div>
+                </div>
+                <div class="panel">
+                    <h3>Pending Donation Requests</h3>
+                    <p class="sub">Donation offers and requests for assistance from students, oldest first.</p>
+                    <div id="donRequests" class="table-wrap"></div>
+                </div>
+            </div>
+
+            <!-- ============ SUBCOMMITTEE ============ -->
+            <div class="tab-panel" id="tabSub">
+                <div class="panel">
+                    <h3>Community Garden Schedule</h3>
+                    <p class="sub">Monday to Sunday. Entries stay drafts until you publish the week; only published entries appear on Kovsie Acts.</p>
+                    <div id="schedNotice" class="notice"></div>
+                    <div class="filter-row">
+                        <button class="btn secondary" id="weekPrev">&larr; Previous week</button>
+                        <div class="field"><label>Week</label><div id="weekLabel" class="admin-name"></div></div>
+                        <button class="btn secondary" id="weekNext">Next week &rarr;</button>
+                        <button class="btn" id="weekPublish">Publish week</button>
+                        <button class="btn secondary" id="weekUnpublish">Unpublish week</button>
+                    </div>
+                    <div class="filter-row">
+                        <div class="field"><label for="sDay">Day</label><select id="sDay"></select></div>
+                        <div class="field grow"><label for="sTask">Task</label><input type="text" id="sTask" maxlength="100" value="Community Garden"></div>
+                        <div class="field"><label for="sWho">Assign to</label><select id="sWho"><option value="SUBCOM">Whole subcommittee</option></select></div>
+                        <button class="btn" id="sAdd">Add to Schedule</button>
+                    </div>
+                    <div id="schedGrid" class="table-wrap"></div>
+                </div>
+                <div class="panel">
+                    <h3>Debates</h3>
+                    <p class="sub">Debate dates, topics and details for the subcommittee.</p>
+                    <div id="debNotice" class="notice"></div>
+                    <div class="filter-row">
+                        <div class="field"><label for="dDate">Date</label><input type="date" id="dDate"></div>
+                        <div class="field grow"><label for="dTopic">Topic</label><input type="text" id="dTopic" maxlength="150"></div>
+                    </div>
+                    <div class="field" style="margin-bottom:12px;"><label for="dDetails">Details (time, venue, format)</label><textarea id="dDetails" maxlength="1000"></textarea></div>
+                    <div class="field" style="margin-bottom:14px;"><label for="dAssign">Assignments (optional)</label><textarea id="dAssign" maxlength="600" style="min-height:60px;"></textarea></div>
+                    <div class="filter-row" style="align-items:center;">
+                        <label style="display:flex;gap:8px;align-items:center;font-size:14px;"><input type="checkbox" id="dPub" style="width:auto;"> Publish to subcommittee now</label>
+                        <button class="btn" id="dAdd">Add Debate</button>
+                    </div>
+                    <div id="debList" class="table-wrap"></div>
+                    <div style="margin-top:12px;"><button class="btn secondary small" id="debPast">Show past debates</button></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">House Beyers Naude • House of Masters</footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+        import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app-check.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+        import {
+            getFirestore, doc, getDoc, getDocs, setDoc, addDoc, updateDoc,
+            collection, query, where, orderBy, limit, runTransaction, writeBatch, deleteDoc, serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDW6IArj2dZiqbf00Ix3SPPSqvxTKG0GgE",
+            authDomain: "master-files-95f6b.firebaseapp.com",
+            projectId: "master-files-95f6b",
+            storageBucket: "master-files-95f6b.firebasestorage.app",
+            messagingSenderId: "537891510061",
+            appId: "1:537891510061:web:fb46c8d1abae02b9e725a4",
+            measurementId: "G-4GNVR5EBJX"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const appCheck = initializeAppCheck(app, {
+            provider: new ReCaptchaV3Provider('6LfAPn8tAAAAAOa1QF1-NqwCu6aPsGWyOep3mo2s'),
+            isTokenAutoRefreshEnabled: true
+        });
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        /* SHARED HELPERS */
+        const $ = id => document.getElementById(id);
+        const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+        const todayStr = () => { const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 10); };
+        const fmtDate = s => { if (!s) return ""; const [y, m, d] = s.split("-"); return `${d}/${m}/${y}`; };
+        function notify(id, type, msg) { const n = $(id); n.className = "notice show " + type; n.textContent = msg; }
+        function clearNotify(id) { $(id).className = "notice"; }
+
+        function setupTabs() {
+            document.querySelectorAll(".tab-button").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    document.querySelectorAll(".tab-button").forEach(b => b.classList.remove("active"));
+                    document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+                    btn.classList.add("active");
+                    $(btn.dataset.tab).classList.add("active");
+                });
+            });
+        }
+
+        $("logoutButton").addEventListener("click", async () => {
+            try { await signOut(auth); window.location.href = "index.html"; }
+            catch (e) { console.error("Logout Error:", e); alert("Unable to log out. Please check your network connection."); }
+        });
+
+        setupTabs();
+
+        const ALLOWED_ROLES = ["RC_ACTS"];
+        const LOW_LIMIT = 30, DEFAULT_CAP = 200;
+        const CAT = { CANNED: "Canned", STARCH: "Starch", GRAINS: "Grains", DRY_GOODS: "Dry Goods", BREAKFAST: "Breakfast", OTHER_NON_PERISHABLE: "Other Non-Perishable" };
+        const STATUS_LABEL = { FULL: "Full", MODERATE: "Moderate", RUNNING_LOW: "Running Low", EMPTY: "Empty" };
+        const PERISHABLE_WORDS = /\b(milk|meat|chicken|beef|pork|fish|fresh|fruit|veg|vegetables?|dairy|eggs?|yogh?urt|cheese|butter|cream|bread|rolls?|cooked|leftovers?|frozen|mince|sausages?|polony|salad)\b/i;
+        const SUMMARY = () => doc(db, "foodbankSummary", "current");
+        const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+        let adminUser = null, adminData = null, summary = { totalAvailable: 0, capacity: DEFAULT_CAP, status: "EMPTY" };
+        const loaded = { tabDon: false, tabSub: false };
+        const contributors = new Set();
+        let invItems = [], weekStart = null, weekEntries = [], members = [], pendingReqs = [];
+
+        const computeStatus = (total, cap) => total <= 0 ? "EMPTY" : total < LOW_LIMIT ? "RUNNING_LOW" : (cap > 0 && total >= cap * 0.8) ? "FULL" : "MODERATE";
+        const pillFor = s => `<span class="pill ${s === "FULL" ? "ok" : s === "MODERATE" ? "info" : s === "RUNNING_LOW" ? "warn" : "bad"}">${STATUS_LABEL[s] || s}</span>`;
+        const ymd = d => { const x = new Date(d); x.setMinutes(x.getMinutes() - x.getTimezoneOffset()); return x.toISOString().slice(0, 10); };
+        const addD = (s, n) => { const d = new Date(s + "T00:00:00"); d.setDate(d.getDate() + n); return ymd(d); };
+        const mondayOf = s => { const d = new Date(s + "T00:00:00"); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return ymd(d); };
+        const posInt = v => /^\d+$/.test(String(v).trim()) ? parseInt(v, 10) : NaN;
+        const errMsg = e => e && e.code === "permission-denied" ? "Permission denied. Your account may not hold the RC ACTS role." : (e && e.message) || "Unknown error";
+
+        function deny() { $("loadingState").style.display = "none"; $("accessDeniedState").style.display = "block"; }
+
+        /* ---------- AUTH: admins/{uid}, ACTIVE, role RC_ACTS (the Firestore rules enforce the same) ---------- */
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) { window.location.href = "index.html"; return; }
+            try {
+                const snap = await getDoc(doc(db, "admins", user.uid));
+                if (!snap.exists()) { await signOut(auth); window.location.href = "index.html"; return; }
+                adminUser = user; adminData = snap.data();
+                const roles = Array.isArray(adminData.role) ? adminData.role : (adminData.role ? [adminData.role] : []);
+                if (adminData.status !== "ACTIVE" || !roles.some(r => ALLOWED_ROLES.includes(String(r).toUpperCase()))) { deny(); return; }
+
+                $("adminName").textContent = adminData.name || "Administrator";
+                roles.forEach(r => { const b = document.createElement("span"); b.className = "role-badge"; b.textContent = String(r).replace(/_/g, " "); $("adminRoles").appendChild(b); });
+
+                $("aRecv").value = todayStr();
+                await loadSummary();                    // the only read on open: one small document
+                $("loadingState").style.display = "none";
+                $("mainContent").style.display = "block";
+                loadInventory(); loadFoodRequests();    // the Foodbank tab is the one being shown
+            } catch (err) { console.error(err); deny(); }
+        });
+
+        /* lazy tabs: Donations and Subcommittee load the first time they are opened */
+        document.querySelectorAll(".tab-button").forEach(btn => btn.addEventListener("click", () => {
+            const t = btn.dataset.tab;
+            if (t === "tabDon" && !loaded.tabDon) { loaded.tabDon = true; loadCampaigns(); loadDonRequests(); }
+            if (t === "tabSub" && !loaded.tabSub) { loaded.tabSub = true; initSubcommittee(); }
+        }));
+
+        /* ================= FOODBANK SUMMARY ================= */
+        async function loadSummary() {
+            const s = await getDoc(SUMMARY());
+            if (s.exists()) summary = s.data();
+            renderSummary();
+        }
+        function renderSummary() {
+            $("fbKpis").innerHTML = [
+                [summary.totalAvailable, "Items available"], [summary.capacity, "Capacity"],
+                [pillFor(summary.status), "Public status"], [`${Math.max(0, summary.capacity - summary.totalAvailable)}`, "Space remaining"]
+            ].map(([n, l]) => `<div class="kpi"><div class="num" style="${typeof n === "string" && n.startsWith("<") ? "font-size:18px;padding-top:6px;" : ""}">${n}</div><div class="lbl">${l}</div></div>`).join("");
+            $("capInput").value = summary.capacity;
+        }
+
+        $("saveCap").addEventListener("click", async () => {
+            const cap = posInt($("capInput").value);
+            if (!(cap > 0)) { notify("globalNotice", "err", "Capacity must be a whole number greater than 0."); return; }
+            try {
+                await runTransaction(db, async tx => {
+                    const s = await tx.get(SUMMARY());
+                    const total = s.exists() ? s.data().totalAvailable : 0;
+                    tx.set(SUMMARY(), { totalAvailable: total, capacity: cap, status: computeStatus(total, cap), updatedAt: serverTimestamp() });
+                });
+                await loadSummary();
+                notify("globalNotice", "ok", "Capacity saved.");
+            } catch (e) { notify("globalNotice", "err", "Could not save capacity. " + errMsg(e)); }
+        });
+
+        /* ================= ADD FOOD (inventory record + summary in one transaction) ================= */
+        $("saveFood").addEventListener("click", async () => {
+            clearNotify("addNotice");
+            const category = $("aCat").value, item = $("aItem").value.trim(), qty = posInt($("aQty").value);
+            const best = $("aBest").value, recv = $("aRecv").value || todayStr();
+            const contributor = $("aContrib").value.trim(), contribNo = $("aContribNo").value.trim();
+
+            if ($("aPerish").checked) { notify("addNotice", "err", "Perishable food cannot be accepted by the Foodbank."); return; }
+            if (!item) { notify("addNotice", "err", "Please enter the item or type."); return; }
+            if (!(qty > 0)) { notify("addNotice", "err", "Quantity must be a whole number greater than 0."); return; }
+            if (!best) { notify("addNotice", "err", "Please enter the best-before date."); return; }
+            if (best < todayStr()) { notify("addNotice", "err", "That item is already past its best-before date and cannot be accepted."); return; }
+            if (!contributor) { notify("addNotice", "err", "Please record who contributed this food."); return; }
+            if (PERISHABLE_WORDS.test(item) && !confirm(`"${item}" may be perishable. Only continue if it is long-life (for example UHT or canned). Continue?`)) return;
+
+            const btn = $("saveFood"); btn.disabled = true;
+            try {
+                const iref = doc(collection(db, "foodbankInventory"));
+                await runTransaction(db, async tx => {
+                    const s = await tx.get(SUMMARY());
+                    const cur = s.exists() ? s.data() : { totalAvailable: 0, capacity: DEFAULT_CAP };
+                    const total = cur.totalAvailable + qty;
+                    tx.set(iref, {
+                        category, item, quantity: qty, bestBefore: best, receivedDate: recv,
+                        contributorName: contributor, contributorStudentNumber: contribNo,
+                        perishable: false, status: "AVAILABLE",
+                        createdByUid: adminUser.uid, createdAt: serverTimestamp(), updatedAt: serverTimestamp()
+                    });
+                    tx.set(SUMMARY(), { totalAvailable: total, capacity: cur.capacity, status: computeStatus(total, cur.capacity), updatedAt: serverTimestamp() });
+                });
+                notify("addNotice", "ok", `Added ${qty} × ${item}.`);
+                ["aItem", "aQty", "aBest", "aContribNo"].forEach(id => $(id).value = "");
+                await loadSummary(); await loadInventory();
+            } catch (e) { notify("addNotice", "err", "Could not add the item. " + errMsg(e)); }
+            finally { btn.disabled = false; }
+        });
+
+        /* ================= INVENTORY (targeted query, max 100) ================= */
+        async function loadInventory() {
+            const cons = [where("status", "==", $("fStatus").value)];
+            if ($("fCat").value) cons.push(where("category", "==", $("fCat").value));
+            if ($("fContrib").value) cons.push(where("contributorName", "==", $("fContrib").value));
+            if ($("fBest").value) cons.push(where("bestBefore", "<=", $("fBest").value));
+            cons.push(orderBy("bestBefore"), limit(100));
+            try {
+                const res = await getDocs(query(collection(db, "foodbankInventory"), ...cons));
+                invItems = res.docs.map(d => ({ id: d.id, ...d.data() }));
+                invItems.forEach(i => contributors.add(i.contributorName));
+                const keep = $("fContrib").value;
+                $("fContrib").innerHTML = '<option value="">All</option>' + [...contributors].sort().map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join("");
+                $("fContrib").value = keep;
+                renderInventory();
+            } catch (e) {
+                console.error(e);
+                $("invList").innerHTML = `<div class="empty">Could not load inventory. ${esc(errMsg(e))}${e.code === "failed-precondition" ? " (a database index is still being created or missing; see the browser console for the link)" : ""}</div>`;
+            }
+        }
+        $("fApply").addEventListener("click", loadInventory);
+
+        function renderInventory() {
+            const today = todayStr(), soon = addD(today, 14);
+            $("invList").innerHTML = invItems.length ? `<table><thead><tr><th>Item</th><th>Category</th><th>Qty</th><th>Best before</th><th>Received</th><th>Contributor</th><th>Status</th><th></th></tr></thead><tbody>${invItems.map(i => {
+                const flag = i.status !== "AVAILABLE" ? "" : i.bestBefore < today ? ' <span class="pill bad">Expired</span>' : i.bestBefore <= soon ? ' <span class="pill warn">Soon</span>' : "";
+                return `<tr><td><b>${esc(i.item)}</b></td><td>${CAT[i.category] || esc(i.category)}</td><td>${i.quantity}</td><td>${fmtDate(i.bestBefore)}${flag}</td><td>${fmtDate(i.receivedDate)}</td>
+                <td>${esc(i.contributorName)}${i.contributorStudentNumber ? `<div class="student-meta">${esc(i.contributorStudentNumber)}</div>` : ""}</td>
+                <td>${esc(i.status)}</td><td>${i.status === "AVAILABLE" ? `<button class="btn secondary small" data-act="dist" data-id="${i.id}">Distribute</button> <button class="btn danger small" data-act="rem" data-id="${i.id}">Remove</button>` : ""}</td></tr>`;
+            }).join("")}</tbody></table>${invItems.length === 100 ? '<div class="student-meta" style="padding-top:8px;">Showing the first 100. Narrow the filters to see more.</div>' : ""}` : '<div class="empty">No inventory matches these filters.</div>';
+            $("invList").querySelectorAll("button[data-act]").forEach(b => b.addEventListener("click", () => changeStock(b.dataset.id, b.dataset.act)));
+        }
+
+        /* distribute (reduce) or remove (zero) one record + keep the summary consistent */
+        async function changeStock(id, act) {
+            const item = invItems.find(i => i.id === id); if (!item) return;
+            let take = item.quantity;
+            if (act === "dist") {
+                const v = prompt(`How many of "${item.item}" are being distributed? (1 to ${item.quantity})`, "1");
+                if (v === null) return; take = posInt(v);
+                if (!(take > 0 && take <= item.quantity)) { notify("globalNotice", "err", `Enter a whole number between 1 and ${item.quantity}.`); return; }
+            } else if (!confirm(`Remove all ${item.quantity} × ${item.item} from the inventory (expired or unusable)?`)) return;
+            try {
+                await runTransaction(db, async tx => {
+                    const iref = doc(db, "foodbankInventory", id);
+                    const [is, ss] = await Promise.all([tx.get(iref), tx.get(SUMMARY())]);
+                    if (!is.exists() || is.data().status !== "AVAILABLE") throw new Error("This item has already changed. Refresh and try again.");
+                    const q = is.data().quantity, n = act === "dist" ? Math.min(take, q) : q, left = q - n;
+                    const cur = ss.exists() ? ss.data() : { totalAvailable: q, capacity: DEFAULT_CAP };
+                    const total = Math.max(0, cur.totalAvailable - n);
+                    tx.update(iref, { quantity: left, status: left === 0 ? (act === "dist" ? "DISTRIBUTED" : "REMOVED") : "AVAILABLE", updatedAt: serverTimestamp() });
+                    tx.set(SUMMARY(), { totalAvailable: total, capacity: cur.capacity, status: computeStatus(total, cur.capacity), updatedAt: serverTimestamp() });
+                });
+                await loadSummary(); await loadInventory();
+            } catch (e) { notify("globalNotice", "err", "Could not update the item. " + errMsg(e)); }
+        }
+
+        /* ================= REQUESTS (shared by Foodbank + Donations tabs) ================= */
+        async function loadRequests(area, targetId, history) {
+            const el = $(targetId);
+            const cons = history ? [where("area", "==", area), where("status", "in", ["APPROVED", "COMPLETED", "DECLINED"]), orderBy("createdAt", "desc"), limit(25)]
+                                 : [where("area", "==", area), where("status", "==", "PENDING"), orderBy("createdAt"), limit(25)];
+            try {
+                const res = await getDocs(query(collection(db, "actsRequests"), ...cons));
+                const rows = res.docs.map(d => ({ id: d.id, ...d.data() }));
+                if (!history) pendingReqs = pendingReqs.filter(r => r.area !== area).concat(rows);
+                el.innerHTML = rows.length ? `<table><thead><tr><th>Date</th><th>Type</th><th>From</th><th>Details</th><th>${history ? "Status" : "Action"}</th></tr></thead><tbody>${rows.map(r => `<tr>
+                    <td>${r.createdAt ? fmtDate(ymd(r.createdAt.toDate())) : "-"}</td>
+                    <td><span class="pill ${r.type === "OFFER" ? "ok" : "info"}">${r.type === "OFFER" ? "Offer" : "Request"}</span>${r.campaignTitle ? `<div class="student-meta">${esc(r.campaignTitle)}</div>` : ""}</td>
+                    <td><b>${esc(r.requesterName)}</b><div class="student-meta">${esc(r.studentNumber || "")} • Room ${esc(r.room || "-")}</div></td>
+                    <td style="white-space:pre-wrap;max-width:340px;">${esc(r.details)}</td>
+                    <td>${history ? esc(r.status) : `<button class="btn small" data-rid="${r.id}" data-val="COMPLETED">Mark handled</button> <button class="btn danger small" data-rid="${r.id}" data-val="DECLINED">Decline</button>${r.area === "FOODBANK" && r.type === "OFFER" ? ` <button class="btn secondary small" data-fill="${r.id}">Record food</button>` : ""}`}</td></tr>`).join("")}</tbody></table>`
+                    : `<div class="empty">${history ? "No history yet." : "No pending requests."}</div>`;
+                el.querySelectorAll("button[data-rid]").forEach(b => b.addEventListener("click", () => reviewRequest(b.dataset.rid, b.dataset.val, area, targetId)));
+                el.querySelectorAll("button[data-fill]").forEach(b => b.addEventListener("click", () => {
+                    const r = pendingReqs.find(x => x.id === b.dataset.fill); if (!r) return;
+                    $("aContrib").value = r.requesterName || ""; $("aContribNo").value = r.studentNumber || "";
+                    $("aItem").focus(); window.scrollTo({ top: $("aItem").getBoundingClientRect().top + window.scrollY - 140, behavior: "smooth" });
+                }));
+            } catch (e) { console.error(e); el.innerHTML = `<div class="empty">Could not load requests. ${esc(errMsg(e))}</div>`; }
+        }
+        const loadFoodRequests = () => loadRequests("FOODBANK", "fbRequests", false);
+        const loadDonRequests = () => loadRequests("DONATION", "donRequests", false);
+        $("fbHistoryBtn").addEventListener("click", () => loadRequests("FOODBANK", "fbHistory", true));
+
+        async function reviewRequest(id, status, area, targetId) {
+            try {
+                await updateDoc(doc(db, "actsRequests", id), { status, reviewedAt: serverTimestamp(), reviewedByUid: adminUser.uid, reviewedByName: adminData.name || "Administrator" });
+                await loadRequests(area, targetId, false);
+            } catch (e) { notify("globalNotice", "err", "Could not update the request. " + errMsg(e)); }
+        }
+
+        /* ================= DONATIONS ================= */
+        const TYPE_LABEL = { R5_BREAD: "R5 Bread", CLOTHING: "Clothing", SANITARY: "Sanitary Products", TOILETRIES: "Toiletries", OTHER: "Other" };
+        $("cType").addEventListener("change", () => { if (!$("cTitle").value.trim()) $("cTitle").value = TYPE_LABEL[$("cType").value] + " Donation"; });
+
+        async function loadCampaigns() {
+            try {
+                const res = await getDocs(query(collection(db, "donationCampaigns"), orderBy("createdAt", "desc"), limit(30)));
+                const rows = res.docs.map(d => ({ id: d.id, ...d.data() }));
+                $("campList").innerHTML = rows.length ? `<table style="margin-top:16px;"><thead><tr><th>Campaign</th><th>Type</th><th>Reminder</th><th>Last sent</th><th>Status</th><th></th></tr></thead><tbody>${rows.map(c => `<tr>
+                    <td><b>${esc(c.title)}</b><div class="student-meta">${esc(c.description || "")}</div></td><td>${TYPE_LABEL[c.type] || esc(c.type)}</td>
+                    <td>${c.notifyEnabled ? "Day " + c.monthlyDay + " monthly" : "Off"}</td><td>${esc(c.lastNotifiedMonth || "Never")}</td>
+                    <td>${c.active ? '<span class="pill ok">Active</span>' : '<span class="pill warn">Inactive</span>'}</td>
+                    <td><button class="btn secondary small" data-cid="${c.id}" data-active="${c.active ? 1 : 0}">${c.active ? "Deactivate" : "Activate"}</button></td></tr>`).join("")}</tbody></table>`
+                    : '<div class="empty">No campaigns yet. Create one above.</div>';
+                $("campList").querySelectorAll("button[data-cid]").forEach(b => b.addEventListener("click", async () => {
+                    try { await updateDoc(doc(db, "donationCampaigns", b.dataset.cid), { active: b.dataset.active !== "1", updatedAt: serverTimestamp() }); loadCampaigns(); }
+                    catch (e) { notify("campNotice", "err", "Could not update the campaign. " + errMsg(e)); }
+                }));
+            } catch (e) { console.error(e); $("campList").innerHTML = `<div class="empty">Could not load campaigns. ${esc(errMsg(e))}</div>`; }
+        }
+
+        $("saveCamp").addEventListener("click", async () => {
+            const title = $("cTitle").value.trim(), day = posInt($("cDay").value);
+            if (!title) { notify("campNotice", "err", "Please give the campaign a title."); return; }
+            if (!(day >= 1 && day <= 28)) { notify("campNotice", "err", "Reminder day must be between 1 and 28."); return; }
+            try {
+                await addDoc(collection(db, "donationCampaigns"), {
+                    type: $("cType").value, title, description: $("cDesc").value.trim(), active: true,
+                    notifyEnabled: $("cNotify").checked, monthlyDay: day, lastNotifiedMonth: "",
+                    createdByUid: adminUser.uid, createdAt: serverTimestamp(), updatedAt: serverTimestamp()
+                });
+                notify("campNotice", "ok", "Campaign created.");
+                $("cTitle").value = ""; $("cDesc").value = "";
+                loadCampaigns();
+            } catch (e) { notify("campNotice", "err", "Could not create the campaign. " + errMsg(e)); }
+        });
+
+        /* ================= SUBCOMMITTEE: WEEK SCHEDULE + DEBATES ================= */
+        async function initSubcommittee() {
+            weekStart = mondayOf(todayStr());
+            try {   // subcommittee members, for the assignment dropdown
+                const res = await getDocs(query(collection(db, "users"), where("houseRoles", "array-contains", "ACTS_COMMITTEE"), limit(60)));
+                members = res.docs.map(d => ({ uid: d.id, name: d.data().name || d.data().fullName || "Member" })).sort((a, b) => a.name.localeCompare(b.name));
+                $("sWho").innerHTML = '<option value="SUBCOM">Whole subcommittee</option>' + members.map(m => `<option value="${esc(m.uid)}">${esc(m.name)}</option>`).join("");
+            } catch (e) { console.error(e); notify("schedNotice", "info", "Could not load subcommittee members; you can still assign to the whole subcommittee."); }
+            loadWeek(); loadDebates(false);
+        }
+
+        async function loadWeek() {
+            const end = addD(weekStart, 6);
+            $("weekLabel").textContent = `${fmtDate(weekStart)} – ${fmtDate(end)}`;
+            $("sDay").innerHTML = DAYS.map((d, i) => `<option value="${addD(weekStart, i)}">${d} ${fmtDate(addD(weekStart, i)).slice(0, 5)}</option>`).join("");
+            try {
+                const res = await getDocs(query(collection(db, "actsSchedule"), where("date", ">=", weekStart), where("date", "<=", end), orderBy("date")));
+                weekEntries = res.docs.map(d => ({ id: d.id, ...d.data() }));
+                $("schedGrid").innerHTML = `<table><thead><tr>${DAYS.map((d, i) => `<th>${d}<div class="student-meta">${fmtDate(addD(weekStart, i)).slice(0, 5)}</div></th>`).join("")}</tr></thead><tbody><tr>${DAYS.map((d, i) => {
+                    const day = addD(weekStart, i);
+                    return `<td style="min-width:130px;">${weekEntries.filter(e => e.date === day).map(e => `<div style="margin-bottom:8px;"><b>${esc(e.task)}</b><div class="student-meta">${esc(e.assignedName)}</div>${e.published ? '<span class="pill ok">Published</span>' : '<span class="pill warn">Draft</span>'} <button class="btn danger small" data-del="${e.id}" style="padding:2px 8px;">x</button></div>`).join("") || '<span class="student-meta">-</span>'}</td>`;
+                }).join("")}</tr></tbody></table>`;
+                $("schedGrid").querySelectorAll("button[data-del]").forEach(b => b.addEventListener("click", async () => {
+                    if (!confirm("Remove this schedule entry?")) return;
+                    try { await deleteDoc(doc(db, "actsSchedule", b.dataset.del)); loadWeek(); } catch (e) { notify("schedNotice", "err", "Could not remove it. " + errMsg(e)); }
+                }));
+            } catch (e) { console.error(e); $("schedGrid").innerHTML = `<div class="empty">Could not load the schedule. ${esc(errMsg(e))}</div>`; }
+        }
+        $("weekPrev").addEventListener("click", () => { weekStart = addD(weekStart, -7); loadWeek(); });
+        $("weekNext").addEventListener("click", () => { weekStart = addD(weekStart, 7); loadWeek(); });
+
+        $("sAdd").addEventListener("click", async () => {
+            const task = $("sTask").value.trim(), who = $("sWho").value;
+            if (!task) { notify("schedNotice", "err", "Please enter the task."); return; }
+            const m = members.find(x => x.uid === who);
+            try {
+                await addDoc(collection(db, "actsSchedule"), {
+                    date: $("sDay").value, task, assignedType: m ? "MEMBER" : "SUBCOM", assignedUid: m ? m.uid : "",
+                    assignedName: m ? m.name : "Whole subcommittee", published: false,
+                    createdByUid: adminUser.uid, createdAt: serverTimestamp()
+                });
+                clearNotify("schedNotice"); loadWeek();
+            } catch (e) { notify("schedNotice", "err", "Could not add the entry. " + errMsg(e)); }
+        });
+
+        async function setWeekPublished(flag) {
+            const todo = weekEntries.filter(e => e.published !== flag);
+            if (!todo.length) { notify("schedNotice", "info", flag ? "Nothing to publish for this week." : "Nothing to unpublish for this week."); return; }
+            try {
+                const batch = writeBatch(db);
+                todo.forEach(e => batch.update(doc(db, "actsSchedule", e.id), { published: flag }));
+                await batch.commit();
+                notify("schedNotice", "ok", flag ? "Week published to the subcommittee." : "Week unpublished.");
+                loadWeek();
+            } catch (e) { notify("schedNotice", "err", "Could not update the week. " + errMsg(e)); }
+        }
+        $("weekPublish").addEventListener("click", () => setWeekPublished(true));
+        $("weekUnpublish").addEventListener("click", () => setWeekPublished(false));
+
+        /* debates: upcoming by default, past only on request */
+        async function loadDebates(past) {
+            const t = todayStr();
+            try {
+                const res = await getDocs(query(collection(db, "debates"),
+                    past ? where("date", "<", t) : where("date", ">=", t), orderBy("date", past ? "desc" : "asc"), limit(30)));
+                const rows = res.docs.map(d => ({ id: d.id, ...d.data() }));
+                $("debList").innerHTML = rows.length ? `<table style="margin-top:16px;"><thead><tr><th>Date</th><th>Topic</th><th>Details</th><th>Status</th><th></th></tr></thead><tbody>${rows.map(d => `<tr>
+                    <td>${fmtDate(d.date)}</td><td><b>${esc(d.topic)}</b></td>
+                    <td style="white-space:pre-wrap;max-width:320px;">${esc(d.details)}${d.assignments ? `<div class="student-meta">Assignments: ${esc(d.assignments)}</div>` : ""}</td>
+                    <td>${d.published ? '<span class="pill ok">Published</span>' : '<span class="pill warn">Draft</span>'}</td>
+                    <td><button class="btn secondary small" data-pub="${d.id}" data-val="${d.published ? 0 : 1}">${d.published ? "Unpublish" : "Publish"}</button> <button class="btn danger small" data-ddel="${d.id}">Delete</button></td></tr>`).join("")}</tbody></table>`
+                    : `<div class="empty">${past ? "No past debates." : "No upcoming debates."}</div>`;
+                $("debList").querySelectorAll("button[data-pub]").forEach(b => b.addEventListener("click", async () => {
+                    try { await updateDoc(doc(db, "debates", b.dataset.pub), { published: b.dataset.val === "1" }); loadDebates(past); } catch (e) { notify("debNotice", "err", "Could not update. " + errMsg(e)); }
+                }));
+                $("debList").querySelectorAll("button[data-ddel]").forEach(b => b.addEventListener("click", async () => {
+                    if (!confirm("Delete this debate?")) return;
+                    try { await deleteDoc(doc(db, "debates", b.dataset.ddel)); loadDebates(past); } catch (e) { notify("debNotice", "err", "Could not delete. " + errMsg(e)); }
+                }));
+            } catch (e) { console.error(e); $("debList").innerHTML = `<div class="empty">Could not load debates. ${esc(errMsg(e))}</div>`; }
+        }
+        $("debPast").addEventListener("click", () => loadDebates(true));
+
+        $("dAdd").addEventListener("click", async () => {
+            const date = $("dDate").value, topic = $("dTopic").value.trim();
+            if (!date || !topic) { notify("debNotice", "err", "Please enter the debate date and topic."); return; }
+            try {
+                await addDoc(collection(db, "debates"), {
+                    date, topic, details: $("dDetails").value.trim(), assignments: $("dAssign").value.trim(),
+                    published: $("dPub").checked, createdByUid: adminUser.uid, createdAt: serverTimestamp()
+                });
+                notify("debNotice", "ok", "Debate added.");
+                ["dDate", "dTopic", "dDetails", "dAssign"].forEach(id => $(id).value = ""); $("dPub").checked = false;
+                loadDebates(false);
+            } catch (e) { notify("debNotice", "err", "Could not add the debate. " + errMsg(e)); }
+        });
+    </script>
+</body>
+</html>
