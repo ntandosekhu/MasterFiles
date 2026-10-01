@@ -741,6 +741,7 @@ import {
     getDocs,
     addDoc,
     updateDoc,
+    writeBatch,
     query,
     orderBy,
     serverTimestamp
@@ -1062,7 +1063,12 @@ bookingForm.addEventListener("submit", async (e) => {
             createdAt: new Date().toISOString()
         };
 
-        const docRef = await addDoc(collection(db, "bookings"), bookingDocData);
+        const bookingRef = doc(collection(db, "bookings"));
+        const batch = writeBatch(db);
+        batch.set(bookingRef, bookingDocData);
+        addSlotLocks(batch, bookingRef.id, currentVenueId, bookingDocData.startTime, bookingDocData.endTime, currentUser.uid);
+        await batch.commit();
+        const docRef = { id: bookingRef.id };
 
         // Activity Logging on Success
         try {
@@ -1106,7 +1112,12 @@ bookingForm.addEventListener("submit", async (e) => {
 
     } catch (error) {
         console.error("Booking error:", error);
-        showMessage("Your booking could not be created. " + error.message, true);
+        if (error && error.code === "permission-denied") {
+            showMessage("Your booking could not be created. That time slot was just taken, or you are not permitted to book it. Please pick another time.", true);
+            await loadBookings();
+        } else {
+            showMessage("Your booking could not be created. " + error.message, true);
+        }
     } finally {
         submitBookingBtn.textContent = "Book Venue";
     }
@@ -1119,6 +1130,38 @@ function resetForm() {
     formEnd.innerHTML = `<option value="">Select start time first</option>`;
     formEnd.disabled = true;
     submitBookingBtn.disabled = true;
+}
+
+/* =========================
+   SLOT LOCKS (atomic double-booking protection)
+   One small lock document per venue-hour, written in the SAME batch as the
+   booking. If any hour is already locked, Firestore rejects the whole batch,
+   so two people can never both get the same slot.
+========================= */
+function slotKeys(venueId, startIso, endIso) {
+    const HOUR = 3600000;
+    const keys = [];
+    const first = Math.floor(new Date(startIso).getTime() / HOUR) * HOUR;
+    const end = new Date(endIso).getTime();
+    for (let t = first; t < end; t += HOUR) {
+        keys.push(`${String(venueId).toLowerCase()}_${new Date(t).toISOString().slice(0, 13)}`);
+    }
+    return keys;
+}
+
+function addSlotLocks(batch, bookingId, venueId, startIso, endIso, ownerUid) {
+    slotKeys(venueId, startIso, endIso).forEach(key => {
+        batch.set(doc(db, "venueSlots", key), {
+            bookingId: bookingId,
+            venueId: venueId,
+            bookerId: ownerUid,
+            createdAt: serverTimestamp()
+        });
+    });
+}
+
+function removeSlotLocks(batch, venueId, startIso, endIso) {
+    slotKeys(venueId, startIso, endIso).forEach(key => batch.delete(doc(db, "venueSlots", key)));
 }
 
 /* =========================
@@ -1174,10 +1217,10 @@ myBookingsList.addEventListener("click", async (e) => {
     const existingBooking = bookings.find(b => b.id === bookingId);
 
     try {
-        const bookingRef = doc(db, "bookings", bookingId);
-        await updateDoc(bookingRef, {
-            status: "CANCELLED"
-        });
+        const batch = writeBatch(db);
+        batch.update(doc(db, "bookings", bookingId), { status: "CANCELLED" });
+        if (existingBooking) removeSlotLocks(batch, existingBooking.venueId, existingBooking.startTime, existingBooking.endTime);
+        await batch.commit();
 
         // Activity Logging on Success
         try {
@@ -1240,6 +1283,7 @@ function renderHouseEvents() {
     
     // Filter future events
     const upcoming = houseEvents.filter(e => {
+        if ((e.status || "").toUpperCase() === "CANCELLED") return false;
         const eDate = parseDate(e.date || e.startTime);
         return eDate && eDate >= now;
     });
