@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Beyers Naude - Mentor Tools</title>
+    <style>
+        :root {
+            --space-blue-primary: #1D2951;
+            --space-blue-hover: #141C38;
+            --space-blue-light: #EFF3F9;
+            --space-blue-border: #D0DCED;
+            --space-blue-accent: #3B5295;
+            --bg-page: #F4F6F9;
+            --bg-card: #FFFFFF;
+            --text-main: #0F172A;
+            --text-muted: #475569;
+            --text-subtle: #64748B;
+            --danger-red: #DC2626;
+            --danger-red-hover: #B91C1C;
+            --ok-green: #15803D;
+            --ok-bg: #DCFCE7;
+            --warn-amber: #B45309;
+            --warn-bg: #FEF3C7;
+            --bad-bg: #FEE2E2;
+            --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+            --shadow-md: 0 4px 12px rgba(29, 41, 81, 0.08);
+            --shadow-lg: 0 10px 25px rgba(29, 41, 81, 0.12);
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* HEADER */
+        .header {
+            background-color: var(--space-blue-primary);
+            color: #FFFFFF;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            gap: 12px;
+        }
+        .brand { display: flex; flex-direction: column; }
+        .brand h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
+        .brand p { color: #A0B2D6; font-size: 13px; font-weight: 500; letter-spacing: 0.01em; margin-top: 2px; }
+        .header-actions { display: flex; gap: 10px; align-items: center; }
+
+        .logout-button, .back-button {
+            border: none;
+            color: #FFFFFF;
+            padding: 9px 18px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: background-color 0.15s ease, transform 0.1s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .logout-button { background-color: var(--danger-red); }
+        .logout-button:hover { background-color: var(--danger-red-hover); }
+        .back-button { background-color: var(--space-blue-accent); }
+        .back-button:hover { background-color: var(--space-blue-hover); }
+        .logout-button:active, .back-button:active { transform: scale(0.98); }
+
+        /* LAYOUT */
+        .container { max-width: 1200px; width: 100%; margin: 0 auto; padding: 32px 24px 60px; flex: 1; }
+        .dashboard-welcome { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--space-blue-border); }
+        .dashboard-welcome h2 { font-size: 26px; font-weight: 800; color: var(--space-blue-primary); letter-spacing: -0.02em; margin-bottom: 6px; }
+        .dashboard-welcome p { color: var(--text-muted); font-size: 15px; max-width: 800px; }
+
+        .admin-card {
+            background-color: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: 20px 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--space-blue-border);
+            border-left: 5px solid var(--space-blue-primary);
+            box-shadow: var(--shadow-sm);
+        }
+        .admin-label { color: var(--text-subtle); font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+        .admin-name { font-size: 17px; font-weight: 700; color: var(--text-main); }
+        .role-container { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; }
+        .role-badge {
+            display: inline-flex; align-items: center;
+            background-color: var(--space-blue-light); color: var(--space-blue-primary);
+            border: 1px solid var(--space-blue-border);
+            padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;
+        }
+
+        /* TABS */
+        .tab-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; border-bottom: 1px solid var(--space-blue-border); }
+        .tab-button {
+            background: none; border: none; cursor: pointer;
+            padding: 12px 18px; font-size: 14px; font-weight: 700;
+            color: var(--text-subtle); border-bottom: 3px solid transparent; margin-bottom: -1px;
+        }
+        .tab-button:hover { color: var(--space-blue-primary); }
+        .tab-button.active { color: var(--space-blue-primary); border-bottom-color: var(--space-blue-primary); }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        /* PANELS, FORMS, BUTTONS */
+        .panel {
+            background: var(--bg-card); border: 1px solid #E2E8F0; border-radius: var(--radius-lg);
+            padding: 22px; box-shadow: var(--shadow-sm); margin-bottom: 20px; position: relative; overflow: hidden;
+        }
+        .panel::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--space-blue-primary); opacity: .85; }
+        .panel h3 { font-size: 17px; font-weight: 700; color: var(--space-blue-primary); margin-bottom: 4px; letter-spacing: -0.01em; }
+        .panel .sub { color: var(--text-subtle); font-size: 13px; margin-bottom: 16px; }
+
+        .filter-row { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end; margin-bottom: 18px; }
+        .field { display: flex; flex-direction: column; gap: 4px; min-width: 160px; }
+        .field.grow { flex: 1; }
+        .field label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--text-subtle); }
+        input[type=text], input[type=date], select, textarea {
+            font: inherit; font-size: 14px; padding: 9px 12px; border: 1px solid var(--space-blue-border);
+            border-radius: var(--radius-sm); background: #fff; color: var(--text-main); width: 100%;
+        }
+        textarea { min-height: 90px; resize: vertical; }
+        input:focus, select:focus, textarea:focus { outline: 2px solid var(--space-blue-accent); outline-offset: 1px; }
+
+        .btn {
+            border: none; background: var(--space-blue-primary); color: #fff; padding: 10px 18px;
+            border-radius: var(--radius-sm); cursor: pointer; font-size: 13px; font-weight: 700;
+            transition: background-color .15s ease, transform .1s ease;
+        }
+        .btn:hover { background: var(--space-blue-hover); }
+        .btn:active { transform: scale(.98); }
+        .btn:disabled { opacity: .55; cursor: not-allowed; }
+        .btn.secondary { background: var(--space-blue-light); color: var(--space-blue-primary); border: 1px solid var(--space-blue-border); }
+        .btn.secondary:hover { background: var(--space-blue-border); }
+        .btn.danger { background: var(--danger-red); }
+        .btn.danger:hover { background: var(--danger-red-hover); }
+        .btn.small { padding: 6px 12px; font-size: 12px; }
+
+        /* LISTS & TABLES */
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th { text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-subtle); padding: 10px 12px; border-bottom: 2px solid var(--space-blue-border); white-space: nowrap; }
+        td { padding: 10px 12px; border-bottom: 1px solid #F1F5F9; vertical-align: top; }
+        tr.clickable { cursor: pointer; }
+        tr.clickable:hover td { background: var(--space-blue-light); }
+
+        .pill { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; }
+        .pill.ok { background: var(--ok-bg); color: var(--ok-green); }
+        .pill.warn { background: var(--warn-bg); color: var(--warn-amber); }
+        .pill.bad { background: var(--bad-bg); color: var(--danger-red); }
+        .pill.info { background: var(--space-blue-light); color: var(--space-blue-primary); }
+
+        .student-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 10px 0; border-bottom: 1px solid #F1F5F9; }
+        .student-name { font-weight: 600; }
+        .student-meta { color: var(--text-subtle); font-size: 12px; }
+        .seg { display: inline-flex; border: 1px solid var(--space-blue-border); border-radius: var(--radius-sm); overflow: hidden; }
+        .seg button { border: none; background: #fff; padding: 6px 12px; font-size: 12px; font-weight: 700; cursor: pointer; color: var(--text-muted); border-right: 1px solid var(--space-blue-border); }
+        .seg button:last-child { border-right: none; }
+        .seg button.on-present { background: var(--ok-green); color: #fff; }
+        .seg button.on-absent { background: var(--danger-red); color: #fff; }
+        .seg button.on-excused { background: var(--space-blue-accent); color: #fff; }
+
+        .kpi-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-bottom: 20px; }
+        .kpi { background: var(--bg-card); border: 1px solid #E2E8F0; border-radius: var(--radius-md); padding: 16px 18px; box-shadow: var(--shadow-sm); }
+        .kpi .num { font-size: 26px; font-weight: 800; color: var(--space-blue-primary); line-height: 1.1; }
+        .kpi .lbl { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-subtle); font-weight: 600; margin-top: 4px; }
+
+        .card-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+        .corr-card { background: var(--bg-card); border: 1px solid #E2E8F0; border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow-sm); position: relative; overflow: hidden; cursor: pointer; transition: all .2s ease-in-out; }
+        .corr-card::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--space-blue-primary); opacity: .85; }
+        .corr-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+        .corr-card h4 { font-size: 17px; font-weight: 700; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+        .corr-card .mentor { color: var(--text-subtle); font-size: 12px; margin-bottom: 12px; }
+        .stat-line { display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0; border-top: 1px solid #F1F5F9; color: var(--text-muted); }
+        .stat-line b { color: var(--text-main); }
+        .drill { margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--space-blue-border); font-size: 13px; display: none; }
+        .drill.open { display: block; }
+        .drill div { padding: 2px 0; }
+
+        .notice { padding: 12px 16px; border-radius: var(--radius-md); font-size: 14px; margin-bottom: 16px; display: none; }
+        .notice.show { display: block; }
+        .notice.ok { background: var(--ok-bg); color: var(--ok-green); }
+        .notice.err { background: var(--bad-bg); color: var(--danger-red); }
+        .notice.info { background: var(--space-blue-light); color: var(--space-blue-primary); }
+        .empty { color: var(--text-subtle); font-size: 14px; padding: 18px 0; text-align: center; }
+
+        #loadingState, #accessDeniedState { text-align: center; padding: 80px 20px; color: var(--text-muted); }
+        #accessDeniedState { display: none; }
+        #accessDeniedState h2 { color: var(--danger-red); margin-bottom: 8px; }
+        #mainContent { display: none; }
+
+        .footer { text-align: center; color: var(--text-subtle); font-size: 13px; font-weight: 500; padding: 24px 16px; border-top: 1px solid var(--space-blue-border); background: #fff; margin-top: auto; }
+
+        @media (max-width: 1024px) { .card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+        @media (max-width: 640px) {
+            .header { padding: 16px 20px; }
+            .brand h1 { font-size: 18px; }
+            .container { padding: 20px 16px 40px; }
+            .card-grid, .kpi-grid { grid-template-columns: 1fr; }
+            .dashboard-welcome h2 { font-size: 22px; }
+            .field { min-width: 100%; }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="brand">
+            <h1>House Beyers Naude</h1>
+            <p>House of Masters • Mentor Tools</p>
+        </div>
+        <div class="header-actions">
+            <a class="back-button" href="clienthub.html">&larr; Client Hub</a>
+            <button class="logout-button" id="logoutButton">Log Out</button>
+        </div>
+    </header>
+
+    <main class="container">
+        <div id="loadingState">Loading mentor tools...</div>
+
+        <div id="accessDeniedState">
+            <h2>Access Restricted</h2>
+            <p id="accessDeniedText">Mentor tools are only available to users assigned a Mentor role.</p>
+        </div>
+
+        <div id="mainContent">
+            <section class="dashboard-welcome">
+                <h2>Mentor Tools</h2>
+                <p>Record curfew signings and theme discussions for your first years, and suggest events to FCOM. These records are reviewed by the First Years committee.</p>
+            </section>
+
+            <section class="admin-card">
+                <div class="admin-label">Signed in as</div>
+                <div id="mentorName" class="admin-name">Loading...</div>
+                <div id="mentorBadges" class="role-container"></div>
+            </section>
+
+            <div class="tab-bar">
+                <button class="tab-button active" data-tab="tabCurfew">Curfew Signings</button>
+                <button class="tab-button" data-tab="tabTheme">Theme Discussions</button>
+                <button class="tab-button" data-tab="tabFcom">FCOM Suggestions</button>
+            </div>
+
+            <!-- CURFEW -->
+            <div class="tab-panel active" id="tabCurfew">
+                <div class="panel">
+                    <h3>Curfew Signings</h3>
+                    <p class="sub">Mark each first year on your corridor as present, absent or excused for the selected night.</p>
+                    <div id="curfewNotice" class="notice"></div>
+                    <div class="filter-row">
+                        <div class="field">
+                            <label for="curfewDate">Date</label>
+                            <input type="date" id="curfewDate">
+                        </div>
+                        <div class="field" style="min-width:auto;flex-direction:row;align-items:center;gap:8px;">
+                            <input type="checkbox" id="showAllResidents" style="width:auto;">
+                            <label for="showAllResidents" style="text-transform:none;letter-spacing:0;font-size:13px;">Show all corridor residents (not only flagged first years)</label>
+                        </div>
+                        <button class="btn secondary" id="markAllPresent">Mark all present</button>
+                    </div>
+                    <div id="curfewRoster"></div>
+                    <div style="margin-top:18px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+                        <button class="btn" id="saveCurfew">Save Curfew Record</button>
+                        <span id="curfewSummary" class="student-meta"></span>
+                    </div>
+                </div>
+                <div class="panel">
+                    <h3>Your Recent Curfew Records</h3>
+                    <p class="sub">The last records submitted for your corridor.</p>
+                    <div id="curfewHistory" class="table-wrap"></div>
+                </div>
+            </div>
+
+            <!-- THEME -->
+            <div class="tab-panel" id="tabTheme">
+                <div class="panel">
+                    <h3>Record a Theme Discussion</h3>
+                    <p class="sub">Capture the theme, what was discussed and who attended.</p>
+                    <div id="themeNotice" class="notice"></div>
+                    <div class="filter-row">
+                        <div class="field grow">
+                            <label for="themeTitle">Theme</label>
+                            <input type="text" id="themeTitle" maxlength="120" placeholder="e.g. Mental health and balance">
+                        </div>
+                        <div class="field">
+                            <label for="themeDate">Date held</label>
+                            <input type="date" id="themeDate">
+                        </div>
+                    </div>
+                    <div class="field" style="margin-bottom:18px;">
+                        <label for="themeNotes">Discussion information</label>
+                        <textarea id="themeNotes" maxlength="2000" placeholder="Key points raised, outcomes, follow-ups..."></textarea>
+                    </div>
+                    <div class="admin-label" style="margin-bottom:6px;">Attendance</div>
+                    <div style="margin-bottom:8px;"><button class="btn secondary small" id="themeSelectAll">Select all</button> <button class="btn secondary small" id="themeClearAll">Clear</button></div>
+                    <div id="themeRoster"></div>
+                    <div style="margin-top:18px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+                        <button class="btn" id="saveTheme">Submit Theme Discussion</button>
+                        <span id="themeSummary" class="student-meta"></span>
+                    </div>
+                </div>
+                <div class="panel">
+                    <h3>Your Recent Theme Discussions</h3>
+                    <p class="sub">Discussions already submitted for your corridor.</p>
+                    <div id="themeHistory" class="table-wrap"></div>
+                </div>
+            </div>
+
+            <!-- FCOM -->
+            <div class="tab-panel" id="tabFcom">
+                <div class="panel">
+                    <h3>Suggest an Event to FCOM</h3>
+                    <p class="sub">Suggest an event or activity for first years. The First Years committee reviews every suggestion.</p>
+                    <div id="fcomNotice" class="notice"></div>
+                    <div class="filter-row">
+                        <div class="field grow">
+                            <label for="fcomTitle">Event title</label>
+                            <input type="text" id="fcomTitle" maxlength="120" placeholder="e.g. First years braai evening">
+                        </div>
+                        <div class="field">
+                            <label for="fcomDate">Proposed date</label>
+                            <input type="date" id="fcomDate">
+                        </div>
+                    </div>
+                    <div class="field" style="margin-bottom:18px;">
+                        <label for="fcomDesc">Description</label>
+                        <textarea id="fcomDesc" maxlength="1500" placeholder="What is the event and why is it good for first years?"></textarea>
+                    </div>
+                    <button class="btn" id="saveFcom">Send Suggestion</button>
+                </div>
+                <div class="panel">
+                    <h3>Your Suggestions</h3>
+                    <p class="sub">Status of the suggestions you have sent.</p>
+                    <div id="fcomHistory" class="table-wrap"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">House Beyers Naude • House of Masters</footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+        import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app-check.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+        import {
+            getFirestore, doc, getDoc, getDocs, setDoc, addDoc, updateDoc,
+            collection, query, where, serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDW6IArj2dZiqbf00Ix3SPPSqvxTKG0GgE",
+            authDomain: "master-files-95f6b.firebaseapp.com",
+            projectId: "master-files-95f6b",
+            storageBucket: "master-files-95f6b.firebasestorage.app",
+            messagingSenderId: "537891510061",
+            appId: "1:537891510061:web:fb46c8d1abae02b9e725a4",
+            measurementId: "G-4GNVR5EBJX"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const appCheck = initializeAppCheck(app, {
+            provider: new ReCaptchaV3Provider('6LfAPn8tAAAAAOa1QF1-NqwCu6aPsGWyOep3mo2s'),
+            isTokenAutoRefreshEnabled: true
+        });
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        /* SHARED HELPERS */
+        const $ = id => document.getElementById(id);
+        const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+        const todayStr = () => { const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 10); };
+        const fmtDate = s => { if (!s) return ""; const [y, m, d] = s.split("-"); return `${d}/${m}/${y}`; };
+        function notify(id, type, msg) { const n = $(id); n.className = "notice show " + type; n.textContent = msg; }
+        function clearNotify(id) { $(id).className = "notice"; }
+
+        function setupTabs() {
+            document.querySelectorAll(".tab-button").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    document.querySelectorAll(".tab-button").forEach(b => b.classList.remove("active"));
+                    document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+                    btn.classList.add("active");
+                    $(btn.dataset.tab).classList.add("active");
+                });
+            });
+        }
+
+        $("logoutButton").addEventListener("click", async () => {
+            try { await signOut(auth); window.location.href = "index.html"; }
+            catch (e) { console.error("Logout Error:", e); alert("Unable to log out. Please check your network connection."); }
+        });
+
+        setupTabs();
+
+        /* ------------------------------------------------------------------
+           FIRST-YEAR DETECTION
+           The users documents are not known to carry one agreed "first year"
+           field, so the common variants are all accepted here. Adjust this
+           single function if your users collection uses a different field.
+           ------------------------------------------------------------------ */
+        function isFirstYear(u) {
+            const y = String(u.yearOfStudy ?? u.year ?? u.studyYear ?? "").toLowerCase();
+            return u.firstYear === true || u.isFirstYear === true
+                || y === "1" || y.startsWith("first") || y === "1st";
+        }
+
+        let currentUser = null, mentorData = null, corridor = "";
+        let allResidents = [];          // everyone on the corridor
+        let curfewStatus = {};          // uid -> PRESENT | ABSENT | EXCUSED
+        let themeAttended = {};         // uid -> true
+        let existingCreatedAt = null;
+
+        const visibleRoster = () => {
+            const flagged = allResidents.filter(isFirstYear);
+            return ($("showAllResidents").checked || flagged.length === 0) ? allResidents : flagged;
+        };
+
+        function showDenied(msg) {
+            $("loadingState").style.display = "none";
+            if (msg) $("accessDeniedText").textContent = msg;
+            $("accessDeniedState").style.display = "block";
+        }
+
+        /* ---------- AUTH: same houseRoles check pattern as Secretary access ---------- */
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) { window.location.href = "index.html"; return; }
+            try {
+                const snap = await getDoc(doc(db, "users", user.uid));
+                if (!snap.exists()) { showDenied("We could not load your residence profile."); return; }
+                mentorData = snap.data();
+                const houseRoles = Array.isArray(mentorData.houseRoles) ? mentorData.houseRoles : [];
+                const isMentor = houseRoles.some(r => typeof r === "string" && r.toLowerCase().includes("mentor"));
+                if (!isMentor) { showDenied(); return; }
+
+                currentUser = user;
+                corridor = String(mentorData["corridor number"] ?? "").trim();
+                if (!corridor) { showDenied("Your profile has no corridor number, so no corridor can be assigned to you."); return; }
+
+                $("mentorName").textContent = `${mentorData.name || user.displayName || "Mentor"} — Corridor ${corridor}`;
+                houseRoles.filter(r => String(r).toLowerCase().includes("mentor")).forEach(r => {
+                    const b = document.createElement("span");
+                    b.className = "role-badge";
+                    b.textContent = String(r).replace(/_/g, " ");
+                    $("mentorBadges").appendChild(b);
+                });
+
+                await loadRoster();
+                $("curfewDate").value = todayStr();
+                $("curfewDate").max = todayStr();
+                $("themeDate").value = todayStr();
+                $("themeDate").max = todayStr();
+                await loadCurfewForDate();
+                renderThemeRoster();
+                loadCurfewHistory(); loadThemeHistory(); loadFcomHistory();
+
+                $("loadingState").style.display = "none";
+                $("mainContent").style.display = "block";
+            } catch (err) {
+                console.error("Mentor load error:", err);
+                showDenied("Something went wrong while loading mentor tools. Please try again.");
+            }
+        });
+
+        /* ---------- ROSTER ---------- */
+        async function loadRoster() {
+            const q = query(collection(db, "users"), where("corridor number", "==", mentorData["corridor number"]));
+            const res = await getDocs(q);
+            allResidents = res.docs
+                .map(d => ({ uid: d.id, ...d.data() }))
+                .filter(u => u.status !== "PENDING")
+                .map(u => ({
+                    uid: u.uid,
+                    name: u.name || u.fullName || "Resident",
+                    studentNumber: String(u.studentnumber ?? u.studentNumber ?? ""),
+                    room: String(u.roomNumber ?? ""),
+                    firstYear: isFirstYear(u)
+                }))
+                .sort((a, b) => a.room.localeCompare(b.room, undefined, { numeric: true }) || a.name.localeCompare(b.name));
+        }
+
+        $("showAllResidents").addEventListener("change", () => { renderCurfewRoster(); renderThemeRoster(); });
+
+        /* ---------- CURFEW ---------- */
+        const curfewDocId = date => `${date}_${corridor}`;
+
+        function renderCurfewRoster() {
+            const roster = visibleRoster();
+            if (!roster.length) { $("curfewRoster").innerHTML = '<div class="empty">No residents found for your corridor.</div>'; updateCurfewSummary(); return; }
+            $("curfewRoster").innerHTML = roster.map(s => {
+                const st = curfewStatus[s.uid];
+                const btn = (val, cls, label) => `<button type="button" data-uid="${esc(s.uid)}" data-val="${val}" class="${st === val ? "on-" + cls : ""}">${label}</button>`;
+                return `<div class="student-row">
+                    <div><div class="student-name">${esc(s.name)}</div><div class="student-meta">Room ${esc(s.room || "-")} • ${esc(s.studentNumber || "no student no.")}</div></div>
+                    <div class="seg">${btn("PRESENT", "present", "Present")}${btn("ABSENT", "absent", "Absent")}${btn("EXCUSED", "excused", "Excused")}</div>
+                </div>`;
+            }).join("");
+            $("curfewRoster").querySelectorAll("button[data-uid]").forEach(b => b.addEventListener("click", () => {
+                curfewStatus[b.dataset.uid] = b.dataset.val;
+                renderCurfewRoster();
+            }));
+            updateCurfewSummary();
+        }
+
+        function updateCurfewSummary() {
+            const roster = visibleRoster();
+            const c = v => roster.filter(s => curfewStatus[s.uid] === v).length;
+            const marked = c("PRESENT") + c("ABSENT") + c("EXCUSED");
+            $("curfewSummary").textContent = `${marked}/${roster.length} marked • ${c("PRESENT")} present • ${c("ABSENT")} absent • ${c("EXCUSED")} excused`;
+        }
+
+        $("markAllPresent").addEventListener("click", () => {
+            visibleRoster().forEach(s => { curfewStatus[s.uid] = "PRESENT"; });
+            renderCurfewRoster();
+        });
+
+        async function loadCurfewForDate() {
+            clearNotify("curfewNotice");
+            curfewStatus = {}; existingCreatedAt = null;
+            const date = $("curfewDate").value;
+            if (date) {
+                const snap = await getDoc(doc(db, "curfewSignings", curfewDocId(date)));
+                if (snap.exists()) {
+                    const d = snap.data();
+                    existingCreatedAt = d.createdAt || null;
+                    (d.entries || []).forEach(e => { if (e.status) curfewStatus[e.uid] = e.status; });
+                    notify("curfewNotice", "info", `A record for ${fmtDate(date)} already exists (last saved by ${d.mentorName || "a mentor"}). Saving will update it.`);
+                }
+            }
+            renderCurfewRoster();
+        }
+        $("curfewDate").addEventListener("change", loadCurfewForDate);
+
+        $("saveCurfew").addEventListener("click", async () => {
+            const date = $("curfewDate").value;
+            if (!date) { notify("curfewNotice", "err", "Please choose a date."); return; }
+            const roster = visibleRoster();
+            if (!roster.length) { notify("curfewNotice", "err", "There are no residents to record."); return; }
+            const entries = roster.map(s => ({ uid: s.uid, name: s.name, studentNumber: s.studentNumber, room: s.room, status: curfewStatus[s.uid] || null }));
+            const count = v => entries.filter(e => e.status === v).length;
+            const unmarked = entries.filter(e => !e.status).length;
+            if (unmarked > 0 && !confirm(`${unmarked} first year(s) are not marked. Save as an incomplete record?`)) return;
+            const btn = $("saveCurfew"); btn.disabled = true;
+            try {
+                await setDoc(doc(db, "curfewSignings", curfewDocId(date)), {
+                    date, corridor,
+                    mentorUid: currentUser.uid, mentorName: mentorData.name || "Mentor",
+                    entries,
+                    totalFirstYears: entries.length,
+                    presentCount: count("PRESENT"), absentCount: count("ABSENT"), excusedCount: count("EXCUSED"), unmarkedCount: unmarked,
+                    createdAt: existingCreatedAt || serverTimestamp(),
+                    updatedAt: serverTimestamp()
+                });
+                await addDoc(collection(db, "activityLogs"), {
+                    category: "FIRST_YEARS", action: "CURFEW_SAVED", actorUid: currentUser.uid,
+                    actorRole: "MENTOR", corridor, date, timestamp: serverTimestamp()
+                });
+                notify("curfewNotice", "ok", `Curfew record for ${fmtDate(date)} saved.`);
+                existingCreatedAt = existingCreatedAt || new Date();
+                loadCurfewHistory();
+            } catch (err) {
+                console.error(err);
+                notify("curfewNotice", "err", "Could not save the curfew record. You may not have permission, or the connection failed.");
+            } finally { btn.disabled = false; }
+        });
+
+        async function loadCurfewHistory() {
+            try {
+                const res = await getDocs(query(collection(db, "curfewSignings"), where("corridor", "==", corridor)));
+                const rows = res.docs.map(d => d.data()).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 10);
+                $("curfewHistory").innerHTML = rows.length ? `<table><thead><tr><th>Date</th><th>Present</th><th>Absent</th><th>Excused</th><th>Unmarked</th><th>Status</th></tr></thead><tbody>${rows.map(r =>
+                    `<tr><td>${fmtDate(r.date)}</td><td>${r.presentCount}</td><td>${r.absentCount}</td><td>${r.excusedCount}</td><td>${r.unmarkedCount}</td><td>${r.unmarkedCount ? '<span class="pill warn">Incomplete</span>' : '<span class="pill ok">Complete</span>'}</td></tr>`).join("")}</tbody></table>`
+                    : '<div class="empty">No curfew records submitted yet.</div>';
+            } catch (e) { console.error(e); $("curfewHistory").innerHTML = '<div class="empty">Could not load history.</div>'; }
+        }
+
+        /* ---------- THEME DISCUSSIONS ---------- */
+        function renderThemeRoster() {
+            const roster = visibleRoster();
+            if (!roster.length) { $("themeRoster").innerHTML = '<div class="empty">No residents found for your corridor.</div>'; updateThemeSummary(); return; }
+            $("themeRoster").innerHTML = roster.map(s => `<div class="student-row">
+                <label style="display:flex;gap:10px;align-items:center;cursor:pointer;">
+                    <input type="checkbox" data-uid="${esc(s.uid)}" style="width:auto;" ${themeAttended[s.uid] ? "checked" : ""}>
+                    <span><span class="student-name">${esc(s.name)}</span> <span class="student-meta">Room ${esc(s.room || "-")} • ${esc(s.studentNumber || "no student no.")}</span></span>
+                </label></div>`).join("");
+            $("themeRoster").querySelectorAll("input[data-uid]").forEach(cb => cb.addEventListener("change", () => {
+                themeAttended[cb.dataset.uid] = cb.checked; updateThemeSummary();
+            }));
+            updateThemeSummary();
+        }
+        function updateThemeSummary() {
+            const roster = visibleRoster();
+            $("themeSummary").textContent = `${roster.filter(s => themeAttended[s.uid]).length}/${roster.length} attended`;
+        }
+        $("themeSelectAll").addEventListener("click", () => { visibleRoster().forEach(s => themeAttended[s.uid] = true); renderThemeRoster(); });
+        $("themeClearAll").addEventListener("click", () => { themeAttended = {}; renderThemeRoster(); });
+
+        $("saveTheme").addEventListener("click", async () => {
+            const theme = $("themeTitle").value.trim(), date = $("themeDate").value, notes = $("themeNotes").value.trim();
+            if (!theme || !date) { notify("themeNotice", "err", "Please enter the theme and the date held."); return; }
+            const roster = visibleRoster();
+            if (!roster.length) { notify("themeNotice", "err", "There are no residents to record."); return; }
+            const entries = roster.map(s => ({ uid: s.uid, name: s.name, studentNumber: s.studentNumber, room: s.room, attended: !!themeAttended[s.uid] }));
+            const btn = $("saveTheme"); btn.disabled = true;
+            try {
+                await addDoc(collection(db, "themeDiscussions"), {
+                    theme, date, notes, corridor,
+                    mentorUid: currentUser.uid, mentorName: mentorData.name || "Mentor",
+                    entries, totalFirstYears: entries.length,
+                    attendedCount: entries.filter(e => e.attended).length,
+                    status: "SUBMITTED",
+                    createdAt: serverTimestamp()
+                });
+                await addDoc(collection(db, "activityLogs"), {
+                    category: "FIRST_YEARS", action: "THEME_SUBMITTED", actorUid: currentUser.uid,
+                    actorRole: "MENTOR", corridor, date, timestamp: serverTimestamp()
+                });
+                notify("themeNotice", "ok", "Theme discussion submitted.");
+                $("themeTitle").value = ""; $("themeNotes").value = ""; themeAttended = {};
+                renderThemeRoster(); loadThemeHistory();
+            } catch (err) {
+                console.error(err);
+                notify("themeNotice", "err", "Could not submit the theme discussion. You may not have permission, or the connection failed.");
+            } finally { btn.disabled = false; }
+        });
+
+        async function loadThemeHistory() {
+            try {
+                const res = await getDocs(query(collection(db, "themeDiscussions"), where("corridor", "==", corridor)));
+                const rows = res.docs.map(d => d.data()).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 10);
+                $("themeHistory").innerHTML = rows.length ? `<table><thead><tr><th>Date</th><th>Theme</th><th>Attendance</th></tr></thead><tbody>${rows.map(r =>
+                    `<tr><td>${fmtDate(r.date)}</td><td>${esc(r.theme)}</td><td>${r.attendedCount}/${r.totalFirstYears}</td></tr>`).join("")}</tbody></table>`
+                    : '<div class="empty">No theme discussions submitted yet.</div>';
+            } catch (e) { console.error(e); $("themeHistory").innerHTML = '<div class="empty">Could not load history.</div>'; }
+        }
+
+        /* ---------- FCOM SUGGESTIONS ---------- */
+        $("saveFcom").addEventListener("click", async () => {
+            const title = $("fcomTitle").value.trim(), description = $("fcomDesc").value.trim(), proposedDate = $("fcomDate").value;
+            if (!title || !description) { notify("fcomNotice", "err", "Please add an event title and a description."); return; }
+            const btn = $("saveFcom"); btn.disabled = true;
+            try {
+                await addDoc(collection(db, "fcomSuggestions"), {
+                    title, description, proposedDate, corridor,
+                    suggestedByUid: currentUser.uid, suggestedByName: mentorData.name || "Mentor",
+                    status: "SUGGESTED", createdAt: serverTimestamp()
+                });
+                notify("fcomNotice", "ok", "Suggestion sent to FCOM.");
+                $("fcomTitle").value = ""; $("fcomDesc").value = ""; $("fcomDate").value = "";
+                loadFcomHistory();
+            } catch (err) {
+                console.error(err);
+                notify("fcomNotice", "err", "Could not send the suggestion. You may not have permission, or the connection failed.");
+            } finally { btn.disabled = false; }
+        });
+
+        async function loadFcomHistory() {
+            try {
+                const res = await getDocs(query(collection(db, "fcomSuggestions"), where("suggestedByUid", "==", currentUser.uid)));
+                const rows = res.docs.map(d => d.data()).sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+                const pill = s => s === "APPROVED" ? '<span class="pill ok">Approved</span>' : s === "DECLINED" ? '<span class="pill bad">Declined</span>' : '<span class="pill info">Awaiting review</span>';
+                $("fcomHistory").innerHTML = rows.length ? `<table><thead><tr><th>Event</th><th>Proposed date</th><th>Status</th></tr></thead><tbody>${rows.map(r =>
+                    `<tr><td>${esc(r.title)}</td><td>${r.proposedDate ? fmtDate(r.proposedDate) : "-"}</td><td>${pill(r.status)}</td></tr>`).join("")}</tbody></table>`
+                    : '<div class="empty">You have not sent any suggestions yet.</div>';
+            } catch (e) { console.error(e); $("fcomHistory").innerHTML = '<div class="empty">Could not load suggestions.</div>'; }
+        }
+    </script>
+</body>
+</html>
