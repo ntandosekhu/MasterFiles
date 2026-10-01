@@ -1,0 +1,19 @@
+{
+  "indexes": [
+    { "collectionGroup": "foodbankInventory", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "bestBefore", "order": "ASCENDING" } ] },
+    { "collectionGroup": "foodbankInventory", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "category", "order": "ASCENDING" }, { "fieldPath": "bestBefore", "order": "ASCENDING" } ] },
+    { "collectionGroup": "foodbankInventory", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "contributorName", "order": "ASCENDING" }, { "fieldPath": "bestBefore", "order": "ASCENDING" } ] },
+    { "collectionGroup": "foodbankInventory", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "category", "order": "ASCENDING" }, { "fieldPath": "contributorName", "order": "ASCENDING" }, { "fieldPath": "bestBefore", "order": "ASCENDING" } ] },
+    { "collectionGroup": "actsRequests", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "area", "order": "ASCENDING" }, { "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "createdAt", "order": "ASCENDING" } ] },
+    { "collectionGroup": "actsSchedule", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "published", "order": "ASCENDING" }, { "fieldPath": "date", "order": "ASCENDING" } ] },
+    { "collectionGroup": "debates", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "published", "order": "ASCENDING" }, { "fieldPath": "date", "order": "ASCENDING" } ] }
+  ],
+  "fieldOverrides": []
+}
