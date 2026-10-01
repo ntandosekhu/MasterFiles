@@ -405,6 +405,11 @@ body {
     display: none;
 }
 
+/* Hide ACTS subcommittee section by default */
+#actsSection {
+    display: none;
+}
+
 /* =========================
    RESPONSIVE DESIGN
 ========================= */
@@ -617,9 +622,28 @@ body {
                             <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor" aria-label="Mentor Tools"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
                         </span>
                         <h3 class="card-title">Mentor Tools</h3>
-                        <p class="card-description">Record first-year curfew signings and theme discussions.</p>
+                        <p class="card-description">Record first-year curfew signings and theme discussions for your corridor.</p>
                     </div>
                     <button class="card-button" data-link="mentors.html">Open Mentor Tools</button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ACTS SUBCOMMITTEE SECTION (CONDITIONAL FOR ACTS HOUSE ROLE) -->
+        <div class="services-group" id="actsSection">
+            <h4 class="section-heading">ACTS Subcommittee</h4>
+            <div class="card-grid">
+
+                <div class="service-card">
+                    <div class="card-top">
+                        <span class="card-icon">
+                            <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor" aria-label="Kovsie Acts"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                        </span>
+                        <h3 class="card-title">Kovsie Acts</h3>
+                        <p class="card-description">See the Community Garden schedule and debate information published by RC ACTS.</p>
+                    </div>
+                    <button class="card-button" data-link="kovsieacts.html">Open Kovsie Acts</button>
                 </div>
 
             </div>
@@ -694,6 +718,7 @@ const roleBadge = document.getElementById("roleBadge");
 const leadershipSection = document.getElementById("leadershipSection");
 const secretarySection = document.getElementById("secretarySection");
 const mentorSection = document.getElementById("mentorSection");
+const actsSection = document.getElementById("actsSection");
 const logoutButton = document.getElementById("logoutButton");
 
 /* =========================
@@ -801,6 +826,15 @@ onAuthStateChanged(auth, async (user) => {
 
         if (isMentor) {
             mentorSection.style.display = "block";
+        }
+
+        // ACTS subcommittee members (house role ACTS_COMMITTEE)
+        const isActsMember = houseRoles.some(role =>
+            typeof role === "string" && role.toLowerCase().startsWith("acts")
+        );
+
+        if (isActsMember) {
+            actsSection.style.display = "block";
         }
 
         // Reveal dashboard only after all security checks & data loading complete
