@@ -245,7 +245,7 @@
         <div id="mainContent">
             <section class="dashboard-welcome">
                 <h2>Mentor Tools</h2>
-                <p>Record curfew signings and theme discussions for your first years, and suggest events to FCOM. These records are reviewed by the First Years committee.</p>
+                <p>Record curfew signings and theme discussions for your first years. These records are reviewed by the First Years committee.</p>
             </section>
 
             <section class="admin-card">
@@ -257,7 +257,6 @@
             <div class="tab-bar">
                 <button class="tab-button active" data-tab="tabCurfew">Curfew Signings</button>
                 <button class="tab-button" data-tab="tabTheme">Theme Discussions</button>
-                <button class="tab-button" data-tab="tabFcom">FCOM Suggestions</button>
             </div>
 
             <!-- CURFEW -->
@@ -322,35 +321,6 @@
                     <h3>Your Recent Theme Discussions</h3>
                     <p class="sub">Discussions already submitted for your corridor.</p>
                     <div id="themeHistory" class="table-wrap"></div>
-                </div>
-            </div>
-
-            <!-- FCOM -->
-            <div class="tab-panel" id="tabFcom">
-                <div class="panel">
-                    <h3>Suggest an Event to FCOM</h3>
-                    <p class="sub">Suggest an event or activity for first years. The First Years committee reviews every suggestion.</p>
-                    <div id="fcomNotice" class="notice"></div>
-                    <div class="filter-row">
-                        <div class="field grow">
-                            <label for="fcomTitle">Event title</label>
-                            <input type="text" id="fcomTitle" maxlength="120" placeholder="e.g. First years braai evening">
-                        </div>
-                        <div class="field">
-                            <label for="fcomDate">Proposed date</label>
-                            <input type="date" id="fcomDate">
-                        </div>
-                    </div>
-                    <div class="field" style="margin-bottom:18px;">
-                        <label for="fcomDesc">Description</label>
-                        <textarea id="fcomDesc" maxlength="1500" placeholder="What is the event and why is it good for first years?"></textarea>
-                    </div>
-                    <button class="btn" id="saveFcom">Send Suggestion</button>
-                </div>
-                <div class="panel">
-                    <h3>Your Suggestions</h3>
-                    <p class="sub">Status of the suggestions you have sent.</p>
-                    <div id="fcomHistory" class="table-wrap"></div>
                 </div>
             </div>
         </div>
@@ -470,7 +440,7 @@
                 $("themeDate").max = todayStr();
                 await loadCurfewForDate();
                 renderThemeRoster();
-                loadCurfewHistory(); loadThemeHistory(); loadFcomHistory();
+                loadCurfewHistory(); loadThemeHistory();
 
                 $("loadingState").style.display = "none";
                 $("mainContent").style.display = "block";
@@ -650,37 +620,6 @@
                     `<tr><td>${fmtDate(r.date)}</td><td>${esc(r.theme)}</td><td>${r.attendedCount}/${r.totalFirstYears}</td></tr>`).join("")}</tbody></table>`
                     : '<div class="empty">No theme discussions submitted yet.</div>';
             } catch (e) { console.error(e); $("themeHistory").innerHTML = '<div class="empty">Could not load history.</div>'; }
-        }
-
-        /* ---------- FCOM SUGGESTIONS ---------- */
-        $("saveFcom").addEventListener("click", async () => {
-            const title = $("fcomTitle").value.trim(), description = $("fcomDesc").value.trim(), proposedDate = $("fcomDate").value;
-            if (!title || !description) { notify("fcomNotice", "err", "Please add an event title and a description."); return; }
-            const btn = $("saveFcom"); btn.disabled = true;
-            try {
-                await addDoc(collection(db, "fcomSuggestions"), {
-                    title, description, proposedDate, corridor,
-                    suggestedByUid: currentUser.uid, suggestedByName: mentorData.name || "Mentor",
-                    status: "SUGGESTED", createdAt: serverTimestamp()
-                });
-                notify("fcomNotice", "ok", "Suggestion sent to FCOM.");
-                $("fcomTitle").value = ""; $("fcomDesc").value = ""; $("fcomDate").value = "";
-                loadFcomHistory();
-            } catch (err) {
-                console.error(err);
-                notify("fcomNotice", "err", "Could not send the suggestion. You may not have permission, or the connection failed.");
-            } finally { btn.disabled = false; }
-        });
-
-        async function loadFcomHistory() {
-            try {
-                const res = await getDocs(query(collection(db, "fcomSuggestions"), where("suggestedByUid", "==", currentUser.uid)));
-                const rows = res.docs.map(d => d.data()).sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
-                const pill = s => s === "APPROVED" ? '<span class="pill ok">Approved</span>' : s === "DECLINED" ? '<span class="pill bad">Declined</span>' : '<span class="pill info">Awaiting review</span>';
-                $("fcomHistory").innerHTML = rows.length ? `<table><thead><tr><th>Event</th><th>Proposed date</th><th>Status</th></tr></thead><tbody>${rows.map(r =>
-                    `<tr><td>${esc(r.title)}</td><td>${r.proposedDate ? fmtDate(r.proposedDate) : "-"}</td><td>${pill(r.status)}</td></tr>`).join("")}</tbody></table>`
-                    : '<div class="empty">You have not sent any suggestions yet.</div>';
-            } catch (e) { console.error(e); $("fcomHistory").innerHTML = '<div class="empty">Could not load suggestions.</div>'; }
         }
     </script>
 </body>
