@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Beyers Naude - Food Bank</title>
+    <style>
+        :root {
+            --space-blue-primary: #1D2951;
+            --space-blue-hover: #141C38;
+            --space-blue-light: #EFF3F9;
+            --space-blue-border: #D0DCED;
+            --space-blue-accent: #3B5295;
+            --bg-page: #F4F6F9;
+            --bg-card: #FFFFFF;
+            --text-main: #0F172A;
+            --text-muted: #475569;
+            --text-subtle: #64748B;
+            --danger-red: #DC2626;
+            --danger-red-hover: #B91C1C;
+            --ok-green: #15803D;
+            --ok-bg: #DCFCE7;
+            --warn-amber: #B45309;
+            --warn-bg: #FEF3C7;
+            --bad-bg: #FEE2E2;
+            --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+            --shadow-md: 0 4px 12px rgba(29, 41, 81, 0.08);
+            --shadow-lg: 0 10px 25px rgba(29, 41, 81, 0.12);
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* HEADER */
+        .header {
+            background-color: var(--space-blue-primary);
+            color: #FFFFFF;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            gap: 12px;
+        }
+        .brand { display: flex; flex-direction: column; }
+        .brand h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
+        .brand p { color: #A0B2D6; font-size: 13px; font-weight: 500; letter-spacing: 0.01em; margin-top: 2px; }
+        .header-actions { display: flex; gap: 10px; align-items: center; }
+
+        .logout-button, .back-button {
+            border: none;
+            color: #FFFFFF;
+            padding: 9px 18px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: background-color 0.15s ease, transform 0.1s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .logout-button { background-color: var(--danger-red); }
+        .logout-button:hover { background-color: var(--danger-red-hover); }
+        .back-button { background-color: var(--space-blue-accent); }
+        .back-button:hover { background-color: var(--space-blue-hover); }
+        .logout-button:active, .back-button:active { transform: scale(0.98); }
+
+        /* LAYOUT */
+        .container { max-width: 1200px; width: 100%; margin: 0 auto; padding: 32px 24px 60px; flex: 1; }
+        .dashboard-welcome { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--space-blue-border); }
+        .dashboard-welcome h2 { font-size: 26px; font-weight: 800; color: var(--space-blue-primary); letter-spacing: -0.02em; margin-bottom: 6px; }
+        .dashboard-welcome p { color: var(--text-muted); font-size: 15px; max-width: 800px; }
+
+        .admin-card {
+            background-color: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: 20px 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--space-blue-border);
+            border-left: 5px solid var(--space-blue-primary);
+            box-shadow: var(--shadow-sm);
+        }
+        .admin-label { color: var(--text-subtle); font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+        .admin-name { font-size: 17px; font-weight: 700; color: var(--text-main); }
+        .role-container { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; }
+        .role-badge {
+            display: inline-flex; align-items: center;
+            background-color: var(--space-blue-light); color: var(--space-blue-primary);
+            border: 1px solid var(--space-blue-border);
+            padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;
+        }
+
+        /* TABS */
+        .tab-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; border-bottom: 1px solid var(--space-blue-border); }
+        .tab-button {
+            background: none; border: none; cursor: pointer;
+            padding: 12px 18px; font-size: 14px; font-weight: 700;
+            color: var(--text-subtle); border-bottom: 3px solid transparent; margin-bottom: -1px;
+        }
+        .tab-button:hover { color: var(--space-blue-primary); }
+        .tab-button.active { color: var(--space-blue-primary); border-bottom-color: var(--space-blue-primary); }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        /* PANELS, FORMS, BUTTONS */
+        .panel {
+            background: var(--bg-card); border: 1px solid #E2E8F0; border-radius: var(--radius-lg);
+            padding: 22px; box-shadow: var(--shadow-sm); margin-bottom: 20px; position: relative; overflow: hidden;
+        }
+        .panel::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--space-blue-primary); opacity: .85; }
+        .panel h3 { font-size: 17px; font-weight: 700; color: var(--space-blue-primary); margin-bottom: 4px; letter-spacing: -0.01em; }
+        .panel .sub { color: var(--text-subtle); font-size: 13px; margin-bottom: 16px; }
+
+        .filter-row { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end; margin-bottom: 18px; }
+        .field { display: flex; flex-direction: column; gap: 4px; min-width: 160px; }
+        .field.grow { flex: 1; }
+        .field label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--text-subtle); }
+        input[type=text], input[type=date], select, textarea {
+            font: inherit; font-size: 14px; padding: 9px 12px; border: 1px solid var(--space-blue-border);
+            border-radius: var(--radius-sm); background: #fff; color: var(--text-main); width: 100%;
+        }
+        textarea { min-height: 90px; resize: vertical; }
+        input:focus, select:focus, textarea:focus { outline: 2px solid var(--space-blue-accent); outline-offset: 1px; }
+
+        .btn {
+            border: none; background: var(--space-blue-primary); color: #fff; padding: 10px 18px;
+            border-radius: var(--radius-sm); cursor: pointer; font-size: 13px; font-weight: 700;
+            transition: background-color .15s ease, transform .1s ease;
+        }
+        .btn:hover { background: var(--space-blue-hover); }
+        .btn:active { transform: scale(.98); }
+        .btn:disabled { opacity: .55; cursor: not-allowed; }
+        .btn.secondary { background: var(--space-blue-light); color: var(--space-blue-primary); border: 1px solid var(--space-blue-border); }
+        .btn.secondary:hover { background: var(--space-blue-border); }
+        .btn.danger { background: var(--danger-red); }
+        .btn.danger:hover { background: var(--danger-red-hover); }
+        .btn.small { padding: 6px 12px; font-size: 12px; }
+
+        /* LISTS & TABLES */
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th { text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-subtle); padding: 10px 12px; border-bottom: 2px solid var(--space-blue-border); white-space: nowrap; }
+        td { padding: 10px 12px; border-bottom: 1px solid #F1F5F9; vertical-align: top; }
+        tr.clickable { cursor: pointer; }
+        tr.clickable:hover td { background: var(--space-blue-light); }
+
+        .pill { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; }
+        .pill.ok { background: var(--ok-bg); color: var(--ok-green); }
+        .pill.warn { background: var(--warn-bg); color: var(--warn-amber); }
+        .pill.bad { background: var(--bad-bg); color: var(--danger-red); }
+        .pill.info { background: var(--space-blue-light); color: var(--space-blue-primary); }
+
+        .student-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 10px 0; border-bottom: 1px solid #F1F5F9; }
+        .student-name { font-weight: 600; }
+        .student-meta { color: var(--text-subtle); font-size: 12px; }
+        .seg { display: inline-flex; border: 1px solid var(--space-blue-border); border-radius: var(--radius-sm); overflow: hidden; }
+        .seg button { border: none; background: #fff; padding: 6px 12px; font-size: 12px; font-weight: 700; cursor: pointer; color: var(--text-muted); border-right: 1px solid var(--space-blue-border); }
+        .seg button:last-child { border-right: none; }
+        .seg button.on-present { background: var(--ok-green); color: #fff; }
+        .seg button.on-absent { background: var(--danger-red); color: #fff; }
+        .seg button.on-excused { background: var(--space-blue-accent); color: #fff; }
+
+        .kpi-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-bottom: 20px; }
+        .kpi { background: var(--bg-card); border: 1px solid #E2E8F0; border-radius: var(--radius-md); padding: 16px 18px; box-shadow: var(--shadow-sm); }
+        .kpi .num { font-size: 26px; font-weight: 800; color: var(--space-blue-primary); line-height: 1.1; }
+        .kpi .lbl { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-subtle); font-weight: 600; margin-top: 4px; }
+
+        .card-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+        .corr-card { background: var(--bg-card); border: 1px solid #E2E8F0; border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow-sm); position: relative; overflow: hidden; cursor: pointer; transition: all .2s ease-in-out; }
+        .corr-card::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--space-blue-primary); opacity: .85; }
+        .corr-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+        .corr-card h4 { font-size: 17px; font-weight: 700; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+        .corr-card .mentor { color: var(--text-subtle); font-size: 12px; margin-bottom: 12px; }
+        .stat-line { display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0; border-top: 1px solid #F1F5F9; color: var(--text-muted); }
+        .stat-line b { color: var(--text-main); }
+        .drill { margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--space-blue-border); font-size: 13px; display: none; }
+        .drill.open { display: block; }
+        .drill div { padding: 2px 0; }
+
+        .notice { padding: 12px 16px; border-radius: var(--radius-md); font-size: 14px; margin-bottom: 16px; display: none; }
+        .notice.show { display: block; }
+        .notice.ok { background: var(--ok-bg); color: var(--ok-green); }
+        .notice.err { background: var(--bad-bg); color: var(--danger-red); }
+        .notice.info { background: var(--space-blue-light); color: var(--space-blue-primary); }
+        .empty { color: var(--text-subtle); font-size: 14px; padding: 18px 0; text-align: center; }
+
+        #loadingState, #accessDeniedState { text-align: center; padding: 80px 20px; color: var(--text-muted); }
+        #accessDeniedState { display: none; }
+        #accessDeniedState h2 { color: var(--danger-red); margin-bottom: 8px; }
+        #mainContent { display: none; }
+
+        .footer { text-align: center; color: var(--text-subtle); font-size: 13px; font-weight: 500; padding: 24px 16px; border-top: 1px solid var(--space-blue-border); background: #fff; margin-top: auto; }
+
+        @media (max-width: 1024px) { .card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+        @media (max-width: 640px) {
+            .header { padding: 16px 20px; }
+            .brand h1 { font-size: 18px; }
+            .container { padding: 20px 16px 40px; }
+            .card-grid, .kpi-grid { grid-template-columns: 1fr; }
+            .dashboard-welcome h2 { font-size: 22px; }
+            .field { min-width: 100%; }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="brand">
+            <h1>House Beyers Naude</h1>
+            <p>House of Masters • Food Bank</p>
+        </div>
+        <div class="header-actions">
+            <a class="back-button" href="clienthub.html">&larr; Client Hub</a>
+            <button class="logout-button" id="logoutButton">Log Out</button>
+        </div>
+    </header>
+
+    <main class="container">
+        <div id="loadingState">Loading Food Bank...</div>
+        <div id="accessDeniedState">
+            <h2>Access Restricted</h2>
+            <p>We could not find your residence profile. Please contact the house committee.</p>
+        </div>
+
+        <div id="mainContent">
+            <section class="dashboard-welcome">
+                <h2>Food Bank</h2>
+                <p>Check the Food Bank status, ask for food, or offer to contribute. Requests go to the RC ACTS team, who will contact you.</p>
+            </section>
+
+            <div class="tab-bar">
+                <button class="tab-button active" data-tab="tabFood">Food Bank</button>
+                <button class="tab-button" data-tab="tabDon">Donations</button>
+            </div>
+
+            <div class="tab-panel active" id="tabFood">
+                <div class="panel">
+                    <h3>Current Status</h3>
+                    <p class="sub">Updated by the RC ACTS team.</p>
+                    <div id="statusBox" style="font-size:30px;font-weight:800;color:var(--space-blue-primary);">Loading...</div>
+                    <div id="statusNote" class="student-meta" style="margin-top:6px;"></div>
+                </div>
+
+                <div class="panel">
+                    <h3>How can we help?</h3>
+                    <p class="sub">Your request is sent to RC ACTS. It does not change the Food Bank directly.</p>
+                    <div id="foodNotice" class="notice"></div>
+                    <div class="filter-row">
+                        <button class="btn" id="btnReq">Request Food</button>
+                        <button class="btn secondary" id="btnOffer">I Want To Contribute Food</button>
+                    </div>
+                    <div id="foodForm" style="display:none;">
+                        <div class="field" style="margin-bottom:12px;">
+                            <label for="foodDetails" id="foodLabel">Details</label>
+                            <textarea id="foodDetails" maxlength="1000"></textarea>
+                        </div>
+                        <div id="foodHint" class="student-meta" style="margin-bottom:12px;"></div>
+                        <button class="btn" id="foodSend">Send</button>
+                        <button class="btn secondary" id="foodCancel">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-panel" id="tabDon">
+                <div class="panel">
+                    <h3>Donation Drives</h3>
+                    <p class="sub">Offer a donation or ask for help with items from an active drive.</p>
+                    <div id="donNotice" class="notice"></div>
+                    <div id="campList"></div>
+                    <div id="donForm" style="display:none;margin-top:16px;border-top:1px dashed var(--space-blue-border);padding-top:16px;">
+                        <div class="admin-label" id="donFormTitle" style="margin-bottom:8px;"></div>
+                        <div class="field" style="margin-bottom:12px;"><label for="donDetails">Details</label><textarea id="donDetails" maxlength="1000"></textarea></div>
+                        <button class="btn" id="donSend">Send</button>
+                        <button class="btn secondary" id="donCancel">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">House Beyers Naude • House of Masters</footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+        import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app-check.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+        import {
+            getFirestore, doc, getDoc, getDocs, setDoc, addDoc, updateDoc,
+            collection, query, where, orderBy, limit, runTransaction, writeBatch, deleteDoc, serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDW6IArj2dZiqbf00Ix3SPPSqvxTKG0GgE",
+            authDomain: "master-files-95f6b.firebaseapp.com",
+            projectId: "master-files-95f6b",
+            storageBucket: "master-files-95f6b.firebasestorage.app",
+            messagingSenderId: "537891510061",
+            appId: "1:537891510061:web:fb46c8d1abae02b9e725a4",
+            measurementId: "G-4GNVR5EBJX"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const appCheck = initializeAppCheck(app, {
+            provider: new ReCaptchaV3Provider('6LfAPn8tAAAAAOa1QF1-NqwCu6aPsGWyOep3mo2s'),
+            isTokenAutoRefreshEnabled: true
+        });
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        /* SHARED HELPERS */
+        const $ = id => document.getElementById(id);
+        const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+        const todayStr = () => { const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 10); };
+        const fmtDate = s => { if (!s) return ""; const [y, m, d] = s.split("-"); return `${d}/${m}/${y}`; };
+        function notify(id, type, msg) { const n = $(id); n.className = "notice show " + type; n.textContent = msg; }
+        function clearNotify(id) { $(id).className = "notice"; }
+
+        function setupTabs() {
+            document.querySelectorAll(".tab-button").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    document.querySelectorAll(".tab-button").forEach(b => b.classList.remove("active"));
+                    document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+                    btn.classList.add("active");
+                    $(btn.dataset.tab).classList.add("active");
+                });
+            });
+        }
+
+        $("logoutButton").addEventListener("click", async () => {
+            try { await signOut(auth); window.location.href = "index.html"; }
+            catch (e) { console.error("Logout Error:", e); alert("Unable to log out. Please check your network connection."); }
+        });
+
+        setupTabs();
+
+        const STATUS = {
+            FULL: ["Full", "ok", "The Food Bank is well stocked."],
+            MODERATE: ["Moderate", "info", "The Food Bank has a fair amount of supplies."],
+            RUNNING_LOW: ["Running Low", "warn", "Supplies are running low. Contributions are very welcome."],
+            EMPTY: ["Empty", "bad", "The Food Bank is empty at the moment. Contributions are very welcome."]
+        };
+        let me = null, profile = null, donMode = null, donCampaign = null, donLoaded = false, foodMode = null;
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) { window.location.href = "index.html"; return; }
+            try {
+                const snap = await getDoc(doc(db, "users", user.uid));
+                if (!snap.exists()) { $("loadingState").style.display = "none"; $("accessDeniedState").style.display = "block"; return; }
+                me = user; profile = snap.data();
+                $("loadingState").style.display = "none";
+                $("mainContent").style.display = "block";
+                loadStatus();                  // one small document is all the public page reads
+            } catch (e) { console.error(e); $("loadingState").textContent = "Something went wrong loading the Food Bank. Please try again."; }
+        });
+
+        document.querySelector('[data-tab="tabDon"]').addEventListener("click", () => { if (!donLoaded) { donLoaded = true; loadCampaigns(); } });
+
+        async function loadStatus() {
+            try {
+                const s = await getDoc(doc(db, "foodbankSummary", "current"));
+                const st = s.exists() ? STATUS[s.data().status] : null;
+                if (st) {
+                    $("statusBox").innerHTML = `<span class="pill ${st[1]}" style="font-size:20px;padding:6px 18px;">${st[0].toUpperCase()}</span>`;
+                    $("statusNote").textContent = st[2];
+                } else { $("statusBox").textContent = "Not available yet"; $("statusNote").textContent = "The RC ACTS team has not published a status."; }
+            } catch (e) { console.error(e); $("statusBox").textContent = "Status unavailable"; }
+        }
+
+        function requesterInfo() {
+            return {
+                requesterUid: me.uid,
+                requesterName: profile.name || profile.fullName || me.displayName || "Student",
+                studentNumber: String(profile.studentNumber ?? profile.studentnumber ?? ""),
+                room: String(profile.roomNumber ?? "")
+            };
+        }
+
+        /* ---------- FOOD: request / offer ---------- */
+        function openFood(mode) {
+            foodMode = mode; clearNotify("foodNotice");
+            $("foodLabel").textContent = mode === "REQUEST" ? "What do you need, and for how many people?" : "What would you like to contribute?";
+            $("foodHint").textContent = mode === "OFFER" ? "Only non-perishable food is accepted (canned, starch, grains, dry goods, breakfast items). No fresh, dairy, meat or cooked food." : "";
+            $("foodDetails").value = ""; $("foodForm").style.display = "block"; $("foodDetails").focus();
+        }
+        $("btnReq").addEventListener("click", () => openFood("REQUEST"));
+        $("btnOffer").addEventListener("click", () => openFood("OFFER"));
+        $("foodCancel").addEventListener("click", () => { $("foodForm").style.display = "none"; });
+
+        $("foodSend").addEventListener("click", async () => {
+            const details = $("foodDetails").value.trim();
+            if (!details) { notify("foodNotice", "err", "Please add a few details first."); return; }
+            const btn = $("foodSend"); btn.disabled = true;
+            try {
+                await addDoc(collection(db, "actsRequests"), {
+                    area: "FOODBANK", type: foodMode, details, status: "PENDING", ...requesterInfo(), createdAt: serverTimestamp()
+                });
+                $("foodForm").style.display = "none";
+                notify("foodNotice", "ok", foodMode === "REQUEST" ? "Your request has been sent to RC ACTS. They will be in touch." : "Thank you! RC ACTS has your offer and will contact you.");
+            } catch (e) {
+                console.error(e);
+                notify("foodNotice", "err", "We could not send that. Please try again in a moment.");
+            } finally { btn.disabled = false; }
+        });
+
+        /* ---------- DONATIONS ---------- */
+        async function loadCampaigns() {
+            try {
+                const res = await getDocs(query(collection(db, "donationCampaigns"), where("active", "==", true), limit(12)));
+                const rows = res.docs.map(d => ({ id: d.id, ...d.data() }));
+                $("campList").innerHTML = rows.length ? rows.map(c => `<div class="student-row" style="align-items:flex-start;">
+                    <div style="max-width:560px;"><div class="student-name">${esc(c.title)}</div><div class="student-meta">${esc(c.description || "")}</div></div>
+                    <div><button class="btn small" data-id="${c.id}" data-k="OFFER">Offer a donation</button> <button class="btn secondary small" data-id="${c.id}" data-k="REQUEST">Request assistance</button></div></div>`).join("")
+                    : '<div class="empty">There are no active donation drives right now. Please check back soon.</div>';
+                $("campList").querySelectorAll("button[data-id]").forEach(b => b.addEventListener("click", () => {
+                    donCampaign = rows.find(r => r.id === b.dataset.id); donMode = b.dataset.k;
+                    $("donFormTitle").textContent = `${donMode === "OFFER" ? "Offer a donation" : "Request assistance"} • ${donCampaign.title}`;
+                    $("donDetails").value = ""; $("donForm").style.display = "block"; clearNotify("donNotice"); $("donDetails").focus();
+                }));
+            } catch (e) { console.error(e); $("campList").innerHTML = '<div class="empty">Could not load donation drives.</div>'; }
+        }
+        $("donCancel").addEventListener("click", () => { $("donForm").style.display = "none"; });
+
+        $("donSend").addEventListener("click", async () => {
+            const details = $("donDetails").value.trim();
+            if (!details) { notify("donNotice", "err", "Please add a few details first."); return; }
+            const btn = $("donSend"); btn.disabled = true;
+            try {
+                await addDoc(collection(db, "actsRequests"), {
+                    area: "DONATION", type: donMode, campaignId: donCampaign.id, campaignTitle: donCampaign.title,
+                    details, status: "PENDING", ...requesterInfo(), createdAt: serverTimestamp()
+                });
+                $("donForm").style.display = "none";
+                notify("donNotice", "ok", "Sent to RC ACTS. Thank you!");
+            } catch (e) { console.error(e); notify("donNotice", "err", "We could not send that. Please try again in a moment."); }
+            finally { btn.disabled = false; }
+        });
+    </script>
+</body>
+</html>
