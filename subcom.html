@@ -631,6 +631,12 @@ const RC_PERMISSIONS_MAP = {
         roles: [
             { id: 'PEER_TUTOR', label: 'Peer Tutor' }
         ]
+    },
+    'RC_ACTS': {
+        title: 'RC ACTS',
+        roles: [
+            { id: 'ACTS_COMMITTEE', label: 'ACTS Subcommittee' }
+        ]
     }
 };
 
@@ -641,7 +647,8 @@ const ALL_ROLE_LABELS = {
     'SPORTS_SECRETARY': 'Sports Secretary',
     'DISCIPLINARY_COMMITTEE': 'Disciplinary Committee',
     'DC_SECRETARY': 'DC Secretary',
-    'PEER_TUTOR': 'Peer Tutor'
+    'PEER_TUTOR': 'Peer Tutor',
+    'ACTS_COMMITTEE': 'ACTS Subcommittee'
 };
 
 /* STATE VARIABLES */
@@ -690,6 +697,7 @@ function parseRcRoleFromAdminData(data) {
     if (rawRole === 'RC_SPORTS' || rawRole.includes('SPORT')) return 'RC_SPORTS';
     if (rawRole === 'RC_VICE_PRIME' || rawRole.includes('VICE') || rawRole.includes('DISCIPLINARY')) return 'RC_VICE_PRIME';
     if (rawRole === 'RC_ACADEMICS' || rawRole.includes('ACADEMIC')) return 'RC_ACADEMICS';
+    if (rawRole === 'RC_ACTS' || rawRole.includes('RC_ACTS')) return 'RC_ACTS';
 
     return null;
 }
