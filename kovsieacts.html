@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Beyers Naude - Kovsie Acts</title>
+    <style>
+        :root {
+            --space-blue-primary: #1D2951;
+            --space-blue-hover: #141C38;
+            --space-blue-light: #EFF3F9;
+            --space-blue-border: #D0DCED;
+            --space-blue-accent: #3B5295;
+            --bg-page: #F4F6F9;
+            --bg-card: #FFFFFF;
+            --text-main: #0F172A;
+            --text-muted: #475569;
+            --text-subtle: #64748B;
+            --danger-red: #DC2626;
+            --danger-red-hover: #B91C1C;
+            --ok-green: #15803D;
+            --ok-bg: #DCFCE7;
+            --warn-amber: #B45309;
+            --warn-bg: #FEF3C7;
+            --bad-bg: #FEE2E2;
+            --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+            --shadow-md: 0 4px 12px rgba(29, 41, 81, 0.08);
+            --shadow-lg: 0 10px 25px rgba(29, 41, 81, 0.12);
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* HEADER */
+        .header {
+            background-color: var(--space-blue-primary);
+            color: #FFFFFF;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            gap: 12px;
+        }
+        .brand { display: flex; flex-direction: column; }
+        .brand h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
+        .brand p { color: #A0B2D6; font-size: 13px; font-weight: 500; letter-spacing: 0.01em; margin-top: 2px; }
+        .header-actions { display: flex; gap: 10px; align-items: center; }
+
+        .logout-button, .back-button {
+            border: none;
+            color: #FFFFFF;
+            padding: 9px 18px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: background-color 0.15s ease, transform 0.1s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .logout-button { background-color: var(--danger-red); }
+        .logout-button:hover { background-color: var(--danger-red-hover); }
+        .back-button { background-color: var(--space-blue-accent); }
+        .back-button:hover { background-color: var(--space-blue-hover); }
+        .logout-button:active, .back-button:active { transform: scale(0.98); }
+
+        /* LAYOUT */
+        .container { max-width: 1200px; width: 100%; margin: 0 auto; padding: 32px 24px 60px; flex: 1; }
+        .dashboard-welcome { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--space-blue-border); }
+        .dashboard-welcome h2 { font-size: 26px; font-weight: 800; color: var(--space-blue-primary); letter-spacing: -0.02em; margin-bottom: 6px; }
+        .dashboard-welcome p { color: var(--text-muted); font-size: 15px; max-width: 800px; }
+
+        .admin-card {
+            background-color: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: 20px 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--space-blue-border);
+            border-left: 5px solid var(--space-blue-primary);
+            box-shadow: var(--shadow-sm);
+        }
+        .admin-label { color: var(--text-subtle); font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+        .admin-name { font-size: 17px; font-weight: 700; color: var(--text-main); }
+        .role-container { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; }
+        .role-badge {
+            display: inline-flex; align-items: center;
+            background-color: var(--space-blue-light); color: var(--space-blue-primary);
+            border: 1px solid var(--space-blue-border);
+            padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;
+        }
+
+        /* TABS */
+        .tab-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; border-bottom: 1px solid var(--space-blue-border); }
+        .tab-button {
+            background: none; border: none; cursor: pointer;
+            padding: 12px 18px; font-size: 14px; font-weight: 700;
+            color: var(--text-subtle); border-bottom: 3px solid transparent; margin-bottom: -1px;
+        }
+        .tab-button:hover { color: var(--space-blue-primary); }
+        .tab-button.active { color: var(--space-blue-primary); border-bottom-color: var(--space-blue-primary); }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        /* PANELS, FORMS, BUTTONS */
+        .panel {
+            background: var(--bg-card); border: 1px solid #E2E8F0; border-radius: var(--radius-lg);
+            padding: 22px; box-shadow: var(--shadow-sm); margin-bottom: 20px; position: relative; overflow: hidden;
+        }
+        .panel::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--space-blue-primary); opacity: .85; }
+        .panel h3 { font-size: 17px; font-weight: 700; color: var(--space-blue-primary); margin-bottom: 4px; letter-spacing: -0.01em; }
+        .panel .sub { color: var(--text-subtle); font-size: 13px; margin-bottom: 16px; }
+
+        .filter-row { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end; margin-bottom: 18px; }
+        .field { display: flex; flex-direction: column; gap: 4px; min-width: 160px; }
+        .field.grow { flex: 1; }
+        .field label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--text-subtle); }
+        input[type=text], input[type=date], select, textarea {
+            font: inherit; font-size: 14px; padding: 9px 12px; border: 1px solid var(--space-blue-border);
+            border-radius: var(--radius-sm); background: #fff; color: var(--text-main); width: 100%;
+        }
+        textarea { min-height: 90px; resize: vertical; }
+        input:focus, select:focus, textarea:focus { outline: 2px solid var(--space-blue-accent); outline-offset: 1px; }
+
+        .btn {
+            border: none; background: var(--space-blue-primary); color: #fff; padding: 10px 18px;
+            border-radius: var(--radius-sm); cursor: pointer; font-size: 13px; font-weight: 700;
+            transition: background-color .15s ease, transform .1s ease;
+        }
+        .btn:hover { background: var(--space-blue-hover); }
+        .btn:active { transform: scale(.98); }
+        .btn:disabled { opacity: .55; cursor: not-allowed; }
+        .btn.secondary { background: var(--space-blue-light); color: var(--space-blue-primary); border: 1px solid var(--space-blue-border); }
+        .btn.secondary:hover { background: var(--space-blue-border); }
+        .btn.danger { background: var(--danger-red); }
+        .btn.danger:hover { background: var(--danger-red-hover); }
+        .btn.small { padding: 6px 12px; font-size: 12px; }
+
+        /* LISTS & TABLES */
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th { text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-subtle); padding: 10px 12px; border-bottom: 2px solid var(--space-blue-border); white-space: nowrap; }
+        td { padding: 10px 12px; border-bottom: 1px solid #F1F5F9; vertical-align: top; }
+        tr.clickable { cursor: pointer; }
+        tr.clickable:hover td { background: var(--space-blue-light); }
+
+        .pill { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; }
+        .pill.ok { background: var(--ok-bg); color: var(--ok-green); }
+        .pill.warn { background: var(--warn-bg); color: var(--warn-amber); }
+        .pill.bad { background: var(--bad-bg); color: var(--danger-red); }
+        .pill.info { background: var(--space-blue-light); color: var(--space-blue-primary); }
+
+        .student-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 10px 0; border-bottom: 1px solid #F1F5F9; }
+        .student-name { font-weight: 600; }
+        .student-meta { color: var(--text-subtle); font-size: 12px; }
+        .seg { display: inline-flex; border: 1px solid var(--space-blue-border); border-radius: var(--radius-sm); overflow: hidden; }
+        .seg button { border: none; background: #fff; padding: 6px 12px; font-size: 12px; font-weight: 700; cursor: pointer; color: var(--text-muted); border-right: 1px solid var(--space-blue-border); }
+        .seg button:last-child { border-right: none; }
+        .seg button.on-present { background: var(--ok-green); color: #fff; }
+        .seg button.on-absent { background: var(--danger-red); color: #fff; }
+        .seg button.on-excused { background: var(--space-blue-accent); color: #fff; }
+
+        .kpi-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-bottom: 20px; }
+        .kpi { background: var(--bg-card); border: 1px solid #E2E8F0; border-radius: var(--radius-md); padding: 16px 18px; box-shadow: var(--shadow-sm); }
+        .kpi .num { font-size: 26px; font-weight: 800; color: var(--space-blue-primary); line-height: 1.1; }
+        .kpi .lbl { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-subtle); font-weight: 600; margin-top: 4px; }
+
+        .card-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+        .corr-card { background: var(--bg-card); border: 1px solid #E2E8F0; border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow-sm); position: relative; overflow: hidden; cursor: pointer; transition: all .2s ease-in-out; }
+        .corr-card::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--space-blue-primary); opacity: .85; }
+        .corr-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+        .corr-card h4 { font-size: 17px; font-weight: 700; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+        .corr-card .mentor { color: var(--text-subtle); font-size: 12px; margin-bottom: 12px; }
+        .stat-line { display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0; border-top: 1px solid #F1F5F9; color: var(--text-muted); }
+        .stat-line b { color: var(--text-main); }
+        .drill { margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--space-blue-border); font-size: 13px; display: none; }
+        .drill.open { display: block; }
+        .drill div { padding: 2px 0; }
+
+        .notice { padding: 12px 16px; border-radius: var(--radius-md); font-size: 14px; margin-bottom: 16px; display: none; }
+        .notice.show { display: block; }
+        .notice.ok { background: var(--ok-bg); color: var(--ok-green); }
+        .notice.err { background: var(--bad-bg); color: var(--danger-red); }
+        .notice.info { background: var(--space-blue-light); color: var(--space-blue-primary); }
+        .empty { color: var(--text-subtle); font-size: 14px; padding: 18px 0; text-align: center; }
+
+        #loadingState, #accessDeniedState { text-align: center; padding: 80px 20px; color: var(--text-muted); }
+        #accessDeniedState { display: none; }
+        #accessDeniedState h2 { color: var(--danger-red); margin-bottom: 8px; }
+        #mainContent { display: none; }
+
+        .footer { text-align: center; color: var(--text-subtle); font-size: 13px; font-weight: 500; padding: 24px 16px; border-top: 1px solid var(--space-blue-border); background: #fff; margin-top: auto; }
+
+        @media (max-width: 1024px) { .card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+        @media (max-width: 640px) {
+            .header { padding: 16px 20px; }
+            .brand h1 { font-size: 18px; }
+            .container { padding: 20px 16px 40px; }
+            .card-grid, .kpi-grid { grid-template-columns: 1fr; }
+            .dashboard-welcome h2 { font-size: 22px; }
+            .field { min-width: 100%; }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="brand">
+            <h1>House Beyers Naude</h1>
+            <p>House of Masters • Kovsie Acts</p>
+        </div>
+        <div class="header-actions">
+            <a class="back-button" href="clienthub.html">&larr; Client Hub</a>
+            <button class="logout-button" id="logoutButton">Log Out</button>
+        </div>
+    </header>
+
+    <main class="container">
+        <div id="loadingState">Loading Kovsie Acts...</div>
+        <div id="accessDeniedState">
+            <h2>Access Restricted</h2>
+            <p>Kovsie Acts is only available to members of the ACTS subcommittee.</p>
+        </div>
+
+        <div id="mainContent">
+            <section class="dashboard-welcome">
+                <h2>Kovsie Acts</h2>
+                <p>The published Community Garden schedule and debate information from RC ACTS.</p>
+            </section>
+
+            <section class="admin-card">
+                <div class="admin-label">Signed in as</div>
+                <div id="memberName" class="admin-name">Loading...</div>
+            </section>
+
+            <div id="globalNotice" class="notice"></div>
+
+            <div class="tab-bar">
+                <button class="tab-button active" data-tab="tabGarden">Community Garden</button>
+                <button class="tab-button" data-tab="tabDebates">Debates</button>
+            </div>
+
+            <div class="tab-panel active" id="tabGarden">
+                <div class="panel">
+                    <h3>Community Garden Schedule</h3>
+                    <p class="sub">Monday to Sunday. Only published entries are shown.</p>
+                    <div class="filter-row">
+                        <button class="btn secondary" id="weekPrev">&larr; Previous week</button>
+                        <div class="field"><label>Week</label><div id="weekLabel" class="admin-name"></div></div>
+                        <button class="btn secondary" id="weekNext">Next week &rarr;</button>
+                    </div>
+                    <div id="gardenList"></div>
+                </div>
+            </div>
+
+            <div class="tab-panel" id="tabDebates">
+                <div class="panel">
+                    <h3>Upcoming Debates</h3>
+                    <p class="sub">Dates, topics and details.</p>
+                    <div id="debList"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">House Beyers Naude • House of Masters</footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+        import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app-check.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+        import {
+            getFirestore, doc, getDoc, getDocs, setDoc, addDoc, updateDoc,
+            collection, query, where, orderBy, limit, runTransaction, writeBatch, deleteDoc, serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDW6IArj2dZiqbf00Ix3SPPSqvxTKG0GgE",
+            authDomain: "master-files-95f6b.firebaseapp.com",
+            projectId: "master-files-95f6b",
+            storageBucket: "master-files-95f6b.firebasestorage.app",
+            messagingSenderId: "537891510061",
+            appId: "1:537891510061:web:fb46c8d1abae02b9e725a4",
+            measurementId: "G-4GNVR5EBJX"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const appCheck = initializeAppCheck(app, {
+            provider: new ReCaptchaV3Provider('6LfAPn8tAAAAAOa1QF1-NqwCu6aPsGWyOep3mo2s'),
+            isTokenAutoRefreshEnabled: true
+        });
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        /* SHARED HELPERS */
+        const $ = id => document.getElementById(id);
+        const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+        const todayStr = () => { const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 10); };
+        const fmtDate = s => { if (!s) return ""; const [y, m, d] = s.split("-"); return `${d}/${m}/${y}`; };
+        function notify(id, type, msg) { const n = $(id); n.className = "notice show " + type; n.textContent = msg; }
+        function clearNotify(id) { $(id).className = "notice"; }
+
+        function setupTabs() {
+            document.querySelectorAll(".tab-button").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    document.querySelectorAll(".tab-button").forEach(b => b.classList.remove("active"));
+                    document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+                    btn.classList.add("active");
+                    $(btn.dataset.tab).classList.add("active");
+                });
+            });
+        }
+
+        $("logoutButton").addEventListener("click", async () => {
+            try { await signOut(auth); window.location.href = "index.html"; }
+            catch (e) { console.error("Logout Error:", e); alert("Unable to log out. Please check your network connection."); }
+        });
+
+        setupTabs();
+
+        const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+        const ymd = d => { const x = new Date(d); x.setMinutes(x.getMinutes() - x.getTimezoneOffset()); return x.toISOString().slice(0, 10); };
+        const addD = (s, n) => { const d = new Date(s + "T00:00:00"); d.setDate(d.getDate() + n); return ymd(d); };
+        const mondayOf = s => { const d = new Date(s + "T00:00:00"); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return ymd(d); };
+        let me = null, weekStart = mondayOf(todayStr()), debatesLoaded = false;
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) { window.location.href = "index.html"; return; }
+            try {
+                const snap = await getDoc(doc(db, "users", user.uid));
+                const data = snap.exists() ? snap.data() : null;
+                const roles = data && Array.isArray(data.houseRoles) ? data.houseRoles : [];
+                // same pattern as Secretary / Mentors: the role lives on users/{uid}.houseRoles
+                const isMember = roles.some(r => typeof r === "string" && r.toLowerCase().startsWith("acts"));
+                if (!isMember) { $("loadingState").style.display = "none"; $("accessDeniedState").style.display = "block"; return; }
+                me = user;
+                $("memberName").textContent = data.name || data.fullName || user.displayName || "Member";
+                $("loadingState").style.display = "none";
+                $("mainContent").style.display = "block";
+                loadWeek();
+            } catch (e) { console.error(e); $("loadingState").textContent = "Something went wrong. Please try again."; }
+        });
+
+        document.querySelector('[data-tab="tabDebates"]').addEventListener("click", () => { if (!debatesLoaded) { debatesLoaded = true; loadDebates(); } });
+
+        async function loadWeek() {
+            const end = addD(weekStart, 6);
+            $("weekLabel").textContent = `${fmtDate(weekStart)} – ${fmtDate(end)}`;
+            try {
+                const res = await getDocs(query(collection(db, "actsSchedule"),
+                    where("published", "==", true), where("date", ">=", weekStart), where("date", "<=", end), orderBy("date")));
+                const rows = res.docs.map(d => d.data());
+                $("gardenList").innerHTML = DAYS.map((d, i) => {
+                    const day = addD(weekStart, i), list = rows.filter(r => r.date === day);
+                    return `<div class="student-row" style="align-items:flex-start;"><div style="min-width:120px;"><div class="student-name">${d}</div><div class="student-meta">${fmtDate(day)}</div></div>
+                        <div style="flex:1;">${list.map(r => `<div style="margin-bottom:6px;"><b>${esc(r.task)}</b> <span class="student-meta">${esc(r.assignedName)}</span>${r.assignedUid === me.uid ? ' <span class="pill ok">You</span>' : ""}</div>`).join("") || '<span class="student-meta">Nothing scheduled</span>'}</div></div>`;
+                }).join("");
+            } catch (e) { console.error(e); $("gardenList").innerHTML = '<div class="empty">Could not load the schedule. Please try again.</div>'; }
+        }
+        $("weekPrev").addEventListener("click", () => { weekStart = addD(weekStart, -7); loadWeek(); });
+        $("weekNext").addEventListener("click", () => { weekStart = addD(weekStart, 7); loadWeek(); });
+
+        async function loadDebates() {
+            try {
+                const res = await getDocs(query(collection(db, "debates"), where("published", "==", true), where("date", ">=", todayStr()), orderBy("date"), limit(20)));
+                const rows = res.docs.map(d => d.data());
+                $("debList").innerHTML = rows.length ? rows.map(d => `<div class="student-row" style="align-items:flex-start;">
+                    <div style="min-width:120px;"><div class="student-name">${fmtDate(d.date)}</div></div>
+                    <div style="flex:1;"><b>${esc(d.topic)}</b><div class="student-meta" style="white-space:pre-wrap;">${esc(d.details || "")}</div>${d.assignments ? `<div class="student-meta">Assignments: ${esc(d.assignments)}</div>` : ""}</div></div>`).join("")
+                    : '<div class="empty">No upcoming debates have been published yet.</div>';
+            } catch (e) { console.error(e); $("debList").innerHTML = '<div class="empty">Could not load debates. Please try again.</div>'; }
+        }
+    </script>
+</body>
+</html>
