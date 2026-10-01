@@ -1113,6 +1113,8 @@ import {
     getDocs,
     addDoc,
     updateDoc,
+    writeBatch,
+    serverTimestamp,
     query,
     where,
     orderBy
@@ -1290,7 +1292,7 @@ function getSlotStatus(slotStart, slotEnd) {
         if (bStart < slotEnd && bEnd > slotStart) {
             if (b.isHouseEvent || b.type === "HOUSE_EVENT") {
                 return { type: "HOUSE_EVENT", booking: b };
-            } else if (b.createdBy && b.createdBy !== b.bookerId) {
+            } else if ((b.createdByAdminId || b.createdBy) && (b.createdByAdminId || b.createdBy) !== b.bookerId) {
                 return { type: "ADMIN_BOOKING", booking: b };
             } else {
                 return { type: "BOOKED", booking: b };
@@ -1489,6 +1491,51 @@ function checkEventFormState() {
 eventTitle.addEventListener("input", checkEventFormState);
 
 /* =========================
+   SLOT LOCKS (atomic double-booking protection)
+   One small lock document per venue-hour, written in the SAME batch as the
+   booking. If any hour is already locked, Firestore rejects the whole batch,
+   so two people can never both get the same slot.
+========================= */
+function slotKeys(venueId, startIso, endIso) {
+    const HOUR = 3600000;
+    const keys = [];
+    const first = Math.floor(new Date(startIso).getTime() / HOUR) * HOUR;
+    const end = new Date(endIso).getTime();
+    for (let t = first; t < end; t += HOUR) {
+        keys.push(`${String(venueId).toLowerCase()}_${new Date(t).toISOString().slice(0, 13)}`);
+    }
+    return keys;
+}
+
+function addSlotLocks(batch, bookingId, venueId, startIso, endIso, ownerUid) {
+    slotKeys(venueId, startIso, endIso).forEach(key => {
+        batch.set(doc(db, "venueSlots", key), {
+            bookingId: bookingId,
+            venueId: venueId,
+            bookerId: ownerUid,
+            createdAt: serverTimestamp()
+        });
+    });
+}
+
+function removeSlotLocks(batch, venueId, startIso, endIso) {
+    slotKeys(venueId, startIso, endIso).forEach(key => batch.delete(doc(db, "venueSlots", key)));
+}
+
+async function refreshBookings() {
+    const snap = await getDocs(collection(db, "bookings"));
+    allBookings = [];
+    snap.forEach(d => allBookings.push({ id: d.id, ...d.data() }));
+}
+
+function friendlyWriteError(error, what) {
+    if (error && error.code === "permission-denied") {
+        return what + " was refused. Either that time slot was just taken, or your account is not permitted to do this.";
+    }
+    return what + " failed: " + (error && error.message ? error.message : "unknown error");
+}
+
+/* =========================
    CREATE RESIDENT BOOKING
 ========================= */
 residentBookingForm.addEventListener("submit", async (e) => {
@@ -1505,29 +1552,49 @@ residentBookingForm.addEventListener("submit", async (e) => {
     btnSubmitResBooking.textContent = "Processing...";
 
     try {
-        await addDoc(collection(db, "bookings"), {
+        // Re-read the latest bookings so the slot check is not based on stale data
+        await refreshBookings();
+        const slotEnd = new Date(resFormEnd.value);
+        if (getSlotStatus(selectedSlotStart, slotEnd).type !== "AVAILABLE") {
+            showMessage("That time slot is no longer available. Please choose another.", true);
+            renderCalendar();
+            return;
+        }
+
+        const studentNo = selectedStudent.studentnumber ?? selectedStudent.studentNumber ?? selectedStudent.studentId ?? "";
+        const studentType = selectedStudent.accountType === "ALUMNI" ? "ALUMNI" : "HOUSE_MEMBER";
+        const bookingRef = doc(collection(db, "bookings"));
+        const startIso = selectedSlotStart.toISOString();
+        const endIso = selectedEnd.toISOString();
+
+        const batch = writeBatch(db);
+        batch.set(bookingRef, {
             venueId: currentVenueId,
             venueName: currentVenueName,
-            bookerId: selectedStudent.uid,
+            bookerId: selectedStudent.uid,                  // the STUDENT being booked
             bookerName: selectedStudent.name || selectedStudent.fullName || "Resident",
-            bookerStudentNumber: selectedStudent.studentNumber || selectedStudent.studentId || "",
-            bookerType: selectedStudent.accountType || "HOUSE_MEMBER",
-            createdBy: currentAdmin.uid,
+            bookerStudentNumber: String(studentNo),
+            bookerType: studentType,
+            ...(studentType === "ALUMNI" ? { studentNumber: studentNo } : {}),
+            createdByAdminId: currentAdmin.uid,             // the ADMINISTRATOR who made the booking
             createdByName: currentAdminRecord.name || "Administrator",
             isHouseEvent: false,
-            startTime: selectedSlotStart.toISOString(),
-            endTime: selectedEnd.toISOString(),
+            startTime: startIso,
+            endTime: endIso,
             purpose: resFormPurpose.value.trim() || "Admin Created Booking",
             status: "APPROVED",
             createdAt: new Date().toISOString()
         });
+        addSlotLocks(batch, bookingRef.id, currentVenueId, startIso, endIso, selectedStudent.uid);
+        await batch.commit();
 
         showMessage(`Booking created successfully for ${selectedStudent.name || 'Resident'}.`);
         resetForms();
         await loadData();
     } catch (error) {
         console.error("Booking error:", error);
-        showMessage("Failed to create booking: " + error.message, true);
+        showMessage(friendlyWriteError(error, "Creating the booking"), true);
+        await loadData();
     } finally {
         btnSubmitResBooking.textContent = "Create Resident Booking";
     }
@@ -1550,36 +1617,54 @@ houseEventForm.addEventListener("submit", async (e) => {
     btnSubmitEvent.textContent = "Creating Event...";
 
     try {
+        await refreshBookings();
+        if (getSlotStatus(selectedSlotStart, selectedEnd).type !== "AVAILABLE") {
+            showMessage("That time slot is no longer available. Please choose another.", true);
+            renderCalendar();
+            return;
+        }
+
+        const eventRef = doc(collection(db, "bookings"));   // same id used in houseEvents
+        const startIso = selectedSlotStart.toISOString();
+        const endIso = selectedEnd.toISOString();
+
         const eventData = {
             title: eventTitle.value.trim(),
             venueId: currentVenueId,
             venueName: currentVenueName,
-            bookerId: currentAdmin.uid,
+            bookerId: null,                                  // an event has no student booker
             bookerName: `[Event] ${eventTitle.value.trim()}`,
-            createdBy: currentAdmin.uid,
+            bookerType: "ORGANISATION",
+            organisationName: eventOrganiser.value,
+            createdByAdminId: currentAdmin.uid,
             createdByName: currentAdminRecord.name || "Administrator",
             isHouseEvent: true,
             type: "HOUSE_EVENT",
             organiser: eventOrganiser.value,
-            startTime: selectedSlotStart.toISOString(),
-            endTime: selectedEnd.toISOString(),
-            date: selectedSlotStart.toISOString(),
+            startTime: startIso,
+            endTime: endIso,
+            date: startIso,
             description: eventDescription.value.trim(),
             purpose: eventDescription.value.trim() || "House Event",
             status: "APPROVED",
             createdAt: new Date().toISOString()
         };
 
-        // Write to both `bookings` (to block availability) and `houseEvents` (for client listings)
-        await addDoc(collection(db, "bookings"), eventData);
-        await addDoc(collection(db, "houseEvents"), eventData);
+        // One atomic write: the venue block (bookings), the student-facing listing
+        // (houseEvents, same id) and the slot locks all succeed or all fail together.
+        const batch = writeBatch(db);
+        batch.set(eventRef, eventData);
+        batch.set(doc(db, "houseEvents", eventRef.id), eventData);
+        addSlotLocks(batch, eventRef.id, currentVenueId, startIso, endIso, currentAdmin.uid);
+        await batch.commit();
 
         showMessage(`House Event "${eventTitle.value.trim()}" created successfully.`);
         resetForms();
         await loadData();
     } catch (error) {
         console.error("Event creation error:", error);
-        showMessage("Failed to create House Event: " + error.message, true);
+        showMessage(friendlyWriteError(error, "Creating the event"), true);
+        await loadData();
     } finally {
         btnSubmitEvent.textContent = "Create Official House Event";
     }
@@ -1719,7 +1804,7 @@ function openBookingModal(b) {
     document.getElementById("mdTime").textContent = (start && end) ? `${formatTime(start)} → ${formatTime(end)}` : "N/A";
     document.getElementById("mdBooker").textContent = b.title || b.bookerName || b.bookerId || "N/A";
     document.getElementById("mdStudentNum").textContent = b.bookerStudentNumber || "N/A";
-    document.getElementById("mdCreatedBy").textContent = b.createdByName || b.createdBy || "Self-Booked";
+    document.getElementById("mdCreatedBy").textContent = b.createdByName || b.createdByAdminId || b.createdBy || "Self-Booked";
     document.getElementById("mdCreatedDate").textContent = createdDate ? formatDateShort(createdDate) : "N/A";
     document.getElementById("mdPurpose").textContent = b.description || b.purpose || "N/A";
 
@@ -1747,16 +1832,22 @@ btnModalCancelBooking.addEventListener("click", async () => {
     if (!confirmCancel) return;
 
     try {
-        await updateDoc(doc(db, "bookings", activeModalBooking.id), {
-            status: "CANCELLED"
-        });
+        const b = activeModalBooking;
+        const stamp = { status: "CANCELLED", updatedBy: currentAdmin.uid, updatedAt: new Date().toISOString() };
+        const batch = writeBatch(db);
+        batch.update(doc(db, "bookings", b.id), stamp);
+        if (b.isHouseEvent || b.type === "HOUSE_EVENT") {
+            batch.update(doc(db, "houseEvents", b.id), stamp);   // hides it from students too
+        }
+        removeSlotLocks(batch, b.venueId, b.startTime, b.endTime);
+        await batch.commit();
 
         showMessage("Booking cancelled successfully.");
         closeModal();
         await loadData();
     } catch (error) {
         console.error("Error cancelling booking:", error);
-        showMessage("Failed to cancel booking: " + error.message, true);
+        showMessage(friendlyWriteError(error, "Cancelling"), true);
     }
 });
 
@@ -1803,18 +1894,24 @@ async function loadData() {
     }
 }
 
-async function verifyAdminAccess(user) {
-    const userRef = doc(db, "users", user.uid);
-    const userSnap = await getDoc(userRef);
+const BOOKING_ADMIN_ROLES = ["PRIME", "VICE_PRIME", "SECRETARY", "ACADEMICS"];
 
-    if (userSnap.exists()) {
-        currentAdminRecord = userSnap.data();
-        adminNameEl.textContent = currentAdminRecord.name || user.displayName || "Admin User";
-        adminEmailEl.textContent = user.email || "Administrator";
-    } else {
-        adminNameEl.textContent = user.displayName || "Admin User";
-        adminEmailEl.textContent = user.email || "Administrator";
+async function verifyAdminAccess(user) {
+    // Same source of truth as the Firestore rules: admins/{uid}, ACTIVE, with a booking-capable role
+    const adminSnap = await getDoc(doc(db, "admins", user.uid));
+    const adminData = adminSnap.exists() ? adminSnap.data() : null;
+    const roles = adminData ? (Array.isArray(adminData.role) ? adminData.role : [adminData.role]) : [];
+    const allowed = adminData && adminData.status === "ACTIVE"
+        && roles.some(r => BOOKING_ADMIN_ROLES.includes(String(r).toUpperCase()));
+
+    if (!allowed) {
+        window.location.href = "clienthub.html";
+        throw new Error("You are not authorised to manage bookings.");
     }
+
+    currentAdminRecord = adminData;
+    adminNameEl.textContent = adminData.name || user.displayName || "Admin User";
+    adminEmailEl.textContent = user.email || "Administrator";
 }
 
 /* =========================
