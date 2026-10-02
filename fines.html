@@ -3,148 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Master Files - Disciplinary Hub</title>
+    <title>Master Files | Disciplinary & DC Hub</title>
     <link rel="stylesheet" href="styles.css">
-    <style>
-        :root {
-            --space-blue: #1D2951;
-            --space-blue-hover: #141d3a;
-            --accent-red: #d9534f;
-            --accent-green: #5cb85c;
-            --bg-light: #f4f6f9;
-        }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background-color: var(--bg-light); }
-        .dashboard-container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-        .tab-bar { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid var(--space-blue); }
-        .tab-btn { padding: 12px 24px; background: #e0e0e0; border: none; cursor: pointer; font-weight: bold; border-radius: 6px 6px 0 0; }
-        .tab-btn.active { background: var(--space-blue); color: white; }
-        .tab-content { display: none; background: white; padding: 20px; border-radius: 0 0 8px 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .tab-content.active { display: block; }
-        .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px; }
-        .metric-card { background: var(--space-blue); color: white; padding: 15px; border-radius: 8px; text-align: center; }
-        .metric-card h3 { margin: 0; font-size: 2em; }
-        .data-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        .data-table th, .data-table td { border: 1px solid #ddd; padding: 10px; text-align: left; }
-        .data-table th { background-color: var(--space-blue); color: white; }
-        .badge { padding: 4px 8px; border-radius: 4px; color: white; font-size: 0.85em; }
-        .badge-active { background: #f0ad4e; }
-        .badge-paid { background: var(--accent-green); }
-        .badge-overdue { background: var(--accent-red); }
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
-        .modal-content { background: white; padding: 25px; border-radius: 8px; width: 500px; max-width: 90%; max-height: 85vh; overflow-y: auto; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px; box-sizing: border-box; }
-        .btn { padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        .btn-primary { background: var(--space-blue); color: white; }
-        .btn-danger { background: var(--accent-red); color: white; }
-    </style>
 </head>
-<body>
+<body class="dashboard-body">
+
     <div class="dashboard-container">
-        <h2>Disciplinary Hub</h2>
-        <div class="tab-bar">
-            <button class="tab-btn active" onclick="switchTab('finesTab')">Fines Administration</button>
-            <button class="tab-btn" id="dcTabBtn" style="display:none;" onclick="switchTab('dcTab')">DC Confidential Reports</button>
-        </div>
+        <!-- Header Section -->
+        <header class="page-header">
+            <div>
+                <h1 class="page-title">Disciplinary & DC Hub</h1>
+                <p class="page-subtitle">Manage residence fines, warnings, and confidential Disciplinary Committee proceedings.</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-primary" onclick="openIssueFineModal()">+ Issue Fine / Warning</button>
+            </div>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <nav class="tab-nav">
+            <button class="tab-link active" onclick="switchTab('finesTab', event)">Fines Administration</button>
+            <button class="tab-link hidden" id="dcTabBtn" onclick="switchTab('dcTab', event)">DC Confidential Reports</button>
+        </nav>
 
         <!-- TAB 1: FINES MANAGEMENT -->
-        <div id="finesTab" class="tab-content active">
-            <div class="metric-grid">
-                <div class="metric-card"><h3 id="mTotal">0</h3><p>Total Fines</p></div>
-                <div class="metric-card"><h3 id="mActive">0</h3><p>Active</p></div>
-                <div class="metric-card"><h3 id="mOverdue">0</h3><p>Overdue</p></div>
-                <div class="metric-card"><h3 id="mPaid">0</h3><p>Paid</p></div>
+        <section id="finesTab" class="tab-content active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-label">Total Fines</span>
+                    <span class="stat-value" id="mTotal">0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Active</span>
+                    <span class="stat-value" id="mActive">0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Overdue</span>
+                    <span class="stat-value text-danger" id="mOverdue">0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Paid</span>
+                    <span class="stat-value text-success" id="mPaid">0</span>
+                </div>
             </div>
-            <button class="btn btn-primary" onclick="openIssueFineModal()">+ Issue Fine / Warning</button>
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Student #</th>
-                        <th>Name</th>
-                        <th>Type/Level</th>
-                        <th>Amount</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="finesTableBody"></tbody>
-            </table>
-        </div>
+
+            <div class="card card-table">
+                <table class="master-table">
+                    <thead>
+                        <tr>
+                            <th>Student #</th>
+                            <th>Name</th>
+                            <th>Level</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="finesTableBody"></tbody>
+                </table>
+            </div>
+        </section>
 
         <!-- TAB 2: DC CONFIDENTIAL REPORTS -->
-        <div id="dcTab" class="tab-content">
-            <button class="btn btn-primary" onclick="openNewDcCaseModal()">+ Open DC Case</button>
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Case ID</th>
-                        <th>Subject Name</th>
-                        <th>Status</th>
-                        <th>Voting</th>
-                        <th>Decision</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="dcTableBody"></tbody>
-            </table>
-        </div>
+        <section id="dcTab" class="tab-content">
+            <div class="card-header-actions">
+                <h3>Confidential DC Cases</h3>
+                <button class="btn btn-primary" onclick="openNewDcCaseModal()">+ Open DC Case</button>
+            </div>
+            <div class="card card-table">
+                <table class="master-table">
+                    <thead>
+                        <tr>
+                            <th>Case ID</th>
+                            <th>Subject Name</th>
+                            <th>Status</th>
+                            <th>Voting</th>
+                            <th>Decision</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dcTableBody"></tbody>
+                </table>
+            </div>
+        </section>
     </div>
 
     <!-- Issue Fine Modal -->
-    <div id="fineModal" class="modal">
-        <div class="modal-content">
-            <h3>Issue Fine / Confidential Warning</h3>
-            <div class="form-group">
-                <label>Student Number</label>
-                <input type="text" id="fnStudentNum">
+    <div id="fineModal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Issue Fine / Confidential Warning</h3>
+                <button class="close-btn" onclick="closeModal('fineModal')">&times;</button>
             </div>
-            <div class="form-group">
-                <label>Infringement Level</label>
-                <select id="fnLevel">
-                    <option value="LEVEL_1">Level 1 - Minor</option>
-                    <option value="LEVEL_2">Level 2 - Moderate</option>
-                    <option value="LEVEL_3">Level 3 - Severe</option>
-                </select>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Student Number</label>
+                    <input type="text" id="fnStudentNum" class="form-input" placeholder="e.g. 2024123456">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Infringement Level</label>
+                    <select id="fnLevel" class="form-select">
+                        <option value="LEVEL_1">Level 1 - Minor Infringement</option>
+                        <option value="LEVEL_2">Level 2 - Moderate Infringement</option>
+                        <option value="LEVEL_3">Level 3 - Severe Infringement</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Type</label>
+                    <select id="fnType" class="form-select" onchange="toggleFineAmount()">
+                        <option value="MONETARY">Monetary Fine</option>
+                        <option value="WARNING">Confidential Warning</option>
+                    </select>
+                </div>
+                <div class="form-group" id="amountGroup">
+                    <label class="form-label">Amount (ZAR)</label>
+                    <input type="number" id="fnAmount" class="form-input" value="100">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Reason / Offence Details</label>
+                    <textarea id="fnReason" class="form-textarea" rows="3"></textarea>
+                </div>
             </div>
-            <div class="form-group">
-                <label>Type</label>
-                <select id="fnType" onchange="toggleFineAmount()">
-                    <option value="MONETARY">Monetary Fine</option>
-                    <option value="WARNING">Confidential Warning</option>
-                </select>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('fineModal')">Cancel</button>
+                <button class="btn btn-primary" id="btnSubmitFine">Issue Offence Record</button>
             </div>
-            <div class="form-group" id="amountGroup">
-                <label>Amount (ZAR)</label>
-                <input type="number" id="fnAmount" value="100">
-            </div>
-            <div class="form-group">
-                <label>Reason</label>
-                <textarea id="fnReason"></textarea>
-            </div>
-            <button class="btn btn-primary" id="btnSubmitFine">Issue Fine</button>
-            <button class="btn btn-danger" onclick="closeModal('fineModal')">Cancel</button>
         </div>
     </div>
 
     <!-- DC Case Inspection Modal -->
-    <div id="dcInspectModal" class="modal">
-        <div class="modal-content">
-            <h3 id="dcModalCaseTitle">Case Details</h3>
-            <div id="dcCaseDetails"></div>
-            <hr>
-            <h4>Evidence</h4>
-            <div id="evidenceList"></div>
-            <div class="form-group">
-                <input type="text" id="evTitle" placeholder="Evidence Title">
-                <textarea id="evContent" placeholder="Evidence Description"></textarea>
-                <button class="btn btn-primary" id="btnAddEvidence">Add Evidence</button>
+    <div id="dcInspectModal" class="modal-overlay hidden">
+        <div class="modal-card modal-large">
+            <div class="modal-header">
+                <h3 id="dcModalCaseTitle">Case Details</h3>
+                <button class="close-btn" onclick="closeModal('dcInspectModal')">&times;</button>
             </div>
-            <hr>
-            <h4>Voting Section</h4>
-            <div id="votingControls"></div>
-            <br>
-            <button class="btn btn-danger" onclick="closeModal('dcInspectModal')">Close</button>
+            <div class="modal-body">
+                <div id="dcCaseDetails" class="details-box"></div>
+                <hr class="divider">
+                <h4>Evidence File</h4>
+                <div id="evidenceList" class="evidence-container"></div>
+                <div class="form-group margin-top-sm">
+                    <input type="text" id="evTitle" class="form-input" placeholder="Evidence Title">
+                    <textarea id="evContent" class="form-textarea" placeholder="Evidence Description / Observations" rows="2"></textarea>
+                    <button class="btn btn-primary btn-sm margin-top-xs" id="btnAddEvidence">Attach Evidence</button>
+                </div>
+                <hr class="divider">
+                <h4>Subcommittee Voting</h4>
+                <div id="votingControls" class="voting-box"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('dcInspectModal')">Close</button>
+            </div>
         </div>
     </div>
 
