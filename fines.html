@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>House Beyers Naude - Admin Corridors</title>
+<title>House Beyers Naude - Discipline Management</title>
 <style>
 :root{
   --space-blue-primary:#1D2951;--space-blue-hover:#141C38;--space-blue-light:#EFF3F9;
@@ -30,6 +30,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
   padding:8px 16px;border-radius:var(--radius-sm);cursor:pointer;font-size:13px;font-weight:600;
   text-decoration:none;transition:all .15s ease;display:inline-flex;align-items:center;gap:6px;}
 .btn-nav:hover{background:rgba(255,255,255,0.2);border-color:rgba(255,255,255,0.4);}
+.btn-primary-action{background:var(--space-blue-accent);color:#FFF;border:1px solid rgba(255,255,255,0.3);
+  padding:8px 18px;border-radius:var(--radius-sm);cursor:pointer;font-size:13px;font-weight:700;transition:all .15s ease;}
+.btn-primary-action:hover{background:#2F437D;border-color:#FFF;}
 .logout-button{border:none;background:var(--danger-red);color:#FFF;padding:8px 16px;
   border-radius:var(--radius-sm);cursor:pointer;font-size:13px;font-weight:600;}
 .logout-button:hover{background:var(--danger-red-hover);}
@@ -43,18 +46,35 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Ar
   color:var(--text-muted);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .15s ease;}
 .tab-button:hover{color:var(--space-blue-primary);}
 .tab-button.active{color:var(--space-blue-primary);border-bottom-color:var(--space-blue-primary);}
+.tab-button.dc{color:var(--purple);}
+.tab-button.dc.active{color:var(--purple);border-bottom-color:var(--purple);}
 .tab-panel{display:none;}
 .tab-panel.active{display:block;}
-.summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:24px;}
+.summary-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px;margin-bottom:28px;}
 .summary-card{background:var(--bg-card);border-radius:var(--radius-md);padding:18px 20px;
   border:1px solid var(--space-blue-border);box-shadow:var(--shadow-sm);position:relative;overflow:hidden;}
 .summary-card::before{content:"";position:absolute;top:0;left:0;width:100%;height:4px;background:var(--space-blue-primary);}
-.summary-card.open::before{background:var(--warning-amber);}
-.summary-card.handled::before{background:var(--success-green);}
-.summary-card.escalated::before{background:var(--purple);}
+.summary-card.active::before{background:var(--space-blue-accent);}
+.summary-card.disputed::before{background:var(--warning-amber);}
+.summary-card.paid::before{background:var(--success-green);}
+.summary-card.overdue::before{background:var(--danger-red);}
 .summary-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-subtle);margin-bottom:8px;}
 .summary-value{font-size:28px;font-weight:800;color:var(--space-blue-primary);line-height:1.1;}
 .summary-subtext{font-size:12px;color:var(--text-muted);margin-top:6px;}
+.filter-panel{background:var(--bg-card);border-radius:var(--radius-md);padding:20px;
+  border:1px solid var(--space-blue-border);box-shadow:var(--shadow-sm);margin-bottom:24px;display:flex;flex-direction:column;gap:16px;}
+.filter-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:12px;align-items:end;}
+.filter-group{display:flex;flex-direction:column;gap:6px;}
+.filter-label{font-size:12px;font-weight:700;color:var(--text-main);text-transform:uppercase;letter-spacing:.03em;}
+.form-control{width:100%;padding:9px 12px;font-size:14px;border:1px solid var(--space-blue-border);
+  border-radius:var(--radius-sm);background:#FFF;color:var(--text-main);outline:none;transition:border-color .15s,box-shadow .15s;}
+.form-control:focus{border-color:var(--space-blue-accent);box-shadow:0 0 0 3px rgba(59,82,149,0.15);}
+textarea.form-control{resize:vertical;font-family:inherit;}
+.btn-reset{background:var(--space-blue-light);color:var(--space-blue-primary);border:1px solid var(--space-blue-border);
+  padding:9px 16px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;height:38px;white-space:nowrap;}
+.btn-reset:hover{background:var(--space-blue-border);}
+.active-filter-indicator{font-size:13px;color:var(--text-muted);display:flex;align-items:center;
+  justify-content:space-between;padding-top:8px;border-top:1px dashed var(--space-blue-border);}
 .table-card{background:var(--bg-card);border-radius:var(--radius-md);border:1px solid var(--space-blue-border);
   box-shadow:var(--shadow-sm);overflow:hidden;}
 .table-wrapper{width:100%;overflow-x:auto;}
@@ -68,11 +88,22 @@ tbody tr:last-child td{border-bottom:none;}
 .resident-meta{display:flex;flex-direction:column;}
 .resident-name{font-weight:700;color:var(--text-main);}
 .resident-sub{font-size:12px;color:var(--text-subtle);}
+.amount-tag{font-family:monospace;font-weight:700;font-size:15px;color:var(--space-blue-primary);}
 .status-badge{display:inline-flex;align-items:center;padding:4px 10px;border-radius:20px;font-size:11px;
   font-weight:700;letter-spacing:.03em;text-transform:uppercase;line-height:1;width:fit-content;}
-.badge-open{background:var(--warning-light);color:var(--warning-amber);border:1px solid var(--warning-border);}
-.badge-handled{background:var(--success-light);color:var(--success-green);border:1px solid var(--success-border);}
-.badge-escalated{background:var(--purple-light);color:var(--purple);border:1px solid var(--purple-border);}
+.badge-active{background:var(--space-blue-light);color:var(--space-blue-primary);border:1px solid var(--space-blue-border);}
+.badge-paid{background:var(--success-light);color:var(--success-green);border:1px solid var(--success-border);}
+.badge-disputed{background:var(--warning-light);color:var(--warning-amber);border:1px solid var(--warning-border);}
+.badge-overdue{background:var(--danger-light);color:var(--danger-red);border:1px solid var(--danger-border);}
+.badge-cancelled{background:#F1F5F9;color:var(--text-subtle);border:1px solid #CBD5E1;}
+.badge-warning-record{background:var(--purple-light);color:var(--purple);border:1px solid var(--purple-border);}
+.badge-dc{background:var(--purple-light);color:var(--purple);border:1px solid var(--purple-border);}
+.badge-dc-open{background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE;}
+.badge-dc-hearing{background:#FEF3C7;color:#92400E;border:1px solid #FDE68A;}
+.badge-dc-vote{background:#FCE7F3;color:#9D174D;border:1px solid #FBCFE8;}
+.badge-dc-closed{background:#F1F5F9;color:#475569;border:1px solid #CBD5E1;}
+.badge-level{display:inline-block;padding:2px 6px;border-radius:4px;font-size:11px;font-weight:700;
+  background:#E2E8F0;color:#334155;margin-left:6px;}
 .btn-action{background:#FFF;border:1px solid var(--space-blue-border);color:var(--space-blue-primary);
   padding:6px 12px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .15s ease;}
 .btn-action:hover{background:var(--space-blue-primary);color:#FFF;border-color:var(--space-blue-primary);}
@@ -84,12 +115,14 @@ tbody tr:last-child td{border-bottom:none;}
 .modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.6);backdrop-filter:blur(2px);
   display:flex;align-items:center;justify-content:center;z-index:200;opacity:0;visibility:hidden;transition:all .2s ease;padding:20px;}
 .modal-overlay.active{opacity:1;visibility:visible;}
-.modal-card{background:var(--bg-card);border-radius:var(--radius-lg);width:100%;max-width:720px;
+.modal-card{background:var(--bg-card);border-radius:var(--radius-lg);width:100%;max-width:640px;
   border:1px solid var(--space-blue-border);box-shadow:var(--shadow-lg);overflow:hidden;
   transform:translateY(10px);transition:transform .2s ease;max-height:92vh;display:flex;flex-direction:column;}
 .modal-overlay.active .modal-card{transform:translateY(0);}
+.modal-card.wide{max-width:920px;}
 .modal-header{background:var(--space-blue-primary);color:#FFF;padding:18px 24px;display:flex;
   justify-content:space-between;align-items:center;gap:12px;}
+.modal-header.dc{background:var(--purple);}
 .modal-header h3{font-size:18px;font-weight:700;}
 .modal-close{background:none;border:none;color:#A0B2D6;font-size:20px;cursor:pointer;padding:4px;line-height:1;}
 .modal-close:hover{color:#FFF;}
@@ -103,26 +136,75 @@ tbody tr:last-child td{border-bottom:none;}
 .detail-val{font-size:14px;font-weight:600;color:var(--text-main);margin-top:2px;}
 .description-box{background:#FFF;border:1px solid var(--space-blue-border);border-radius:var(--radius-sm);
   padding:12px;font-size:14px;color:var(--text-main);white-space:pre-wrap;}
+.btn-submit-fine{background:var(--space-blue-primary);color:#FFF;border:none;padding:10px 20px;
+  border-radius:var(--radius-sm);font-size:13px;font-weight:700;cursor:pointer;}
+.btn-submit-fine:hover{background:var(--space-blue-hover);}
+.btn-pay-confirm{background:var(--success-green);color:#FFF;border:none;padding:10px 20px;
+  border-radius:var(--radius-sm);font-size:13px;font-weight:700;cursor:pointer;}
+.btn-pay-confirm:hover{background:#15803D;}
+.btn-reinstate{background:var(--space-blue-accent);color:#FFF;border:none;padding:10px 16px;
+  border-radius:var(--radius-sm);font-size:13px;font-weight:700;cursor:pointer;}
+.btn-danger{background:var(--danger-red);color:#FFF;border:none;padding:10px 16px;
+  border-radius:var(--radius-sm);font-size:13px;font-weight:700;cursor:pointer;}
+.btn-danger:hover{background:var(--danger-red-hover);}
 .btn-purple{background:var(--purple);color:#FFF;border:none;padding:10px 18px;
   border-radius:var(--radius-sm);font-size:13px;font-weight:700;cursor:pointer;}
 .btn-purple:hover{background:#6B21A8;}
-.btn-green{background:var(--success-green);color:#FFF;border:none;padding:10px 18px;
-  border-radius:var(--radius-sm);font-size:13px;font-weight:700;cursor:pointer;}
-.btn-green:hover{background:#15803D;}
-.btn-reset{background:var(--space-blue-light);color:var(--space-blue-primary);border:1px solid var(--space-blue-border);
-  padding:9px 16px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;}
-.btn-reset:hover{background:var(--space-blue-border);}
-.btn-purple:disabled,.btn-green:disabled{background:#9CA3AF;cursor:not-allowed;}
+.btn-submit-fine:disabled,.btn-pay-confirm:disabled,.btn-reinstate:disabled,
+.btn-danger:disabled,.btn-purple:disabled{background:#9CA3AF;cursor:not-allowed;}
+.type-toggle-group{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.type-toggle-card{border:2px solid var(--space-blue-border);border-radius:var(--radius-md);padding:12px;
+  cursor:pointer;display:flex;align-items:flex-start;gap:10px;background:#FFF;transition:all .15s;}
+.type-toggle-card:hover{border-color:var(--space-blue-accent);}
+.type-toggle-title{font-size:13px;font-weight:700;color:var(--text-main);}
+.type-toggle-desc{font-size:11px;color:var(--text-muted);margin-top:2px;}
+.dc-case-row{background:#FFF;border:1px solid var(--space-blue-border);border-radius:var(--radius-md);
+  padding:16px 20px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;
+  cursor:pointer;transition:all .15s ease;border-left:4px solid var(--purple);margin-bottom:12px;}
+.dc-case-row:hover{border-color:var(--purple);box-shadow:var(--shadow-md);}
+.dc-case-info{display:flex;flex-direction:column;gap:4px;flex:1;min-width:220px;}
+.dc-case-id{font-family:monospace;font-size:12px;font-weight:700;color:var(--purple);}
+.dc-case-subject{font-size:15px;font-weight:700;color:var(--text-main);}
+.dc-case-summary{font-size:13px;color:var(--text-muted);}
+.dc-case-meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.evidence-item{background:var(--bg-page);border:1px solid var(--space-blue-border);border-radius:var(--radius-md);
+  padding:16px;display:flex;flex-direction:column;gap:10px;}
+.evidence-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;}
+.evidence-id{font-family:monospace;font-size:12px;font-weight:700;color:var(--space-blue-accent);}
+.evidence-meta{font-size:12px;color:var(--text-subtle);}
+.evidence-content{font-size:14px;color:var(--text-main);white-space:pre-wrap;}
+.comments-list{display:flex;flex-direction:column;gap:8px;border-top:1px dashed var(--space-blue-border);padding-top:10px;margin-top:6px;}
+.comment-item{background:#FFF;border:1px solid var(--space-blue-border);border-radius:var(--radius-sm);padding:10px;}
+.comment-author{font-size:12px;font-weight:700;color:var(--space-blue-primary);}
+.comment-text{font-size:13px;color:var(--text-main);margin-top:2px;white-space:pre-wrap;}
+.comment-time{font-size:11px;color:var(--text-subtle);margin-top:4px;}
+.comment-form{display:flex;gap:8px;margin-top:8px;}
+.comment-form input{flex:1;padding:8px 10px;border:1px solid var(--space-blue-border);border-radius:var(--radius-sm);font-size:13px;}
+.comment-form button{padding:8px 14px;border-radius:var(--radius-sm);border:none;background:var(--space-blue-primary);
+  color:#FFF;font-size:12px;font-weight:700;cursor:pointer;}
+.section-divider{border-top:1px solid var(--space-blue-border);padding-top:14px;margin-top:6px;}
+.section-title{font-size:13px;font-weight:700;color:var(--purple);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;}
+.history-item{background:#FFF;border-left:3px solid var(--purple);padding:8px 12px;margin-bottom:6px;border-radius:var(--radius-sm);}
+.history-type{font-size:11px;font-weight:700;color:var(--purple);text-transform:uppercase;}
+.history-detail{font-size:13px;color:var(--text-main);margin-top:2px;}
+.history-meta{font-size:11px;color:var(--text-subtle);margin-top:2px;}
 .footer{text-align:center;color:var(--text-subtle);font-size:13px;font-weight:500;padding:24px 16px;
   border-top:1px solid var(--space-blue-border);background:#FFF;margin-top:auto;}
-@media(max-width:900px){.summary-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
-@media(max-width:680px){
+.deny-banner{background:var(--danger-light);border:1px solid var(--danger-border);color:var(--danger-red);
+  padding:14px 18px;border-radius:var(--radius-md);font-size:14px;font-weight:600;}
+@media (max-width:1100px){
+  .summary-grid{grid-template-columns:repeat(3,minmax(0,1fr));}
+  .filter-grid{grid-template-columns:1fr 1fr;}
+}
+@media (max-width:680px){
   .header{padding:16px 20px;flex-direction:column;align-items:flex-start;gap:10px;}
   .container{padding:20px 16px 40px;}
   .page-intro{flex-direction:column;align-items:flex-start;}
-  .summary-grid{grid-template-columns:1fr;}
+  .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .filter-grid{grid-template-columns:1fr;}
   .detail-group{grid-template-columns:1fr;}
   .modal-footer{flex-direction:column;align-items:stretch;}
+  .type-toggle-group{grid-template-columns:1fr;}
 }
 </style>
 </head>
@@ -132,7 +214,7 @@ tbody tr:last-child td{border-bottom:none;}
 <header class="header">
   <div class="brand">
     <h1>House Beyers Naude</h1>
-    <p>Master Files • Admin Corridors</p>
+    <p>Master Files • Discipline Management</p>
   </div>
   <div class="header-actions">
     <a href="admin.html" class="btn-nav">&larr; Dashboard</a>
@@ -144,86 +226,257 @@ tbody tr:last-child td{border-bottom:none;}
 
   <section class="page-intro">
     <div>
-      <h2>Admin Corridors</h2>
-      <p>Review corridor incident reports submitted by Corridor Primes. Handle or escalate to a private DC case.</p>
+      <h2>Discipline Management</h2>
+      <p>Ordinary fines and warnings, and private DC disciplinary proceedings.</p>
+    </div>
+    <div>
+      <button class="btn-primary-action" id="openIssueModalBtn">+ Issue Fine / Warning</button>
     </div>
   </section>
 
-  <section class="summary-grid">
-    <div class="summary-card"><div><div class="summary-title">Total Reports</div>
-      <div class="summary-value" id="statTotal">--</div></div>
-      <div class="summary-subtext">All corridor reports</div></div>
-    <div class="summary-card open"><div><div class="summary-title">Open</div>
-      <div class="summary-value" id="statOpen">--</div></div>
-      <div class="summary-subtext">Awaiting RC VP review</div></div>
-    <div class="summary-card handled"><div><div class="summary-title">Handled</div>
-      <div class="summary-value" id="statHandled">--</div></div>
-      <div class="summary-subtext">Resolved without DC escalation</div></div>
-    <div class="summary-card escalated"><div><div class="summary-title">Escalated</div>
-      <div class="summary-value" id="statEscalated">--</div></div>
-      <div class="summary-subtext">Now private DC cases</div></div>
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-button active" data-tab="finesTab" id="tabBtnFines">Fines &amp; Warnings</button>
+    <button class="tab-button dc" data-tab="dcReportTab" id="tabBtnDC" style="display:none;">
+      DC Report <span style="font-size:10px;font-weight:700;background:var(--purple-light);color:var(--purple);
+        border:1px solid var(--purple-border);padding:2px 6px;border-radius:10px;margin-left:6px;">PRIVATE</span>
+    </button>
+  </div>
+
+  <!-- ============================================================
+       TAB 1 — FINES & WARNINGS (preserved from fines.html)
+       ============================================================ -->
+  <section class="tab-panel active" id="finesTab">
+
+    <section class="summary-grid">
+      <div class="summary-card"><div><div class="summary-title">Total Records</div>
+        <div class="summary-value" id="statTotal">--</div></div>
+        <div class="summary-subtext">All fines & warnings</div></div>
+      <div class="summary-card active"><div><div class="summary-title">Active Fines</div>
+        <div class="summary-value" id="statActive">--</div></div>
+        <div class="summary-subtext">Unpaid & within 30 days</div></div>
+      <div class="summary-card overdue"><div><div class="summary-title">Overdue Fines</div>
+        <div class="summary-value" id="statOverdue">--</div></div>
+        <div class="summary-subtext">Passed 30-day window</div></div>
+      <div class="summary-card disputed"><div><div class="summary-title">Disputed</div>
+        <div class="summary-value" id="statDisputed">--</div></div>
+        <div class="summary-subtext">Under external review</div></div>
+      <div class="summary-card paid"><div><div class="summary-title">Paid Fines</div>
+        <div class="summary-value" id="statPaid">--</div></div>
+        <div class="summary-subtext">Successfully settled</div></div>
+    </section>
+
+    <section class="filter-panel">
+      <div class="filter-grid">
+        <div class="filter-group">
+          <label for="searchInput" class="filter-label">Search Resident</label>
+          <input type="text" id="searchInput" class="form-control" placeholder="Name, surname or student number...">
+        </div>
+        <div class="filter-group">
+          <label for="corridorFilter" class="filter-label">Corridor</label>
+          <select id="corridorFilter" class="form-control"><option value="ALL">All Corridors</option></select>
+        </div>
+        <div class="filter-group">
+          <label for="statusFilter" class="filter-label">Record Type / Status</label>
+          <select id="statusFilter" class="form-control">
+            <option value="ALL">All Records</option>
+            <option value="ACTIVE">Active Fines (Unpaid)</option>
+            <option value="OVERDUE">Overdue Fines</option>
+            <option value="DISPUTED">Disputed Fines</option>
+            <option value="PAID">Paid Fines</option>
+            <option value="WARNING">Warnings (Confidential)</option>
+            <option value="CANCELLED">Cancelled / Resolved</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="dateFilter" class="filter-label">Issued Period</label>
+          <select id="dateFilter" class="form-control">
+            <option value="ALL">All Dates</option>
+            <option value="TODAY">Today</option>
+            <option value="THIS_WEEK">This Week</option>
+            <option value="THIS_MONTH">This Month</option>
+          </select>
+        </div>
+        <div><button id="resetFiltersBtn" class="btn-reset">Clear Filters</button></div>
+      </div>
+      <div class="active-filter-indicator">
+        <span id="filteredCountLabel">Showing 0 of 0 records</span>
+        <span id="activeFilterTags" style="font-weight:600;color:var(--space-blue-primary);"></span>
+      </div>
+    </section>
+
+    <section class="table-card">
+      <div class="table-wrapper">
+        <table>
+          <thead><tr>
+            <th>Resident</th><th>Student No.</th><th>Room / Corridor</th>
+            <th>Offence Description</th><th>Level</th><th>Amount</th>
+            <th>Date Issued</th><th>Status / Type</th><th>Action</th>
+          </tr></thead>
+          <tbody id="finesTableBody">
+            <tr><td colspan="9"><div class="state-container">
+              <div class="spinner"></div><h4>Loading fine records...</h4>
+            </div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
   </section>
 
-  <section class="table-card">
-    <div class="table-wrapper">
-      <table>
-        <thead><tr>
-          <th>Corridor</th><th>Submitted By</th><th>Incident Date</th>
-          <th>Description</th><th>People Involved</th><th>Status</th><th>Action</th>
-        </tr></thead>
-        <tbody id="reportsTableBody">
-          <tr><td colspan="7"><div class="state-container">
-            <div class="spinner"></div><h4>Loading corridor reports...</h4>
-          </div></td></tr>
-        </tbody>
-      </table>
+  <!-- ============================================================
+       TAB 2 — DC REPORT (PRIVATE, LAZY-LOADED)
+       ============================================================ -->
+  <section class="tab-panel" id="dcReportTab">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
+      <div>
+        <h3 style="color:var(--purple);font-size:19px;font-weight:800;margin-bottom:2px;">Private DC Cases</h3>
+        <p style="font-size:13px;color:var(--text-subtle);">Confidential disciplinary matters. Not written to the ordinary Activity Log.</p>
+      </div>
+      <button class="btn-purple" id="openCreateCaseBtn" style="display:none;">+ Create DC Case</button>
+    </div>
+
+    <div id="dcCasesList">
+      <div class="state-container"><div class="spinner"></div><h4>Loading private DC cases...</h4></div>
     </div>
   </section>
 
 </main>
 
-<!-- REPORT DETAIL MODAL -->
-<div class="modal-overlay" id="reportModal">
+<!-- ============================================================
+     ISSUE FINE / WARNING MODAL
+     ============================================================ -->
+<div class="modal-overlay" id="issueFineModal">
   <div class="modal-card">
     <div class="modal-header">
-      <h3>Corridor Incident Report</h3>
-      <button class="modal-close" id="closeReportBtn">&times;</button>
+      <h3>Issue Fine or Warning</h3>
+      <button class="modal-close" id="closeIssueModalBtn">&times;</button>
     </div>
-    <div class="modal-body" id="reportModalBody"></div>
-    <div class="modal-footer" id="reportModalFooter"></div>
-  </div>
-</div>
-
-<!-- ESCALATE TO DC MODAL -->
-<div class="modal-overlay" id="escalateModal">
-  <div class="modal-card">
-    <div class="modal-header" style="background:var(--purple);">
-      <h3>Escalate to DC Case</h3>
-      <button class="modal-close" id="closeEscalateBtn">&times;</button>
-    </div>
-    <form id="escalateForm">
+    <form id="issueFineForm">
       <div class="modal-body">
-        <p style="font-size:13px;color:var(--text-subtle);">
-          This corridor report will be linked to a new private DC case. The original report remains intact and referenced.
-        </p>
         <div class="filter-group">
-          <label for="escalateSubjectSelect" class="filter-label">Subject (Student) *</label>
-          <select id="escalateSubjectSelect" class="form-control" required
-            style="width:100%;padding:9px 12px;font-size:14px;border:1px solid var(--space-blue-border);
-            border-radius:var(--radius-sm);background:#FFF;">
-            <option value="">-- Choose Subject --</option>
-          </select>
+          <label class="filter-label">Record Type</label>
+          <div class="type-toggle-group">
+            <label class="type-toggle-card">
+              <input type="radio" name="recordType" value="FINE" checked id="typeFineRadio">
+              <div><div class="type-toggle-title">Monetary Fine</div>
+                <div class="type-toggle-desc">Visible to resident on myfines.html</div></div>
+            </label>
+            <label class="type-toggle-card">
+              <input type="radio" name="recordType" value="WARNING" id="typeWarningRadio">
+              <div><div class="type-toggle-title">Warning Notice</div>
+                <div class="type-toggle-desc">Admin-only view (hidden from resident)</div></div>
+            </label>
+          </div>
         </div>
         <div class="filter-group">
-          <label for="escalateSummary" class="filter-label">Case Summary *</label>
-          <textarea id="escalateSummary" class="form-control" rows="3" required
-            style="width:100%;padding:9px 12px;font-size:14px;border:1px solid var(--space-blue-border);
-            border-radius:var(--radius-sm);font-family:inherit;resize:vertical;"></textarea>
+          <label for="issueResidentSelect" class="filter-label">Select Resident *</label>
+          <select id="issueResidentSelect" class="form-control" required>
+            <option value="">-- Choose Resident --</option>
+          </select>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="filter-group">
+            <label for="issueInfringementLevel" class="filter-label">Level of Infringement *</label>
+            <select id="issueInfringementLevel" class="form-control" required>
+              <option value="LEVEL_1">Level 1 (Minor Offence)</option>
+              <option value="LEVEL_2">Level 2 (Moderate Offence)</option>
+              <option value="LEVEL_3">Level 3 (Severe Offence)</option>
+            </select>
+          </div>
+          <div class="filter-group" id="amountContainer">
+            <label for="issueAmount" class="filter-label">Fine Amount (ZAR R) *</label>
+            <input type="number" id="issueAmount" class="form-control" min="0" step="10" placeholder="e.g. 150" required>
+          </div>
+        </div>
+        <div class="filter-group">
+          <label for="issueReason" class="filter-label">Reason / Infringement Details *</label>
+          <textarea id="issueReason" class="form-control" rows="4"
+            placeholder="Detailed explanation of the rule breach or incident..." required></textarea>
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn-reset" id="cancelEscalateBtn">Cancel</button>
-        <button type="submit" class="btn-purple" id="submitEscalateBtn">Escalate to DC</button>
+        <button type="button" class="btn-reset" id="cancelIssueModalBtn">Cancel</button>
+        <button type="submit" class="btn-submit-fine" id="submitFineBtn">Issue Record</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ============================================================
+     FINE DETAIL MODAL
+     ============================================================ -->
+<div class="modal-overlay" id="fineModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>Fine Record Details</h3>
+      <button class="modal-close" id="closeModalBtn">&times;</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-footer">
+      <div id="modalStatusContainer"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn-reset" id="cancelModalBtn">Close</button>
+        <button class="btn-pay-confirm" id="markPaidBtn" style="display:none;">Record Payment</button>
+        <button class="btn-reinstate" id="reinstateBtn" style="display:none;">Reinstate Fine</button>
+        <button class="btn-danger" id="cancelDeleteBtn" style="display:none;">Cancel (Delete Fine)</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     DC CASE DETAIL MODAL
+     ============================================================ -->
+<div class="modal-overlay" id="dcCaseModal">
+  <div class="modal-card wide">
+    <div class="modal-header dc">
+      <h3 id="dcCaseModalTitle">DC Case</h3>
+      <button class="modal-close" id="closeDcCaseBtn">&times;</button>
+    </div>
+    <div class="modal-body" id="dcCaseModalBody"></div>
+    <div class="modal-footer" id="dcCaseModalFooter"></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     CREATE DC CASE MODAL
+     ============================================================ -->
+<div class="modal-overlay" id="createCaseModal">
+  <div class="modal-card">
+    <div class="modal-header dc">
+      <h3>Create Private DC Case</h3>
+      <button class="modal-close" id="closeCreateCaseBtn">&times;</button>
+    </div>
+    <form id="createCaseForm">
+      <div class="modal-body">
+        <div class="filter-group">
+          <label for="caseSubjectSelect" class="filter-label">Subject (Student) *</label>
+          <select id="caseSubjectSelect" class="form-control" required>
+            <option value="">-- Choose Student --</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="caseSourceSelect" class="filter-label">Originating Source *</label>
+          <select id="caseSourceSelect" class="form-control" required>
+            <option value="DIRECT">Direct (no corridor report)</option>
+            <option value="CORRIDOR_REPORT">Escalated corridor report</option>
+          </select>
+        </div>
+        <div class="filter-group" id="corridorReportWrapper" style="display:none;">
+          <label for="caseSourceReportSelect" class="filter-label">Corridor Report</label>
+          <select id="caseSourceReportSelect" class="form-control">
+            <option value="">-- Choose Report --</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="caseSummaryInput" class="filter-label">Short Summary of Incident *</label>
+          <textarea id="caseSummaryInput" class="form-control" rows="3"
+            placeholder="Briefly describe the incident that led to this DC case..." required></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-reset" id="cancelCreateCaseBtn">Cancel</button>
+        <button type="submit" class="btn-purple" id="submitCreateCaseBtn">Create Case</button>
       </div>
     </form>
   </div>
@@ -236,8 +489,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/fireba
 import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app-check.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
 import {
-  getFirestore, doc, getDoc, getDocs, collection, addDoc, updateDoc,
-  query, where, serverTimestamp
+  getFirestore, doc, getDoc, getDocs, collection, addDoc, updateDoc, deleteDoc,
+  query, where, serverTimestamp, arrayUnion, Timestamp
 } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -257,14 +510,33 @@ initializeAppCheck(app, {
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-/* STATE */
+/* ============================================================
+   STATE
+   ============================================================ */
 let currentAdminUid = null;
 let currentAdminName = "";
+let currentAdminRoles = [];
 let isVicePrime = false;
-let rawReports = [];
-let activeReportId = null;
-let residentList = [];
+let isPrime = false;
+let isDCSubcom = false;
 
+let rawFines = [];
+let residentList = [];
+let residentMap = new Map();
+let selectedFineId = null;
+
+let dcCasesLoaded = false;
+let rawDcCases = [];
+let activeCaseId = null;
+let activeCaseData = null;
+let rawActiveEvidence = [];
+let rawActiveVotes = [];
+let rawActiveHistory = [];
+let corridorReportsForCase = [];
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
 const escapeHtml = (s) => !s ? "" : String(s)
   .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
   .replace(/"/g,"&quot;").replace(/'/g,"&#039;");
@@ -275,259 +547,952 @@ function formatDate(d){
   if(isNaN(dt.getTime())) return "N/A";
   return dt.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"});
 }
+function formatDateTime(d){
+  if(!d) return "N/A";
+  const dt = d.toDate ? d.toDate() : new Date(d);
+  if(isNaN(dt.getTime())) return "N/A";
+  return dt.toLocaleString("en-GB",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"});
+}
 
+/* ============================================================
+   ORDINARY ACTIVITY LOG WRITER (per spec §35)
+   ============================================================ */
 async function writeActivity(type, detail, subjectName, subjectUid, oldValue, newValue){
   try{
     await addDoc(collection(db,"activityLogs"),{
       type, detail,
-      actorUid: currentAdminUid, actorName: currentAdminName,
-      subjectName: subjectName || null, subjectUid: subjectUid || null,
-      oldValue: oldValue || null, newValue: newValue || null,
+      actorUid: currentAdminUid,
+      actorName: currentAdminName,
+      subjectName: subjectName || null,
+      subjectUid: subjectUid || null,
+      oldValue: oldValue || null,
+      newValue: newValue || null,
       createdAt: serverTimestamp()
     });
-  }catch(e){ console.warn("Activity log write failed:",e); }
+  }catch(e){ console.warn("Activity log write failed:", e); }
 }
 
-/* AUTH */
+/* ============================================================
+   AUTH
+   ============================================================ */
 onAuthStateChanged(auth, async (user) => {
   if(!user){ window.location.href = "index.html"; return; }
   currentAdminUid = user.uid;
   try{
-    const snap = await getDoc(doc(db,"admins",user.uid));
-    if(!snap.exists()){ await signOut(auth); window.location.href = "index.html"; return; }
-    const admin = snap.data();
+    const adminSnap = await getDoc(doc(db,"admins",user.uid));
+    if(!adminSnap.exists()){
+      await signOut(auth); window.location.href = "index.html"; return;
+    }
+    const admin = adminSnap.data();
     currentAdminName = admin.name || "Administrator";
-    const roles = Array.isArray(admin.role) ? admin.role.map(r => String(r).toUpperCase()) : [];
-    isVicePrime = roles.includes("VICE_PRIME");
+    currentAdminRoles = Array.isArray(admin.role) ? admin.role.map(r => String(r).toUpperCase()) : [];
+    isVicePrime = currentAdminRoles.includes("VICE_PRIME");
+    isPrime = currentAdminRoles.includes("PRIME");
+    isDCSubcom = false; // admins are not DC subcom by default
 
-    if(!isVicePrime){
-      alert("Admin Corridors is restricted to the RC VP.");
+    const canUseFines = isVicePrime || isPrime || currentAdminRoles.includes("RC_DISCIPLINE");
+    if(!canUseFines){
+      alert("You do not have permission to access Discipline Management.");
       window.location.href = "admin.html"; return;
     }
 
+    // Show DC Report tab if any of VP / Prime. DC subcom members
+    // access their tab from dcsubcom.html instead.
+    if(isVicePrime || isPrime){
+      document.getElementById("tabBtnDC").style.display = "inline-block";
+    }
+    if(isVicePrime){
+      document.getElementById("openCreateCaseBtn").style.display = "inline-block";
+    }
+
     document.body.style.display = "";
-    await fetchResidents();
-    await loadReports();
-    setupModalListeners();
+    await initDiscipline();
   }catch(e){
     console.error("Auth error:",e);
     await signOut(auth); window.location.href = "index.html";
   }
 });
 
+/* ============================================================
+   INIT
+   ============================================================ */
+async function initDiscipline(){
+  try{
+    await fetchResidents();
+    await fetchFines();
+    setupFilterListeners();
+    setupIssueFineModal();
+    setupTabs();
+    setupDcCaseModal();
+    setupCreateCaseModal();
+  }catch(e){
+    console.error("Init failure:",e);
+    renderErrorState("Failed to load discipline records.");
+  }
+}
+
+/* ============================================================
+   TABS (lazy-loaded DC tab)
+   ============================================================ */
+function setupTabs(){
+  document.querySelectorAll(".tab-button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const targetId = btn.getAttribute("data-tab");
+      document.querySelectorAll(".tab-button").forEach(b => b.classList.remove("active"));
+      document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+      btn.classList.add("active");
+      document.getElementById(targetId).classList.add("active");
+
+      if(targetId === "dcReportTab" && !dcCasesLoaded){
+        dcCasesLoaded = true;
+        loadDcCases();
+      }
+    });
+  });
+}
+
+/* ============================================================
+   FINES — FETCH
+   ============================================================ */
 async function fetchResidents(){
+  residentMap.clear();
   residentList = [];
+  const corridorSet = new Set();
   try{
     const snap = await getDocs(collection(db,"users"));
     snap.forEach(d => {
       const data = d.data();
-      residentList.push({
+      const sn = (data.studentNumber || data.studentNo || "").toString().trim();
+      const corridor = data["corridor number"] || data.corridor || "Unassigned";
+      if(corridor && corridor !== "Unassigned") corridorSet.add(corridor);
+
+      const res = {
         uid: d.id,
-        fullName: `${data.name||''} ${data.surname||''}`.trim() || "Unknown",
-        studentNumber: (data.studentNumber||data.studentNo||"").toString().trim() || "N/A",
+        fullName: `${data.name || ''} ${data.surname || ''}`.trim() || "Unknown Resident",
+        studentNumber: sn || "N/A",
         roomNumber: data.roomNumber || "N/A",
-        corridor: data["corridor number"] || data.corridor || "Unassigned"
-      });
+        corridor
+      };
+      if(sn) residentMap.set(sn, res);
+      residentMap.set(d.id, res);
+      residentList.push(res);
     });
-    const sel = document.getElementById("escalateSubjectSelect");
-    sel.innerHTML = '<option value="">-- Choose Subject --</option>';
+
+    const corrSel = document.getElementById("corridorFilter");
+    corrSel.innerHTML = '<option value="ALL">All Corridors</option>';
+    Array.from(corridorSet).sort().forEach(c => {
+      const o = document.createElement("option");
+      o.value = c;
+      o.textContent = c.startsWith("Corridor") ? c : "Corridor " + c;
+      corrSel.appendChild(o);
+    });
+
+    const issueSel = document.getElementById("issueResidentSelect");
+    issueSel.innerHTML = '<option value="">-- Choose Resident --</option>';
     residentList.sort((a,b)=>a.fullName.localeCompare(b.fullName)).forEach(r => {
       const o = document.createElement("option");
       o.value = r.uid;
       o.textContent = `${r.fullName} (${r.studentNumber}) - Room ${r.roomNumber}`;
-      sel.appendChild(o);
+      issueSel.appendChild(o);
     });
-  }catch(e){ console.warn("Resident fetch failed:",e); }
-}
 
-async function loadReports(){
-  try{
-    const snap = await getDocs(collection(db,"corridorReports"));
-    rawReports = [];
-    snap.forEach(d => rawReports.push({ id: d.id, ...d.data() }));
-    rawReports.sort((a,b)=>{
-      const da = a.reportDate?.toDate?.() || new Date(0);
-      const dbb = b.reportDate?.toDate?.() || new Date(0);
-      return dbb - da;
+    const subjSel = document.getElementById("caseSubjectSelect");
+    subjSel.innerHTML = '<option value="">-- Choose Student --</option>';
+    residentList.sort((a,b)=>a.fullName.localeCompare(b.fullName)).forEach(r => {
+      const o = document.createElement("option");
+      o.value = r.uid;
+      o.textContent = `${r.fullName} (${r.studentNumber}) - Room ${r.roomNumber}`;
+      subjSel.appendChild(o);
     });
-    calculateMetrics();
-    renderTable();
   }catch(e){
-    console.error(e);
-    document.getElementById("reportsTableBody").innerHTML =
-      `<tr><td colspan="7"><div class="state-container" style="color:var(--danger-red);">
-        <h4>Error</h4><p>${escapeHtml(e.message)}</p></div></td></tr>`;
+    console.warn("Resident pre-fetch failed:",e);
   }
 }
 
-function calculateMetrics(){
-  let open=0, handled=0, escalated=0;
-  rawReports.forEach(r => {
-    if(r.status === "OPEN") open++;
-    else if(r.status === "HANDLED") handled++;
-    else if(r.status === "ESCALATED") escalated++;
+async function fetchFines(){
+  const snap = await getDocs(collection(db,"fines"));
+  rawFines = [];
+  snap.forEach(d => {
+    const data = d.data();
+    const sn = (data.studentNumber || data.studentNo || "").toString().trim();
+    const res = residentMap.get(sn) || residentMap.get(data.userId || data.userUid) || {};
+
+    let dateIssued = new Date();
+    if(data.dateIssued && typeof data.dateIssued.toDate === "function") dateIssued = data.dateIssued.toDate();
+    else if(data.dateIssued) dateIssued = new Date(data.dateIssued);
+    else if(data.createdAt && typeof data.createdAt.toDate === "function") dateIssued = data.createdAt.toDate();
+
+    const expected = new Date(dateIssued);
+    expected.setDate(expected.getDate() + 30);
+
+    const type = (data.type || "FINE").toUpperCase();
+    let raw = (data.status || (data.paid ? "Paid" : "Active")).toUpperCase();
+    let status = raw;
+    const now = new Date();
+    if(type === "WARNING"){
+      status = "WARNING";
+    } else if(!["PAID","CANCELLED","RESOLVED","DISPUTED"].includes(raw)){
+      status = now > expected ? "OVERDUE" : "ACTIVE";
+    }
+
+    rawFines.push({
+      id: d.id, type,
+      infringementLevel: data.infringementLevel || data.level || "LEVEL_1",
+      residentName: res.fullName || data.residentName || `${data.name||''} ${data.surname||''}`.trim() || "Resident",
+      studentNumber: sn || res.studentNumber || "N/A",
+      roomNumber: res.roomNumber || data.roomNumber || "N/A",
+      corridor: res.corridor || data.corridor || "N/A",
+      reason: data.reason || data.description || "No description provided",
+      amount: parseFloat(data.amount || 0),
+      dateIssued, expectedPaymentDate: expected, status, rawStatus: raw,
+      disputeDetails: data.disputeReason || data.disputeDetails || null,
+      userId: data.userId || null
+    });
   });
-  document.getElementById("statTotal").textContent = rawReports.length;
-  document.getElementById("statOpen").textContent = open;
-  document.getElementById("statHandled").textContent = handled;
-  document.getElementById("statEscalated").textContent = escalated;
+  calculateMetrics(rawFines);
+  applyFilters();
 }
 
-function reportBadge(status){
-  if(status === "OPEN")      return `<span class="status-badge badge-open">Open</span>`;
-  if(status === "HANDLED")   return `<span class="status-badge badge-handled">Handled</span>`;
-  if(status === "ESCALATED") return `<span class="status-badge badge-escalated">Escalated</span>`;
-  return `<span class="status-badge badge-open">${escapeHtml(status)}</span>`;
+function calculateMetrics(fines){
+  let total = fines.length, active=0, overdue=0, disputed=0, paid=0;
+  fines.forEach(f => {
+    if(f.type === "WARNING") return;
+    if(f.status === "PAID") paid++;
+    else if(f.status === "DISPUTED") disputed++;
+    else if(f.status === "OVERDUE") overdue++;
+    else if(f.status === "ACTIVE") active++;
+  });
+  document.getElementById("statTotal").textContent = total;
+  document.getElementById("statActive").textContent = active;
+  document.getElementById("statOverdue").textContent = overdue;
+  document.getElementById("statDisputed").textContent = disputed;
+  document.getElementById("statPaid").textContent = paid;
 }
 
-function renderTable(){
-  const tb = document.getElementById("reportsTableBody");
+function setupFilterListeners(){
+  ["searchInput","corridorFilter","statusFilter","dateFilter"].forEach(id => {
+    document.getElementById(id).addEventListener("input", applyFilters);
+    document.getElementById(id).addEventListener("change", applyFilters);
+  });
+  document.getElementById("resetFiltersBtn").addEventListener("click", () => {
+    document.getElementById("searchInput").value = "";
+    document.getElementById("corridorFilter").value = "ALL";
+    document.getElementById("statusFilter").value = "ALL";
+    document.getElementById("dateFilter").value = "ALL";
+    applyFilters();
+  });
+}
+
+function applyFilters(){
+  const q = document.getElementById("searchInput").value.trim().toLowerCase();
+  const cv = document.getElementById("corridorFilter").value;
+  const sv = document.getElementById("statusFilter").value;
+  const dv = document.getElementById("dateFilter").value;
+
+  const filtered = rawFines.filter(f => {
+    if(q){
+      const m = f.residentName.toLowerCase().includes(q) || f.studentNumber.toLowerCase().includes(q);
+      if(!m) return false;
+    }
+    if(cv !== "ALL" && f.corridor.toString().toLowerCase() !== cv.toLowerCase()) return false;
+    if(sv !== "ALL"){
+      if(sv === "ACTIVE" && f.status !== "ACTIVE") return false;
+      if(sv === "OVERDUE" && f.status !== "OVERDUE") return false;
+      if(sv === "DISPUTED" && f.status !== "DISPUTED") return false;
+      if(sv === "PAID" && f.status !== "PAID") return false;
+      if(sv === "WARNING" && f.type !== "WARNING") return false;
+      if(sv === "CANCELLED" && !["CANCELLED","RESOLVED"].includes(f.status)) return false;
+    }
+    if(dv !== "ALL"){
+      const now = new Date(), iss = new Date(f.dateIssued);
+      if(dv === "TODAY" && iss.toDateString() !== now.toDateString()) return false;
+      if(dv === "THIS_WEEK"){
+        const wk = new Date(); wk.setDate(now.getDate() - 7);
+        if(iss < wk) return false;
+      }
+      if(dv === "THIS_MONTH" &&
+         (iss.getMonth() !== now.getMonth() || iss.getFullYear() !== now.getFullYear())) return false;
+    }
+    return true;
+  });
+
+  document.getElementById("filteredCountLabel").textContent =
+    `Showing ${filtered.length} of ${rawFines.length} recorded items`;
+  renderFinesTable(filtered);
+}
+
+function renderFinesTable(fines){
+  const tb = document.getElementById("finesTableBody");
   tb.innerHTML = "";
-  if(rawReports.length === 0){
-    tb.innerHTML = `<tr><td colspan="7"><div class="state-container">
-      <h4>No corridor reports</h4>
-      <p>Reports submitted by Corridor Primes will appear here.</p>
-    </div></td></tr>`;
+  if(fines.length === 0){
+    tb.innerHTML = `<tr><td colspan="9"><div class="state-container">
+      <h4>No matching records</h4><p>Try adjusting your filters.</p></div></td></tr>`;
     return;
   }
-  rawReports.forEach(r => {
+  fines.forEach(f => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
-      <td><div class="resident-meta"><span class="resident-name">${escapeHtml(r.corridor || "?")}</span></div></td>
-      <td>${escapeHtml(r.submittedByName || "Corridor Prime")}</td>
-      <td>${formatDate(r.incidentDate)}</td>
-      <td style="max-width:320px;"><span style="display:-webkit-box;-webkit-line-clamp:2;
-        -webkit-box-orient:vertical;overflow:hidden;" title="${escapeHtml(r.description||'')}">
-        ${escapeHtml(r.description || "")}</span></td>
-      <td>${escapeHtml((r.peopleInvolved || "—").substring(0,60))}</td>
-      <td>${reportBadge(r.status)}</td>
-      <td><button class="btn-action" data-id="${r.id}">Review</button></td>`;
-    tr.querySelector(".btn-action").addEventListener("click", () => openReport(r.id));
+      <td><div class="resident-meta"><span class="resident-name">${escapeHtml(f.residentName)}</span></div></td>
+      <td><span style="font-family:monospace;font-weight:600;">${escapeHtml(f.studentNumber)}</span></td>
+      <td><div class="resident-meta"><span>Room ${escapeHtml(f.roomNumber)}</span>
+        <span class="resident-sub">${escapeHtml(f.corridor.startsWith('Corridor') ? f.corridor : 'Corridor '+f.corridor)}</span></div></td>
+      <td style="max-width:240px;"><span style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;"
+        title="${escapeHtml(f.reason)}">${escapeHtml(f.reason)}</span></td>
+      <td><span class="badge-level">${formatLevel(f.infringementLevel)}</span></td>
+      <td><span class="amount-tag">${f.type === "WARNING" ? "N/A" : "R" + f.amount.toFixed(2)}</span></td>
+      <td>${formatDate(f.dateIssued)}</td>
+      <td>${getFineBadge(f)}</td>
+      <td><button class="btn-action" data-id="${f.id}">Inspect</button></td>`;
+    tr.querySelector(".btn-action").addEventListener("click", () => openFineModal(f.id));
     tb.appendChild(tr);
   });
 }
 
-/* MODAL */
-function setupModalListeners(){
-  document.getElementById("closeReportBtn").addEventListener("click", closeReport);
-  document.getElementById("reportModal").addEventListener("click", e => {
-    if(e.target.id === "reportModal") closeReport();
-  });
-  document.getElementById("closeEscalateBtn").addEventListener("click", () => {
-    document.getElementById("escalateModal").classList.remove("active");
-  });
-  document.getElementById("cancelEscalateBtn").addEventListener("click", () => {
-    document.getElementById("escalateModal").classList.remove("active");
-  });
-  document.getElementById("escalateModal").addEventListener("click", e => {
-    if(e.target.id === "escalateModal")
-      document.getElementById("escalateModal").classList.remove("active");
-  });
-  document.getElementById("escalateForm").addEventListener("submit", handleEscalateSubmit);
+function getFineBadge(f){
+  if(f.type === "WARNING") return `<span class="status-badge badge-warning-record">Warning</span>`;
+  switch(f.status){
+    case "PAID":     return `<span class="status-badge badge-paid">Paid</span>`;
+    case "OVERDUE":  return `<span class="status-badge badge-overdue">Overdue</span>`;
+    case "DISPUTED": return `<span class="status-badge badge-disputed">Disputed</span>`;
+    case "CANCELLED":
+    case "RESOLVED": return `<span class="status-badge badge-cancelled">Cancelled</span>`;
+    default:         return `<span class="status-badge badge-active">Payment Due</span>`;
+  }
+}
+function formatLevel(l){
+  if(l === "LEVEL_3") return "Lvl 3";
+  if(l === "LEVEL_2") return "Lvl 2";
+  return "Lvl 1";
 }
 
-function closeReport(){
-  document.getElementById("reportModal").classList.remove("active");
-  activeReportId = null;
+function renderErrorState(msg){
+  document.getElementById("finesTableBody").innerHTML =
+    `<tr><td colspan="9"><div class="state-container" style="color:var(--danger-red);">
+      <h4>Error</h4><p>${escapeHtml(msg)}</p></div></td></tr>`;
 }
 
-function openReport(id){
-  activeReportId = id;
-  const r = rawReports.find(x => x.id === id);
-  if(!r) return;
+/* ============================================================
+   ISSUE FINE MODAL
+   ============================================================ */
+function setupIssueFineModal(){
+  const modal = document.getElementById("issueFineModal");
+  const form = document.getElementById("issueFineForm");
+  const fineR = document.getElementById("typeFineRadio");
+  const warnR = document.getElementById("typeWarningRadio");
+  const amtC = document.getElementById("amountContainer");
+  const amtI = document.getElementById("issueAmount");
 
-  const body = document.getElementById("reportModalBody");
-  const footer = document.getElementById("reportModalFooter");
+  function toggleType(){
+    if(warnR.checked){
+      amtC.style.opacity = "0.4"; amtI.value = "0";
+      amtI.disabled = true; amtI.required = false;
+    }else{
+      amtC.style.opacity = "1"; amtI.disabled = false; amtI.required = true;
+      if(amtI.value === "0") amtI.value = "";
+    }
+  }
+  fineR.addEventListener("change", toggleType);
+  warnR.addEventListener("change", toggleType);
+
+  document.getElementById("openIssueModalBtn").addEventListener("click", () => {
+    form.reset(); fineR.checked = true; toggleType(); modal.classList.add("active");
+  });
+  const close = () => modal.classList.remove("active");
+  document.getElementById("closeIssueModalBtn").addEventListener("click", close);
+  document.getElementById("cancelIssueModalBtn").addEventListener("click", close);
+
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+    await submitFine();
+  });
+}
+
+async function submitFine(){
+  const btn = document.getElementById("submitFineBtn");
+  const uid = document.getElementById("issueResidentSelect").value;
+  const type = document.querySelector('input[name="recordType"]:checked').value;
+  const level = document.getElementById("issueInfringementLevel").value;
+  const amount = parseFloat(document.getElementById("issueAmount").value || 0);
+  const reason = document.getElementById("issueReason").value.trim();
+
+  const res = residentList.find(r => r.uid === uid);
+  if(!res){ alert("Please select a valid resident."); return; }
+
+  btn.disabled = true; btn.textContent = "Creating...";
+  try{
+    const payload = {
+      type,
+      userId: res.uid,
+      studentNumber: res.studentNumber,
+      residentName: res.fullName,
+      roomNumber: res.roomNumber,
+      corridor: res.corridor,
+      infringementLevel: level,
+      amount: type === "WARNING" ? 0 : amount,
+      reason,
+      status: type === "WARNING" ? "WARNING" : "Active",
+      paid: false,
+      dateIssued: serverTimestamp(),
+      createdByAdminId: currentAdminUid,
+      createdAt: serverTimestamp()
+    };
+    const ref = await addDoc(collection(db,"fines"), payload);
+
+    await writeActivity(
+      type === "WARNING" ? "FINE_CREATED" : "FINE_CREATED",
+      `${type === "WARNING" ? "Warning" : "Fine"} issued: ${reason.substring(0,80)}`,
+      res.fullName, res.uid, null, type === "WARNING" ? "WARNING" : "Active"
+    );
+
+    document.getElementById("issueFineModal").classList.remove("active");
+    alert(`${type === "WARNING" ? "Warning" : "Fine"} issued.`);
+    await fetchFines();
+  }catch(e){
+    console.error(e); alert("Failed to create record. Check permissions.");
+  }finally{
+    btn.disabled = false; btn.textContent = "Issue Record";
+  }
+}
+
+/* ============================================================
+   FINE DETAIL MODAL (payment/reinstate/delete)
+   ============================================================ */
+function openFineModal(id){
+  selectedFineId = id;
+  const f = rawFines.find(x => x.id === id);
+  if(!f) return;
+
+  const body = document.getElementById("modalBody");
+  const statusC = document.getElementById("modalStatusContainer");
+  const paidBtn = document.getElementById("markPaidBtn");
+  const reinstBtn = document.getElementById("reinstateBtn");
+  const delBtn = document.getElementById("cancelDeleteBtn");
+
+  statusC.innerHTML = getFineBadge(f);
 
   body.innerHTML = `
     <div class="detail-group">
+      <div class="detail-item"><span class="detail-label">Resident</span>
+        <span class="detail-val">${escapeHtml(f.residentName)}</span></div>
+      <div class="detail-item"><span class="detail-label">Student No.</span>
+        <span class="detail-val">${escapeHtml(f.studentNumber)}</span></div>
+      <div class="detail-item"><span class="detail-label">Room</span>
+        <span class="detail-val">${escapeHtml(f.roomNumber)}</span></div>
       <div class="detail-item"><span class="detail-label">Corridor</span>
-        <span class="detail-val">${escapeHtml(r.corridor || "?")}</span></div>
-      <div class="detail-item"><span class="detail-label">Submitted By</span>
-        <span class="detail-val">${escapeHtml(r.submittedByName || "Corridor Prime")}</span></div>
-      <div class="detail-item"><span class="detail-label">Incident Date</span>
-        <span class="detail-val">${formatDate(r.incidentDate)}</span></div>
-      <div class="detail-item"><span class="detail-label">Report Date</span>
-        <span class="detail-val">${formatDate(r.reportDate)}</span></div>
+        <span class="detail-val">${escapeHtml(f.corridor)}</span></div>
     </div>
-    <div>
-      <span class="detail-label" style="display:block;margin-bottom:4px;">Incident Description</span>
-      <div class="description-box">${escapeHtml(r.description || "")}</div>
-    </div>
-    ${r.peopleInvolved ? `<div>
-      <span class="detail-label" style="display:block;margin-bottom:4px;">People Involved</span>
-      <div class="description-box">${escapeHtml(r.peopleInvolved)}</div>
-    </div>` : ""}
-    ${r.supportingInfo ? `<div>
-      <span class="detail-label" style="display:block;margin-bottom:4px;">Supporting Information</span>
-      <div class="description-box">${escapeHtml(r.supportingInfo)}</div>
-    </div>` : ""}
+    <div><span class="detail-label" style="display:block;margin-bottom:4px;">
+      Infringement (${formatLevel(f.infringementLevel)})</span>
+      <div class="description-box">${escapeHtml(f.reason)}</div></div>
     <div class="detail-group">
-      <div class="detail-item"><span class="detail-label">Status</span>
-        <span class="detail-val">${reportBadge(r.status)}</span></div>
-      ${r.linkedDcCaseId ? `<div class="detail-item"><span class="detail-label">Linked DC Case</span>
-        <span class="detail-val" style="font-family:monospace;color:var(--purple);">${escapeHtml(r.linkedDcCaseId)}</span></div>` : ""}
+      <div class="detail-item"><span class="detail-label">Amount / Type</span>
+        <span class="detail-val" style="color:var(--space-blue-primary);font-size:18px;">
+          ${f.type === "WARNING" ? "Confidential Warning" : "R" + f.amount.toFixed(2)}</span></div>
+      <div class="detail-item"><span class="detail-label">Date Issued</span>
+        <span class="detail-val">${formatDate(f.dateIssued)}</span></div>
+      <div class="detail-item"><span class="detail-label">Expected Payment</span>
+        <span class="detail-val">${f.type === "WARNING" ? "N/A" : formatDate(f.expectedPaymentDate)}</span></div>
+    </div>
+    ${f.disputeDetails ? `<div style="border:1px solid var(--warning-border);background:var(--warning-light);
+      padding:12px;border-radius:var(--radius-sm);">
+      <span class="detail-label" style="color:var(--warning-amber);">Dispute Details</span>
+      <p style="font-size:13px;color:var(--text-main);margin-top:2px;">${escapeHtml(f.disputeDetails)}</p>
+    </div>` : ""}`;
+
+  if(f.type !== "WARNING" && f.status !== "PAID" && f.status !== "CANCELLED"){
+    paidBtn.style.display = "inline-block";
+    paidBtn.onclick = () => recordPayment(f.id);
+  }else paidBtn.style.display = "none";
+
+  if(f.status === "DISPUTED"){
+    reinstBtn.style.display = "inline-block";
+    reinstBtn.onclick = () => reinstateFine(f.id);
+    delBtn.style.display = "inline-block";
+    delBtn.onclick = () => cancelDeleteFine(f.id);
+  }else{
+    reinstBtn.style.display = "none";
+    delBtn.style.display = "none";
+  }
+
+  document.getElementById("fineModal").classList.add("active");
+}
+
+async function recordPayment(id){
+  if(!confirm("Mark this fine as PAID?")) return;
+  const btn = document.getElementById("markPaidBtn");
+  btn.disabled = true; btn.textContent = "Updating...";
+  try{
+    const f = rawFines.find(x => x.id === id);
+    await updateDoc(doc(db,"fines",id),{
+      status: "Paid", paid: true, datePaid: serverTimestamp()
+    });
+    await writeActivity("FINE_PAID",
+      `Fine marked paid: ${f ? f.reason.substring(0,60) : id}`,
+      f ? f.residentName : null, f ? f.userId : null, f ? f.rawStatus : null, "PAID");
+    closeFineModal(); await fetchFines();
+  }catch(e){
+    console.error(e); alert("Failed to update payment status.");
+    btn.disabled = false; btn.textContent = "Record Payment";
+  }
+}
+
+async function reinstateFine(id){
+  if(!confirm("Reinstate this disputed fine? Status will return to Active.")) return;
+  const btn = document.getElementById("reinstateBtn");
+  btn.disabled = true; btn.textContent = "Reinstating...";
+  try{
+    const f = rawFines.find(x => x.id === id);
+    await updateDoc(doc(db,"fines",id),{ status: "Active" });
+    await writeActivity("FINE_STATUS_CHANGED",
+      `Fine reinstated: ${f ? f.reason.substring(0,60) : id}`,
+      f ? f.residentName : null, f ? f.userId : null, "DISPUTED", "ACTIVE");
+    closeFineModal(); await fetchFines();
+  }catch(e){
+    console.error(e); alert("Failed to reinstate fine.");
+    btn.disabled = false; btn.textContent = "Reinstate Fine";
+  }
+}
+
+async function cancelDeleteFine(id){
+  if(!confirm("Cancel and permanently delete this fine record?")) return;
+  const btn = document.getElementById("cancelDeleteBtn");
+  btn.disabled = true; btn.textContent = "Deleting...";
+  try{
+    const f = rawFines.find(x => x.id === id);
+    await deleteDoc(doc(db,"fines",id));
+    await writeActivity("FINE_STATUS_CHANGED",
+      `Fine cancelled/deleted: ${f ? f.reason.substring(0,60) : id}`,
+      f ? f.residentName : null, f ? f.userId : null, f ? f.rawStatus : null, "CANCELLED");
+    closeFineModal(); await fetchFines();
+  }catch(e){
+    console.error(e); alert("Failed to delete fine. VP-only action for DISPUTED fines.");
+    btn.disabled = false; btn.textContent = "Cancel (Delete Fine)";
+  }
+}
+
+function closeFineModal(){
+  document.getElementById("fineModal").classList.remove("active");
+  selectedFineId = null;
+}
+document.getElementById("closeModalBtn").addEventListener("click", closeFineModal);
+document.getElementById("cancelModalBtn").addEventListener("click", closeFineModal);
+document.getElementById("fineModal").addEventListener("click", e => {
+  if(e.target.id === "fineModal") closeFineModal();
+});
+
+/* ============================================================
+   DC REPORT TAB
+   ============================================================ */
+async function loadDcCases(){
+  try{
+    // RC VP + Prime read all active/unresolved cases.
+    const q = query(
+      collection(db,"dcCases"),
+      where("status","in",["OPEN","EVIDENCE","HEARING","VOTE","DECISION"])
+    );
+    const snap = await getDocs(q);
+    rawDcCases = [];
+    snap.forEach(d => rawDcCases.push({ id: d.id, ...d.data() }));
+    rawDcCases.sort((a,b) => {
+      const da = a.createdAt && a.createdAt.toDate ? a.createdAt.toDate() : new Date(0);
+      const dbb = b.createdAt && b.createdAt.toDate ? b.createdAt.toDate() : new Date(0);
+      return dbb - da;
+    });
+    renderDcCases();
+  }catch(e){
+    console.error(e);
+    document.getElementById("dcCasesList").innerHTML =
+      `<div class="state-container" style="color:var(--danger-red);">
+        <h4>Error loading DC cases</h4><p>${escapeHtml(e.message)}</p></div>`;
+  }
+}
+
+function dcStatusBadge(status){
+  switch(status){
+    case "OPEN":     return `<span class="status-badge badge-dc-open">Open</span>`;
+    case "EVIDENCE": return `<span class="status-badge badge-dc">Evidence</span>`;
+    case "HEARING":  return `<span class="status-badge badge-dc-hearing">Hearing</span>`;
+    case "VOTE":     return `<span class="status-badge badge-dc-vote">Vote</span>`;
+    case "DECISION": return `<span class="status-badge badge-dc">Decision</span>`;
+    case "CLOSED":   return `<span class="status-badge badge-dc-closed">Closed</span>`;
+    default:         return `<span class="status-badge badge-dc">${escapeHtml(status)}</span>`;
+  }
+}
+
+function renderDcCases(){
+  const box = document.getElementById("dcCasesList");
+  if(rawDcCases.length === 0){
+    box.innerHTML = `<div class="state-container">
+      <h4>No active DC cases</h4>
+      <p>Create a DC case to begin a private disciplinary matter.</p>
+    </div>`;
+    return;
+  }
+  box.innerHTML = rawDcCases.map(c => `
+    <div class="dc-case-row" data-case-id="${c.id}">
+      <div class="dc-case-info">
+        <div class="dc-case-id">${escapeHtml(c.caseId || c.id)}</div>
+        <div class="dc-case-subject">${escapeHtml(c.subject?.name || "Unknown Subject")}</div>
+        <div class="dc-case-summary">${escapeHtml((c.summary || "").substring(0,140))}</div>
+      </div>
+      <div class="dc-case-meta">
+        ${dcStatusBadge(c.status)}
+        <span class="resident-sub">${formatDate(c.createdAt)}</span>
+      </div>
+    </div>
+  `).join("");
+
+  box.querySelectorAll(".dc-case-row").forEach(row => {
+    row.addEventListener("click", () => openDcCase(row.getAttribute("data-case-id")));
+  });
+}
+
+/* ============================================================
+   DC CASE DETAIL MODAL
+   ============================================================ */
+function setupDcCaseModal(){
+  document.getElementById("closeDcCaseBtn").addEventListener("click", () => {
+    document.getElementById("dcCaseModal").classList.remove("active");
+    activeCaseId = null; activeCaseData = null;
+  });
+  document.getElementById("dcCaseModal").addEventListener("click", e => {
+    if(e.target.id === "dcCaseModal"){
+      document.getElementById("dcCaseModal").classList.remove("active");
+      activeCaseId = null; activeCaseData = null;
+    }
+  });
+}
+
+async function openDcCase(caseId){
+  activeCaseId = caseId;
+  const modal = document.getElementById("dcCaseModal");
+  const body = document.getElementById("dcCaseModalBody");
+  const footer = document.getElementById("dcCaseModalFooter");
+  const title = document.getElementById("dcCaseModalTitle");
+
+  body.innerHTML = `<div class="state-container"><div class="spinner"></div>
+    <h4>Loading case file...</h4></div>`;
+  footer.innerHTML = "";
+  modal.classList.add("active");
+
+  try{
+    const caseSnap = await getDoc(doc(db,"dcCases",caseId));
+    if(!caseSnap.exists()){ body.innerHTML = `<p>Case not found.</p>`; return; }
+    activeCaseData = { id: caseId, ...caseSnap.data() };
+    title.textContent = `DC Case ${activeCaseData.caseId || caseId}`;
+
+    const [evSnap, vSnap, hSnap] = await Promise.all([
+      getDocs(collection(db,"dcCases",caseId,"evidence")),
+      getDocs(collection(db,"dcCases",caseId,"votes")),
+      getDocs(collection(db,"dcCases",caseId,"history"))
+    ]);
+    rawActiveEvidence = [];
+    rawActiveVotes = [];
+    rawActiveHistory = [];
+    evSnap.forEach(d => rawActiveEvidence.push({ id: d.id, ...d.data() }));
+    vSnap.forEach(d => rawActiveVotes.push({ id: d.id, ...d.data() }));
+    hSnap.forEach(d => rawActiveHistory.push({ id: d.id, ...d.data() }));
+    rawActiveEvidence.sort((a,b)=>(a.submittedAt?.toDate?.()||0)-(b.submittedAt?.toDate?.()||0));
+    rawActiveHistory.sort((a,b)=>(a.createdAt?.toDate?.()||0)-(b.createdAt?.toDate?.()||0));
+
+    renderDcCaseDetail();
+  }catch(e){
+    console.error(e);
+    body.innerHTML = `<div class="state-container" style="color:var(--danger-red);">
+      <h4>Error loading case</h4><p>${escapeHtml(e.message)}</p></div>`;
+  }
+}
+
+function renderDcCaseDetail(){
+  const body = document.getElementById("dcCaseModalBody");
+  const footer = document.getElementById("dcCaseModalFooter");
+  const c = activeCaseData;
+
+  const votesGuilty = rawActiveVotes.filter(v => v.decision === "GUILTY").length;
+  const votesNG = rawActiveVotes.filter(v => v.decision === "NOT_GUILTY").length;
+
+  body.innerHTML = `
+    <div class="detail-group">
+      <div class="detail-item"><span class="detail-label">Subject</span>
+        <span class="detail-val">${escapeHtml(c.subject?.name || "Unknown")}</span></div>
+      <div class="detail-item"><span class="detail-label">Student No.</span>
+        <span class="detail-val">${escapeHtml(c.subject?.studentNumber || "N/A")}</span></div>
+      <div class="detail-item"><span class="detail-label">Room / Corridor</span>
+        <span class="detail-val">${escapeHtml((c.subject?.roomNumber||"N/A") + " • " + (c.subject?.corridor||"N/A"))}</span></div>
+      <div class="detail-item"><span class="detail-label">Source</span>
+        <span class="detail-val">${escapeHtml(c.source || "DIRECT")}</span></div>
+    </div>
+
+    <div>
+      <span class="detail-label" style="display:block;margin-bottom:4px;">Summary of Incident</span>
+      <div class="description-box">${escapeHtml(c.summary || "")}</div>
+    </div>
+
+    <div class="detail-group">
+      <div class="detail-item"><span class="detail-label">Case Status</span>
+        <span class="detail-val">${dcStatusBadge(c.status)}</span></div>
+      <div class="detail-item"><span class="detail-label">Hearing</span>
+        <span class="detail-val">${escapeHtml(c.hearingStatus || "NOT_STARTED")}</span></div>
+      <div class="detail-item"><span class="detail-label">Voting</span>
+        <span class="detail-val">${escapeHtml(c.voteStatus || "NOT_STARTED")}</span></div>
+      <div class="detail-item"><span class="detail-label">Decision</span>
+        <span class="detail-val">${escapeHtml(c.decision || "—")}</span></div>
+    </div>
+
+    <div class="section-divider">
+      <div class="section-title">Evidence (${rawActiveEvidence.length})</div>
+      <div id="evidenceContainer">
+        ${rawActiveEvidence.length === 0
+          ? `<p style="font-size:13px;color:var(--text-subtle);">No evidence recorded yet.</p>`
+          : rawActiveEvidence.map(ev => renderEvidenceItem(ev)).join("")}
+      </div>
+      <div style="margin-top:12px;">
+        <button class="btn-purple" id="addEvidenceBtn" style="display:${isVicePrime ? "inline-block" : "none"};">
+          + Add Evidence
+        </button>
+      </div>
+    </div>
+
+    ${rawActiveVotes.length > 0 ? `
+    <div class="section-divider">
+      <div class="section-title">Votes (${rawActiveVotes.length}) — ${votesGuilty} Guilty, ${votesNG} Not Guilty</div>
+      ${rawActiveVotes.map(v => `
+        <div class="history-item" style="border-left-color:${v.decision === "GUILTY" ? "var(--danger-red)" : "var(--success-green)"};">
+          <div class="history-type" style="color:${v.decision === "GUILTY" ? "var(--danger-red)" : "var(--success-green)"};">
+            ${escapeHtml(v.memberName || "Member")} • ${escapeHtml(v.decision)}
+          </div>
+          <div class="history-detail">${escapeHtml(v.motivation || "")}</div>
+          <div class="history-meta">${formatDateTime(v.submittedAt)}</div>
+        </div>
+      `).join("")}
+    </div>` : ""}
+
+    <div class="section-divider">
+      <div class="section-title">Private History</div>
+      ${rawActiveHistory.length === 0
+        ? `<p style="font-size:13px;color:var(--text-subtle);">No history events.</p>`
+        : rawActiveHistory.map(h => `
+          <div class="history-item">
+            <div class="history-type">${escapeHtml(h.type)}</div>
+            <div class="history-detail">${escapeHtml(h.detail || "")}</div>
+            <div class="history-meta">${escapeHtml(h.actorName || "")} • ${formatDateTime(h.createdAt)}</div>
+          </div>`).join("")}
     </div>
   `;
 
+  // Footer action buttons depend on role and case state.
   footer.innerHTML = "";
-  if(r.status === "OPEN"){
-    footer.innerHTML = `
-      <button class="btn-reset" id="reportCloseFooterBtn">Close</button>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <button class="btn-green" id="markHandledBtn">Mark Handled</button>
-        <button class="btn-purple" id="escalateBtn">Escalate to DC</button>
+  if(isVicePrime){
+    if(c.status === "OPEN" || c.status === "EVIDENCE"){
+      footer.innerHTML += `<button class="btn-purple" id="openHearingBtn">Open Hearing</button>`;
+    }
+    if(c.status === "HEARING"){
+      footer.innerHTML += `<button class="btn-purple" id="openVoteBtn">Open Vote</button>`;
+    }
+    if(c.status === "VOTE"){
+      footer.innerHTML += `<button class="btn-purple" id="closeVoteBtn">Close Vote & Decide</button>`;
+    }
+    if(c.status === "DECISION"){
+      footer.innerHTML += `<button class="btn-purple" id="closeCaseBtn">Close Case</button>`;
+    }
+  }
+  footer.innerHTML += `<button class="btn-reset" id="closeDcFooterBtn">Close</button>`;
+
+  document.getElementById("closeDcFooterBtn").addEventListener("click", () => {
+    document.getElementById("dcCaseModal").classList.remove("active");
+    activeCaseId = null; activeCaseData = null;
+  });
+
+  if(document.getElementById("addEvidenceBtn"))
+    document.getElementById("addEvidenceBtn").addEventListener("click", () => addEvidencePrompt());
+  if(document.getElementById("openHearingBtn"))
+    document.getElementById("openHearingBtn").addEventListener("click", () => advanceCase("EVIDENCE","HEARING","Hearing opened."));
+  if(document.getElementById("openVoteBtn"))
+    document.getElementById("openVoteBtn").addEventListener("click", () => advanceCase("HEARING","VOTE","Vote opened."));
+  if(document.getElementById("closeVoteBtn"))
+    document.getElementById("closeVoteBtn").addEventListener("click", () => closeVoteAndDecide());
+  if(document.getElementById("closeCaseBtn"))
+    document.getElementById("closeCaseBtn").addEventListener("click", () => advanceCase("DECISION","CLOSED","Case closed."));
+
+  // Wire evidence comment forms
+  rawActiveEvidence.forEach(ev => {
+    const form = document.getElementById(`commentForm_${ev.id}`);
+    if(form){
+      form.addEventListener("submit", async e => {
+        e.preventDefault();
+        const input = document.getElementById(`commentInput_${ev.id}`);
+        const text = input.value.trim();
+        if(!text) return;
+        await addEvidenceComment(ev.id, text);
+      });
+    }
+  });
+}
+
+function renderEvidenceItem(ev){
+  const comments = Array.isArray(ev.comments) ? ev.comments : [];
+  return `
+    <div class="evidence-item">
+      <div class="evidence-head">
+        <span class="evidence-id">Evidence ${escapeHtml(ev.evidenceId || ev.id)}</span>
+        <span class="evidence-meta">${escapeHtml(ev.submittedByName || "Unknown")} • ${formatDateTime(ev.submittedAt)}</span>
       </div>
-    `;
-    document.getElementById("markHandledBtn").addEventListener("click", () => markHandled(id));
-    document.getElementById("escalateBtn").addEventListener("click", () => openEscalate(id));
-  }else{
-    footer.innerHTML = `<button class="btn-reset" id="reportCloseFooterBtn">Close</button>`;
-  }
-  document.getElementById("reportCloseFooterBtn").addEventListener("click", closeReport);
-
-  document.getElementById("reportModal").classList.add("active");
+      <div class="evidence-content">${escapeHtml(ev.content || "")}</div>
+      <div class="comments-list">
+        ${comments.map(cm => `
+          <div class="comment-item">
+            <div class="comment-author">${escapeHtml(cm.authorName || "Member")}</div>
+            <div class="comment-text">${escapeHtml(cm.text || "")}</div>
+            <div class="comment-time">${formatDateTime(cm.createdAt)}</div>
+          </div>`).join("")}
+        <form class="comment-form" id="commentForm_${ev.id}">
+          <input type="text" id="commentInput_${ev.id}" placeholder="Comment on this evidence...">
+          <button type="submit">Comment</button>
+        </form>
+      </div>
+    </div>`;
 }
 
-async function markHandled(id){
-  if(!confirm("Mark this corridor report as Handled?")) return;
+async function addEvidencePrompt(){
+  const content = prompt("Enter evidence content (statement, record reference, notes):");
+  if(!content || !content.trim()) return;
   try{
-    const r = rawReports.find(x => x.id === id);
-    await updateDoc(doc(db,"corridorReports",id),{
-      status:"HANDLED", handledBy: currentAdminUid, handledAt: serverTimestamp(), updatedAt: serverTimestamp()
+    const evidenceId = `EV-${Date.now()}`;
+    await addDoc(collection(db,"dcCases",activeCaseId,"evidence"),{
+      evidenceId, caseId: activeCaseId,
+      submittedBy: currentAdminUid,
+      submittedByName: currentAdminName,
+      submittedAt: serverTimestamp(),
+      content: content.trim(),
+      type: "STATEMENT",
+      comments: []
     });
-    await writeActivity("CORRIDOR_REPORT_HANDLED",
-      `Corridor report from ${r.corridor || "?"} marked handled.`,
-      null, null, "OPEN", "HANDLED");
-    closeReport();
-    await loadReports();
+    await addDoc(collection(db,"dcCases",activeCaseId,"history"),{
+      type:"EVIDENCE_ADDED", detail:`Evidence ${evidenceId} added.`,
+      actorUid: currentAdminUid, actorName: currentAdminName, createdAt: serverTimestamp()
+    });
+    await openDcCase(activeCaseId);
   }catch(e){
-    console.error(e); alert("Failed to mark handled.");
+    console.error(e); alert("Failed to add evidence.");
   }
 }
 
-function openEscalate(id){
-  activeReportId = id;
-  const r = rawReports.find(x => x.id === id);
-  if(!r) return;
-
-  // Prefill summary with corridor context
-  document.getElementById("escalateSummary").value =
-    `Escalated from corridor report (${r.corridor || "?"}). ${r.description || ""}`.substring(0, 400);
-
-  document.getElementById("escalateModal").classList.add("active");
+async function addEvidenceComment(evidenceId, text){
+  try{
+    const comment = {
+      commentId: `CM-${Date.now()}`,
+      authorUid: currentAdminUid,
+      authorName: currentAdminName,
+      text,
+      createdAt: new Date().toISOString()
+    };
+    await updateDoc(doc(db,"dcCases",activeCaseId,"evidence",evidenceId),{
+      comments: arrayUnion(comment)
+    });
+    await addDoc(collection(db,"dcCases",activeCaseId,"history"),{
+      type:"COMMENT_ADDED", detail:`Comment added to evidence ${evidenceId}.`,
+      actorUid: currentAdminUid, actorName: currentAdminName, createdAt: serverTimestamp()
+    });
+    await openDcCase(activeCaseId);
+  }catch(e){
+    console.error(e); alert("Failed to add comment.");
+  }
 }
 
-async function handleEscalateSubmit(e){
-  e.preventDefault();
-  const btn = document.getElementById("submitEscalateBtn");
-  const subjUid = document.getElementById("escalateSubjectSelect").value;
-  const summary = document.getElementById("escalateSummary").value.trim();
+async function advanceCase(expectedFrom, toStatus, detail){
+  if(activeCaseData.status !== expectedFrom) return;
+  try{
+    const update = { status: toStatus, updatedAt: serverTimestamp() };
+    if(toStatus === "HEARING") update.hearingStatus = "OPEN";
+    if(toStatus === "VOTE") update.voteStatus = "OPEN";
+    await updateDoc(doc(db,"dcCases",activeCaseId), update);
+    await addDoc(collection(db,"dcCases",activeCaseId,"history"),{
+      type: toStatus === "HEARING" ? "HEARING_OPENED" :
+            toStatus === "VOTE"     ? "VOTE_OPENED" : "CASE_STATUS_CHANGED",
+      detail,
+      actorUid: currentAdminUid, actorName: currentAdminName, createdAt: serverTimestamp()
+    });
+    await openDcCase(activeCaseId);
+  }catch(e){
+    console.error(e); alert("Failed to advance case.");
+  }
+}
 
-  const subject = residentList.find(x => x.uid === subjUid);
-  if(!subject){ alert("Select a subject."); return; }
+async function closeVoteAndDecide(){
+  if(activeCaseData.voteStatus !== "OPEN") return;
+  const votesGuilty = rawActiveVotes.filter(v => v.decision === "GUILTY").length;
+  const votesNG = rawActiveVotes.filter(v => v.decision === "NOT_GUILTY").length;
+  const decision = votesGuilty > votesNG ? "GUILTY" : (votesNG > votesGuilty ? "NOT_GUILTY" : "TIED");
+  if(!confirm(`Record decision as ${decision}? (${votesGuilty} Guilty / ${votesNG} Not Guilty)`)) return;
+  try{
+    await updateDoc(doc(db,"dcCases",activeCaseId),{
+      status:"DECISION", voteStatus:"CLOSED", decision,
+      decisionRecordedAt: serverTimestamp(), updatedAt: serverTimestamp()
+    });
+    await addDoc(collection(db,"dcCases",activeCaseId,"history"),{
+      type:"DECISION_RECORDED", detail:`Decision: ${decision}.`,
+      actorUid: currentAdminUid, actorName: currentAdminName, createdAt: serverTimestamp()
+    });
+    await openDcCase(activeCaseId);
+  }catch(e){
+    console.error(e); alert("Failed to record decision.");
+  }
+}
 
-  btn.disabled = true; btn.textContent = "Escalating...";
+/* ============================================================
+   CREATE DC CASE MODAL
+   ============================================================ */
+function setupCreateCaseModal(){
+  const modal = document.getElementById("createCaseModal");
+  const form = document.getElementById("createCaseForm");
+  const srcSel = document.getElementById("caseSourceSelect");
+  const wrapper = document.getElementById("corridorReportWrapper");
+
+  document.getElementById("openCreateCaseBtn").addEventListener("click", async () => {
+    form.reset(); wrapper.style.display = "none"; modal.classList.add("active");
+    // Lazy-load open corridor reports for escalation option
+    try{
+      const q = query(collection(db,"corridorReports"), where("status","==","OPEN"));
+      const snap = await getDocs(q);
+      corridorReportsForCase = [];
+      snap.forEach(d => corridorReportsForCase.push({ id: d.id, ...d.data() }));
+      const sel = document.getElementById("caseSourceReportSelect");
+      sel.innerHTML = '<option value="">-- Choose Report --</option>';
+      corridorReportsForCase.forEach(r => {
+        const o = document.createElement("option");
+        o.value = r.id;
+        o.textContent = `${r.corridor || "?"} • ${(r.description || "").substring(0,50)}`;
+        sel.appendChild(o);
+      });
+    }catch(e){ console.warn("Corridor report pre-fetch failed:",e); }
+  });
+
+  srcSel.addEventListener("change", () => {
+    wrapper.style.display = srcSel.value === "CORRIDOR_REPORT" ? "flex" : "none";
+  });
+
+  const close = () => modal.classList.remove("active");
+  document.getElementById("closeCreateCaseBtn").addEventListener("click", close);
+  document.getElementById("cancelCreateCaseBtn").addEventListener("click", close);
+
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+    await submitCreateCase();
+  });
+}
+
+async function submitCreateCase(){
+  const btn = document.getElementById("submitCreateCaseBtn");
+  const subjUid = document.getElementById("caseSubjectSelect").value;
+  const source = document.getElementById("caseSourceSelect").value;
+  const reportId = document.getElementById("caseSourceReportSelect").value;
+  const summary = document.getElementById("caseSummaryInput").value.trim();
+
+  const subject = residentList.find(r => r.uid === subjUid);
+  if(!subject){ alert("Select a valid subject."); return; }
+  if(source === "CORRIDOR_REPORT" && !reportId){ alert("Select a corridor report."); return; }
+
+  btn.disabled = true; btn.textContent = "Creating...";
   try{
     const caseId = `DC-${new Date().getFullYear()}-${Date.now().toString().slice(-6)}`;
     const caseRef = await addDoc(collection(db,"dcCases"),{
@@ -537,8 +1502,8 @@ async function handleEscalateSubmit(e){
         studentNumber: subject.studentNumber,
         roomNumber: subject.roomNumber, corridor: subject.corridor
       },
-      source: "CORRIDOR_REPORT",
-      sourceReportId: activeReportId,
+      source,
+      sourceReportId: source === "CORRIDOR_REPORT" ? reportId : null,
       createdBy: currentAdminUid,
       createdAt: serverTimestamp(),
       status: "OPEN",
@@ -549,30 +1514,34 @@ async function handleEscalateSubmit(e){
     });
 
     await addDoc(collection(db,"dcCases",caseRef.id,"history"),{
-      type:"CASE_CREATED",
-      detail:`Case ${caseId} created from corridor report ${activeReportId}.`,
+      type:"CASE_CREATED", detail:`Case ${caseId} created for ${subject.fullName}.`,
       actorUid: currentAdminUid, actorName: currentAdminName, createdAt: serverTimestamp()
     });
 
-    await updateDoc(doc(db,"corridorReports",activeReportId),{
-      status:"ESCALATED", linkedDcCaseId: caseRef.id, updatedAt: serverTimestamp()
-    });
+    // If originating from corridor report, link back and mark as ESCALATED.
+    if(source === "CORRIDOR_REPORT" && reportId){
+      await updateDoc(doc(db,"corridorReports",reportId),{
+        status:"ESCALATED", linkedDcCaseId: caseRef.id, updatedAt: serverTimestamp()
+      });
+      await writeActivity("CORRIDOR_REPORT_ESCALATED",
+        `Corridor report ${reportId} escalated to DC case ${caseId}.`,
+        subject.fullName, subject.uid, "OPEN", "ESCALATED");
+    }
 
-    await writeActivity("CORRIDOR_REPORT_ESCALATED",
-      `Corridor report escalated to DC case ${caseId}.`,
-      subject.fullName, subject.uid, "OPEN", "ESCALATED");
-
-    document.getElementById("escalateModal").classList.remove("active");
+    document.getElementById("createCaseModal").classList.remove("active");
     alert(`DC Case ${caseId} created.`);
-    closeReport();
-    await loadReports();
+    dcCasesLoaded = false;
+    document.getElementById("tabBtnDC").click();
   }catch(e){
-    console.error(e); alert("Failed to escalate. Check permissions.");
+    console.error(e); alert("Failed to create case. Check permissions.");
   }finally{
-    btn.disabled = false; btn.textContent = "Escalate to DC";
+    btn.disabled = false; btn.textContent = "Create Case";
   }
 }
 
+/* ============================================================
+   LOGOUT
+   ============================================================ */
 document.getElementById("logoutButton").addEventListener("click", async () => {
   try{ await signOut(auth); window.location.href = "index.html"; }
   catch(e){ console.error("Logout error:",e); }
