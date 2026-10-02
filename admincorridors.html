@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>House Beyers Naude - Admin Corridors</title>
+<style>
+:root{
+  --space-blue-primary:#1D2951;--space-blue-hover:#141C38;--space-blue-light:#EFF3F9;
+  --space-blue-border:#D0DCED;--space-blue-accent:#3B5295;--bg-page:#F4F6F9;--bg-card:#FFFFFF;
+  --text-main:#0F172A;--text-muted:#475569;--text-subtle:#64748B;
+  --danger-red:#DC2626;--danger-red-hover:#B91C1C;--danger-light:#FEF2F2;--danger-border:#FCA5A5;
+  --success-green:#16A34A;--success-light:#F0FDF4;--success-border:#86EFAC;
+  --warning-amber:#D97706;--warning-light:#FFFBEB;--warning-border:#FDE68A;
+  --purple:#7E22CE;--purple-light:#FAF5FF;--purple-border:#E9D5FF;
+  --radius-sm:6px;--radius-md:10px;--radius-lg:14px;
+  --shadow-sm:0 1px 3px rgba(15,23,42,0.06),0 1px 2px rgba(15,23,42,0.04);
+  --shadow-md:0 4px 12px rgba(29,41,81,0.08);--shadow-lg:0 10px 25px rgba(29,41,81,0.12);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  background:var(--bg-page);color:var(--text-main);min-height:100vh;display:flex;flex-direction:column;
+  line-height:1.5;-webkit-font-smoothing:antialiased;}
+.header{background:var(--space-blue-primary);color:#FFF;padding:16px 32px;display:flex;
+  justify-content:space-between;align-items:center;box-shadow:var(--shadow-md);position:sticky;top:0;z-index:100;}
+.brand h1{font-size:20px;font-weight:700;letter-spacing:-0.02em;line-height:1.2;}
+.brand p{color:#A0B2D6;font-size:13px;font-weight:500;margin-top:2px;}
+.header-actions{display:flex;align-items:center;gap:12px;}
+.btn-nav{border:1px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.1);color:#FFF;
+  padding:8px 16px;border-radius:var(--radius-sm);cursor:pointer;font-size:13px;font-weight:600;
+  text-decoration:none;transition:all .15s ease;display:inline-flex;align-items:center;gap:6px;}
+.btn-nav:hover{background:rgba(255,255,255,0.2);border-color:rgba(255,255,255,0.4);}
+.logout-button{border:none;background:var(--danger-red);color:#FFF;padding:8px 16px;
+  border-radius:var(--radius-sm);cursor:pointer;font-size:13px;font-weight:600;}
+.logout-button:hover{background:var(--danger-red-hover);}
+.container{max-width:1280px;width:100%;margin:0 auto;padding:32px 24px 60px;flex:1;}
+.page-intro{margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--space-blue-border);
+  display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;}
+.page-intro h2{font-size:26px;font-weight:800;color:var(--space-blue-primary);letter-spacing:-0.02em;margin-bottom:4px;}
+.page-intro p{color:var(--text-muted);font-size:15px;}
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--space-blue-border);margin-bottom:24px;flex-wrap:wrap;}
+.tab-button{background:none;border:none;padding:12px 22px;font-size:14px;font-weight:700;
+  color:var(--text-muted);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .15s ease;}
+.tab-button:hover{color:var(--space-blue-primary);}
+.tab-button.active{color:var(--space-blue-primary);border-bottom-color:var(--space-blue-primary);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+.summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:24px;}
+.summary-card{background:var(--bg-card);border-radius:var(--radius-md);padding:18px 20px;
+  border:1px solid var(--space-blue-border);box-shadow:var(--shadow-sm);position:relative;overflow:hidden;}
+.summary-card::before{content:"";position:absolute;top:0;left:0;width:100%;height:4px;background:var(--space-blue-primary);}
+.summary-card.open::before{background:var(--warning-amber);}
+.summary-card.handled::before{background:var(--success-green);}
+.summary-card.escalated::before{background:var(--purple);}
+.summary-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-subtle);margin-bottom:8px;}
+.summary-value{font-size:28px;font-weight:800;color:var(--space-blue-primary);line-height:1.1;}
+.summary-subtext{font-size:12px;color:var(--text-muted);margin-top:6px;}
+.table-card{background:var(--bg-card);border-radius:var(--radius-md);border:1px solid var(--space-blue-border);
+  box-shadow:var(--shadow-sm);overflow:hidden;}
+.table-wrapper{width:100%;overflow-x:auto;}
+table{width:100%;border-collapse:collapse;text-align:left;font-size:14px;}
+thead{background:var(--space-blue-light);border-bottom:2px solid var(--space-blue-border);}
+th{padding:14px 16px;font-weight:700;color:var(--space-blue-primary);font-size:12px;text-transform:uppercase;
+  letter-spacing:.04em;white-space:nowrap;}
+td{padding:14px 16px;border-bottom:1px solid #E2E8F0;color:var(--text-main);vertical-align:middle;}
+tbody tr:hover{background:#F8FAFC;}
+tbody tr:last-child td{border-bottom:none;}
+.resident-meta{display:flex;flex-direction:column;}
+.resident-name{font-weight:700;color:var(--text-main);}
+.resident-sub{font-size:12px;color:var(--text-subtle);}
+.status-badge{display:inline-flex;align-items:center;padding:4px 10px;border-radius:20px;font-size:11px;
+  font-weight:700;letter-spacing:.03em;text-transform:uppercase;line-height:1;width:fit-content;}
+.badge-open{background:var(--warning-light);color:var(--warning-amber);border:1px solid var(--warning-border);}
+.badge-handled{background:var(--success-light);color:var(--success-green);border:1px solid var(--success-border);}
+.badge-escalated{background:var(--purple-light);color:var(--purple);border:1px solid var(--purple-border);}
+.btn-action{background:#FFF;border:1px solid var(--space-blue-border);color:var(--space-blue-primary);
+  padding:6px 12px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .15s ease;}
+.btn-action:hover{background:var(--space-blue-primary);color:#FFF;border-color:var(--space-blue-primary);}
+.state-container{padding:48px 24px;text-align:center;color:var(--text-muted);}
+.state-container h4{font-size:16px;font-weight:700;color:var(--text-main);margin-bottom:6px;}
+.spinner{width:32px;height:32px;border:3px solid var(--space-blue-light);border-top:3px solid var(--space-blue-primary);
+  border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.6);backdrop-filter:blur(2px);
+  display:flex;align-items:center;justify-content:center;z-index:200;opacity:0;visibility:hidden;transition:all .2s ease;padding:20px;}
+.modal-overlay.active{opacity:1;visibility:visible;}
+.modal-card{background:var(--bg-card);border-radius:var(--radius-lg);width:100%;max-width:720px;
+  border:1px solid var(--space-blue-border);box-shadow:var(--shadow-lg);overflow:hidden;
+  transform:translateY(10px);transition:transform .2s ease;max-height:92vh;display:flex;flex-direction:column;}
+.modal-overlay.active .modal-card{transform:translateY(0);}
+.modal-header{background:var(--space-blue-primary);color:#FFF;padding:18px 24px;display:flex;
+  justify-content:space-between;align-items:center;gap:12px;}
+.modal-header h3{font-size:18px;font-weight:700;}
+.modal-close{background:none;border:none;color:#A0B2D6;font-size:20px;cursor:pointer;padding:4px;line-height:1;}
+.modal-close:hover{color:#FFF;}
+.modal-body{padding:24px;display:flex;flex-direction:column;gap:16px;overflow-y:auto;}
+.modal-footer{padding:16px 24px;background:var(--space-blue-light);border-top:1px solid var(--space-blue-border);
+  display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
+.detail-group{display:grid;grid-template-columns:1fr 1fr;gap:12px;background:var(--bg-page);
+  padding:16px;border-radius:var(--radius-md);border:1px solid #E2E8F0;}
+.detail-item{display:flex;flex-direction:column;}
+.detail-label{font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text-subtle);letter-spacing:.03em;}
+.detail-val{font-size:14px;font-weight:600;color:var(--text-main);margin-top:2px;}
+.description-box{background:#FFF;border:1px solid var(--space-blue-border);border-radius:var(--radius-sm);
+  padding:12px;font-size:14px;color:var(--text-main);white-space:pre-wrap;}
+.btn-purple{background:var(--purple);color:#FFF;border:none;padding:10px 18px;
+  border-radius:var(--radius-sm);font-size:13px;font-weight:700;cursor:pointer;}
+.btn-purple:hover{background:#6B21A8;}
+.btn-green{background:var(--success-green);color:#FFF;border:none;padding:10px 18px;
+  border-radius:var(--radius-sm);font-size:13px;font-weight:700;cursor:pointer;}
+.btn-green:hover{background:#15803D;}
+.btn-reset{background:var(--space-blue-light);color:var(--space-blue-primary);border:1px solid var(--space-blue-border);
+  padding:9px 16px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;}
+.btn-reset:hover{background:var(--space-blue-border);}
+.btn-purple:disabled,.btn-green:disabled{background:#9CA3AF;cursor:not-allowed;}
+.footer{text-align:center;color:var(--text-subtle);font-size:13px;font-weight:500;padding:24px 16px;
+  border-top:1px solid var(--space-blue-border);background:#FFF;margin-top:auto;}
+@media(max-width:900px){.summary-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media(max-width:680px){
+  .header{padding:16px 20px;flex-direction:column;align-items:flex-start;gap:10px;}
+  .container{padding:20px 16px 40px;}
+  .page-intro{flex-direction:column;align-items:flex-start;}
+  .summary-grid{grid-template-columns:1fr;}
+  .detail-group{grid-template-columns:1fr;}
+  .modal-footer{flex-direction:column;align-items:stretch;}
+}
+</style>
+</head>
+
+<body style="display:none;">
+
+<header class="header">
+  <div class="brand">
+    <h1>House Beyers Naude</h1>
+    <p>Master Files • Admin Corridors</p>
+  </div>
+  <div class="header-actions">
+    <a href="admin.html" class="btn-nav">&larr; Dashboard</a>
+    <button class="logout-button" id="logoutButton">Log Out</button>
+  </div>
+</header>
+
+<main class="container">
+
+  <section class="page-intro">
+    <div>
+      <h2>Admin Corridors</h2>
+      <p>Review corridor incident reports submitted by Corridor Primes. Handle or escalate to a private DC case.</p>
+    </div>
+  </section>
+
+  <section class="summary-grid">
+    <div class="summary-card"><div><div class="summary-title">Total Reports</div>
+      <div class="summary-value" id="statTotal">--</div></div>
+      <div class="summary-subtext">All corridor reports</div></div>
+    <div class="summary-card open"><div><div class="summary-title">Open</div>
+      <div class="summary-value" id="statOpen">--</div></div>
+      <div class="summary-subtext">Awaiting RC VP review</div></div>
+    <div class="summary-card handled"><div><div class="summary-title">Handled</div>
+      <div class="summary-value" id="statHandled">--</div></div>
+      <div class="summary-subtext">Resolved without DC escalation</div></div>
+    <div class="summary-card escalated"><div><div class="summary-title">Escalated</div>
+      <div class="summary-value" id="statEscalated">--</div></div>
+      <div class="summary-subtext">Now private DC cases</div></div>
+  </section>
+
+  <section class="table-card">
+    <div class="table-wrapper">
+      <table>
+        <thead><tr>
+          <th>Corridor</th><th>Submitted By</th><th>Incident Date</th>
+          <th>Description</th><th>People Involved</th><th>Status</th><th>Action</th>
+        </tr></thead>
+        <tbody id="reportsTableBody">
+          <tr><td colspan="7"><div class="state-container">
+            <div class="spinner"></div><h4>Loading corridor reports...</h4>
+          </div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+<!-- REPORT DETAIL MODAL -->
+<div class="modal-overlay" id="reportModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>Corridor Incident Report</h3>
+      <button class="modal-close" id="closeReportBtn">&times;</button>
+    </div>
+    <div class="modal-body" id="reportModalBody"></div>
+    <div class="modal-footer" id="reportModalFooter"></div>
+  </div>
+</div>
+
+<!-- ESCALATE TO DC MODAL -->
+<div class="modal-overlay" id="escalateModal">
+  <div class="modal-card">
+    <div class="modal-header" style="background:var(--purple);">
+      <h3>Escalate to DC Case</h3>
+      <button class="modal-close" id="closeEscalateBtn">&times;</button>
+    </div>
+    <form id="escalateForm">
+      <div class="modal-body">
+        <p style="font-size:13px;color:var(--text-subtle);">
+          This corridor report will be linked to a new private DC case. The original report remains intact and referenced.
+        </p>
+        <div class="filter-group">
+          <label for="escalateSubjectSelect" class="filter-label">Subject (Student) *</label>
+          <select id="escalateSubjectSelect" class="form-control" required
+            style="width:100%;padding:9px 12px;font-size:14px;border:1px solid var(--space-blue-border);
+            border-radius:var(--radius-sm);background:#FFF;">
+            <option value="">-- Choose Subject --</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="escalateSummary" class="filter-label">Case Summary *</label>
+          <textarea id="escalateSummary" class="form-control" rows="3" required
+            style="width:100%;padding:9px 12px;font-size:14px;border:1px solid var(--space-blue-border);
+            border-radius:var(--radius-sm);font-family:inherit;resize:vertical;"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-reset" id="cancelEscalateBtn">Cancel</button>
+        <button type="submit" class="btn-purple" id="submitEscalateBtn">Escalate to DC</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<footer class="footer">House Beyers Naude • House of Masters</footer>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app-check.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+import {
+  getFirestore, doc, getDoc, getDocs, collection, addDoc, updateDoc,
+  query, where, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDW6IArj2dZiqbf00Ix3SPPSqvxTKG0GgE",
+  authDomain: "master-files-95f6b.firebaseapp.com",
+  projectId: "master-files-95f6b",
+  storageBucket: "master-files-95f6b.firebasestorage.app",
+  messagingSenderId: "537891510061",
+  appId: "1:537891510061:web:fb46c8d1abae02b9e725a4",
+  measurementId: "G-4GNVR5EBJX"
+};
+const app = initializeApp(firebaseConfig);
+initializeAppCheck(app, {
+  provider: new ReCaptchaV3Provider('6LfAPn8tAAAAAOa1QF1-NqwCu6aPsGWyOep3mo2s'),
+  isTokenAutoRefreshEnabled: true
+});
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+/* STATE */
+let currentAdminUid = null;
+let currentAdminName = "";
+let isVicePrime = false;
+let rawReports = [];
+let activeReportId = null;
+let residentList = [];
+
+const escapeHtml = (s) => !s ? "" : String(s)
+  .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+  .replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+
+function formatDate(d){
+  if(!d) return "N/A";
+  const dt = d.toDate ? d.toDate() : new Date(d);
+  if(isNaN(dt.getTime())) return "N/A";
+  return dt.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"});
+}
+
+async function writeActivity(type, detail, subjectName, subjectUid, oldValue, newValue){
+  try{
+    await addDoc(collection(db,"activityLogs"),{
+      type, detail,
+      actorUid: currentAdminUid, actorName: currentAdminName,
+      subjectName: subjectName || null, subjectUid: subjectUid || null,
+      oldValue: oldValue || null, newValue: newValue || null,
+      createdAt: serverTimestamp()
+    });
+  }catch(e){ console.warn("Activity log write failed:",e); }
+}
+
+/* AUTH */
+onAuthStateChanged(auth, async (user) => {
+  if(!user){ window.location.href = "index.html"; return; }
+  currentAdminUid = user.uid;
+  try{
+    const snap = await getDoc(doc(db,"admins",user.uid));
+    if(!snap.exists()){ await signOut(auth); window.location.href = "index.html"; return; }
+    const admin = snap.data();
+    currentAdminName = admin.name || "Administrator";
+    const roles = Array.isArray(admin.role) ? admin.role.map(r => String(r).toUpperCase()) : [];
+    isVicePrime = roles.includes("VICE_PRIME");
+
+    if(!isVicePrime){
+      alert("Admin Corridors is restricted to the RC VP.");
+      window.location.href = "admin.html"; return;
+    }
+
+    document.body.style.display = "";
+    await fetchResidents();
+    await loadReports();
+    setupModalListeners();
+  }catch(e){
+    console.error("Auth error:",e);
+    await signOut(auth); window.location.href = "index.html";
+  }
+});
+
+async function fetchResidents(){
+  residentList = [];
+  try{
+    const snap = await getDocs(collection(db,"users"));
+    snap.forEach(d => {
+      const data = d.data();
+      residentList.push({
+        uid: d.id,
+        fullName: `${data.name||''} ${data.surname||''}`.trim() || "Unknown",
+        studentNumber: (data.studentNumber||data.studentNo||"").toString().trim() || "N/A",
+        roomNumber: data.roomNumber || "N/A",
+        corridor: data["corridor number"] || data.corridor || "Unassigned"
+      });
+    });
+    const sel = document.getElementById("escalateSubjectSelect");
+    sel.innerHTML = '<option value="">-- Choose Subject --</option>';
+    residentList.sort((a,b)=>a.fullName.localeCompare(b.fullName)).forEach(r => {
+      const o = document.createElement("option");
+      o.value = r.uid;
+      o.textContent = `${r.fullName} (${r.studentNumber}) - Room ${r.roomNumber}`;
+      sel.appendChild(o);
+    });
+  }catch(e){ console.warn("Resident fetch failed:",e); }
+}
+
+async function loadReports(){
+  try{
+    const snap = await getDocs(collection(db,"corridorReports"));
+    rawReports = [];
+    snap.forEach(d => rawReports.push({ id: d.id, ...d.data() }));
+    rawReports.sort((a,b)=>{
+      const da = a.reportDate?.toDate?.() || new Date(0);
+      const dbb = b.reportDate?.toDate?.() || new Date(0);
+      return dbb - da;
+    });
+    calculateMetrics();
+    renderTable();
+  }catch(e){
+    console.error(e);
+    document.getElementById("reportsTableBody").innerHTML =
+      `<tr><td colspan="7"><div class="state-container" style="color:var(--danger-red);">
+        <h4>Error</h4><p>${escapeHtml(e.message)}</p></div></td></tr>`;
+  }
+}
+
+function calculateMetrics(){
+  let open=0, handled=0, escalated=0;
+  rawReports.forEach(r => {
+    if(r.status === "OPEN") open++;
+    else if(r.status === "HANDLED") handled++;
+    else if(r.status === "ESCALATED") escalated++;
+  });
+  document.getElementById("statTotal").textContent = rawReports.length;
+  document.getElementById("statOpen").textContent = open;
+  document.getElementById("statHandled").textContent = handled;
+  document.getElementById("statEscalated").textContent = escalated;
+}
+
+function reportBadge(status){
+  if(status === "OPEN")      return `<span class="status-badge badge-open">Open</span>`;
+  if(status === "HANDLED")   return `<span class="status-badge badge-handled">Handled</span>`;
+  if(status === "ESCALATED") return `<span class="status-badge badge-escalated">Escalated</span>`;
+  return `<span class="status-badge badge-open">${escapeHtml(status)}</span>`;
+}
+
+function renderTable(){
+  const tb = document.getElementById("reportsTableBody");
+  tb.innerHTML = "";
+  if(rawReports.length === 0){
+    tb.innerHTML = `<tr><td colspan="7"><div class="state-container">
+      <h4>No corridor reports</h4>
+      <p>Reports submitted by Corridor Primes will appear here.</p>
+    </div></td></tr>`;
+    return;
+  }
+  rawReports.forEach(r => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td><div class="resident-meta"><span class="resident-name">${escapeHtml(r.corridor || "?")}</span></div></td>
+      <td>${escapeHtml(r.submittedByName || "Corridor Prime")}</td>
+      <td>${formatDate(r.incidentDate)}</td>
+      <td style="max-width:320px;"><span style="display:-webkit-box;-webkit-line-clamp:2;
+        -webkit-box-orient:vertical;overflow:hidden;" title="${escapeHtml(r.description||'')}">
+        ${escapeHtml(r.description || "")}</span></td>
+      <td>${escapeHtml((r.peopleInvolved || "—").substring(0,60))}</td>
+      <td>${reportBadge(r.status)}</td>
+      <td><button class="btn-action" data-id="${r.id}">Review</button></td>`;
+    tr.querySelector(".btn-action").addEventListener("click", () => openReport(r.id));
+    tb.appendChild(tr);
+  });
+}
+
+/* MODAL */
+function setupModalListeners(){
+  document.getElementById("closeReportBtn").addEventListener("click", closeReport);
+  document.getElementById("reportModal").addEventListener("click", e => {
+    if(e.target.id === "reportModal") closeReport();
+  });
+  document.getElementById("closeEscalateBtn").addEventListener("click", () => {
+    document.getElementById("escalateModal").classList.remove("active");
+  });
+  document.getElementById("cancelEscalateBtn").addEventListener("click", () => {
+    document.getElementById("escalateModal").classList.remove("active");
+  });
+  document.getElementById("escalateModal").addEventListener("click", e => {
+    if(e.target.id === "escalateModal")
+      document.getElementById("escalateModal").classList.remove("active");
+  });
+  document.getElementById("escalateForm").addEventListener("submit", handleEscalateSubmit);
+}
+
+function closeReport(){
+  document.getElementById("reportModal").classList.remove("active");
+  activeReportId = null;
+}
+
+function openReport(id){
+  activeReportId = id;
+  const r = rawReports.find(x => x.id === id);
+  if(!r) return;
+
+  const body = document.getElementById("reportModalBody");
+  const footer = document.getElementById("reportModalFooter");
+
+  body.innerHTML = `
+    <div class="detail-group">
+      <div class="detail-item"><span class="detail-label">Corridor</span>
+        <span class="detail-val">${escapeHtml(r.corridor || "?")}</span></div>
+      <div class="detail-item"><span class="detail-label">Submitted By</span>
+        <span class="detail-val">${escapeHtml(r.submittedByName || "Corridor Prime")}</span></div>
+      <div class="detail-item"><span class="detail-label">Incident Date</span>
+        <span class="detail-val">${formatDate(r.incidentDate)}</span></div>
+      <div class="detail-item"><span class="detail-label">Report Date</span>
+        <span class="detail-val">${formatDate(r.reportDate)}</span></div>
+    </div>
+    <div>
+      <span class="detail-label" style="display:block;margin-bottom:4px;">Incident Description</span>
+      <div class="description-box">${escapeHtml(r.description || "")}</div>
+    </div>
+    ${r.peopleInvolved ? `<div>
+      <span class="detail-label" style="display:block;margin-bottom:4px;">People Involved</span>
+      <div class="description-box">${escapeHtml(r.peopleInvolved)}</div>
+    </div>` : ""}
+    ${r.supportingInfo ? `<div>
+      <span class="detail-label" style="display:block;margin-bottom:4px;">Supporting Information</span>
+      <div class="description-box">${escapeHtml(r.supportingInfo)}</div>
+    </div>` : ""}
+    <div class="detail-group">
+      <div class="detail-item"><span class="detail-label">Status</span>
+        <span class="detail-val">${reportBadge(r.status)}</span></div>
+      ${r.linkedDcCaseId ? `<div class="detail-item"><span class="detail-label">Linked DC Case</span>
+        <span class="detail-val" style="font-family:monospace;color:var(--purple);">${escapeHtml(r.linkedDcCaseId)}</span></div>` : ""}
+    </div>
+  `;
+
+  footer.innerHTML = "";
+  if(r.status === "OPEN"){
+    footer.innerHTML = `
+      <button class="btn-reset" id="reportCloseFooterBtn">Close</button>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn-green" id="markHandledBtn">Mark Handled</button>
+        <button class="btn-purple" id="escalateBtn">Escalate to DC</button>
+      </div>
+    `;
+    document.getElementById("markHandledBtn").addEventListener("click", () => markHandled(id));
+    document.getElementById("escalateBtn").addEventListener("click", () => openEscalate(id));
+  }else{
+    footer.innerHTML = `<button class="btn-reset" id="reportCloseFooterBtn">Close</button>`;
+  }
+  document.getElementById("reportCloseFooterBtn").addEventListener("click", closeReport);
+
+  document.getElementById("reportModal").classList.add("active");
+}
+
+async function markHandled(id){
+  if(!confirm("Mark this corridor report as Handled?")) return;
+  try{
+    const r = rawReports.find(x => x.id === id);
+    await updateDoc(doc(db,"corridorReports",id),{
+      status:"HANDLED", handledBy: currentAdminUid, handledAt: serverTimestamp(), updatedAt: serverTimestamp()
+    });
+    await writeActivity("CORRIDOR_REPORT_HANDLED",
+      `Corridor report from ${r.corridor || "?"} marked handled.`,
+      null, null, "OPEN", "HANDLED");
+    closeReport();
+    await loadReports();
+  }catch(e){
+    console.error(e); alert("Failed to mark handled.");
+  }
+}
+
+function openEscalate(id){
+  activeReportId = id;
+  const r = rawReports.find(x => x.id === id);
+  if(!r) return;
+
+  // Prefill summary with corridor context
+  document.getElementById("escalateSummary").value =
+    `Escalated from corridor report (${r.corridor || "?"}). ${r.description || ""}`.substring(0, 400);
+
+  document.getElementById("escalateModal").classList.add("active");
+}
+
+async function handleEscalateSubmit(e){
+  e.preventDefault();
+  const btn = document.getElementById("submitEscalateBtn");
+  const subjUid = document.getElementById("escalateSubjectSelect").value;
+  const summary = document.getElementById("escalateSummary").value.trim();
+
+  const subject = residentList.find(x => x.uid === subjUid);
+  if(!subject){ alert("Select a subject."); return; }
+
+  btn.disabled = true; btn.textContent = "Escalating...";
+  try{
+    const caseId = `DC-${new Date().getFullYear()}-${Date.now().toString().slice(-6)}`;
+    const caseRef = await addDoc(collection(db,"dcCases"),{
+      caseId,
+      subject:{
+        uid: subject.uid, name: subject.fullName,
+        studentNumber: subject.studentNumber,
+        roomNumber: subject.roomNumber, corridor: subject.corridor
+      },
+      source: "CORRIDOR_REPORT",
+      sourceReportId: activeReportId,
+      createdBy: currentAdminUid,
+      createdAt: serverTimestamp(),
+      status: "OPEN",
+      hearingStatus: "NOT_STARTED",
+      voteStatus: "NOT_STARTED",
+      decision: null,
+      summary
+    });
+
+    await addDoc(collection(db,"dcCases",caseRef.id,"history"),{
+      type:"CASE_CREATED",
+      detail:`Case ${caseId} created from corridor report ${activeReportId}.`,
+      actorUid: currentAdminUid, actorName: currentAdminName, createdAt: serverTimestamp()
+    });
+
+    await updateDoc(doc(db,"corridorReports",activeReportId),{
+      status:"ESCALATED", linkedDcCaseId: caseRef.id, updatedAt: serverTimestamp()
+    });
+
+    await writeActivity("CORRIDOR_REPORT_ESCALATED",
+      `Corridor report escalated to DC case ${caseId}.`,
+      subject.fullName, subject.uid, "OPEN", "ESCALATED");
+
+    document.getElementById("escalateModal").classList.remove("active");
+    alert(`DC Case ${caseId} created.`);
+    closeReport();
+    await loadReports();
+  }catch(e){
+    console.error(e); alert("Failed to escalate. Check permissions.");
+  }finally{
+    btn.disabled = false; btn.textContent = "Escalate to DC";
+  }
+}
+
+document.getElementById("logoutButton").addEventListener("click", async () => {
+  try{ await signOut(auth); window.location.href = "index.html"; }
+  catch(e){ console.error("Logout error:",e); }
+});
+</script>
+</body>
+</html>
