@@ -329,7 +329,7 @@
             const batch = writeBatch(db);
             batch.set(ref, {
                 caseRef: dcMakeRef(), subjectName: d.subjectName, subjectStudentNumber: d.subjectStudentNumber || "",
-                summary: d.summary || "", source: d.source || "MANUAL", sourceReportId: d.sourceReportId || "",
+                summary: d.summary || "", source: d.source || "MANUAL", sourceReportId: d.sourceReportId || "", relatedFineIds: d.relatedFineIds || [],
                 status: "OPEN", voteStatus: "NOT_STARTED", voteRound: 0, decision: "", decisionNote: "",
                 createdByUid: user.uid, createdByName: user.name, createdAt: serverTimestamp(), updatedAt: serverTimestamp()
             });
