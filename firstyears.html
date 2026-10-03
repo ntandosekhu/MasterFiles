@@ -277,6 +277,15 @@
                         </select>
                     </div>
                 </div>
+                <div class="panel">
+                    <h3>Missing Curfew: fine policy</h3>
+                    <p class="sub">An unexcused absence recorded by a mentor automatically creates a fine at the level and amount below. An excused absence never creates a fine. Changes apply to future absences only.</p>
+                    <div class="filter-row" style="margin-bottom:0;">
+                        <div class="field"><label for="cfgCurLevel">Punishment level</label><select id="cfgCurLevel"><option value="LEVEL_1">Level 1 (Minor Offence)</option><option value="LEVEL_2">Level 2 (Moderate Offence)</option><option value="LEVEL_3">Level 3 (Severe Offence)</option></select></div>
+                        <div class="field"><label for="cfgCurAmt">Fine amount (R)</label><input type="text" id="cfgCurAmt" inputmode="decimal" placeholder="e.g. 50"></div>
+                        <button class="btn" id="cfgSaveCur">Save curfew policy</button>
+                    </div>
+                </div>
                 <div class="kpi-grid" id="cKpis"></div>
                 <div class="card-grid" id="cCards"></div>
                 <div class="panel" style="margin-top:24px;">
@@ -291,6 +300,16 @@
                 <div class="filter-row">
                     <div class="field"><label for="tCorridor">Corridor</label><select id="tCorridor"><option value="">All corridors</option></select></div>
                     <div class="field grow"><label for="tSearch">Search theme</label><input type="text" id="tSearch" placeholder="Search by theme or mentor"></div>
+                </div>
+                <div class="panel">
+                    <h3>Missing Theme Discussion: fine policy</h3>
+                    <p class="sub">First Years decides whether missing a theme discussion is currently finable. When it is, a mentor recording an unexcused absence creates a fine automatically. Turning it on is not retroactive.</p>
+                    <div class="filter-row" style="margin-bottom:0;align-items:center;">
+                        <label style="display:flex;gap:8px;align-items:center;font-size:14px;cursor:pointer;"><input type="checkbox" id="cfgTdOn" style="width:auto;"> Missing a Theme Discussion is finable</label>
+                        <div class="field"><label for="cfgTdLevel">Punishment level</label><select id="cfgTdLevel"><option value="LEVEL_1">Level 1 (Minor Offence)</option><option value="LEVEL_2">Level 2 (Moderate Offence)</option><option value="LEVEL_3">Level 3 (Severe Offence)</option></select></div>
+                        <div class="field"><label for="cfgTdAmt">Fine amount (R)</label><input type="text" id="cfgTdAmt" inputmode="decimal" placeholder="e.g. 30"></div>
+                        <button class="btn" id="cfgSaveTd">Save TD policy</button>
+                    </div>
                 </div>
                 <div class="kpi-grid" id="tKpis"></div>
                 <div class="panel">
@@ -335,7 +354,7 @@
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
         import {
             getFirestore, doc, getDoc, getDocs, setDoc, addDoc, updateDoc,
-            collection, query, where, serverTimestamp
+            collection, query, where, limit, serverTimestamp
         } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -386,6 +405,66 @@
         let adminUser = null, adminData = null;
         let curfewRecs = [], themeRecs = [], fcomRecs = [], corridors = [];
 
+
+        /* ================= FINE POLICY (stored in Firestore: firstYearsConfig/current) ================= */
+        let fyCfg = null;
+        const FINE_LABEL = { Active: "Unpaid", Paid: "Paid", Cancelled: "Cancelled" };
+
+        async function loadConfig() {
+            try { const c = await getDoc(doc(db, "firstYearsConfig", "current")); fyCfg = c.exists() ? c.data() : null; }
+            catch (e) { console.error(e); fyCfg = null; }
+            const c = fyCfg || {};
+            $("cfgCurLevel").value = c.missingCurfewLevel || "LEVEL_1"; $("cfgCurAmt").value = c.missingCurfewAmount ?? "";
+            $("cfgTdOn").checked = c.missingTDFineEnabled === true; $("cfgTdLevel").value = c.missingTDLevel || "LEVEL_1"; $("cfgTdAmt").value = c.missingTDAmount ?? "";
+            if (!fyCfg) notify("globalNotice", "info", "The fine policy has not been set up yet. No Missing Curfew or Missing TD fines are created until you save it.");
+        }
+
+        async function saveConfig() {
+            const cur = parseFloat($("cfgCurAmt").value), tdRaw = $("cfgTdAmt").value.trim(), td = tdRaw === "" ? 0 : parseFloat(tdRaw);
+            if (!(cur >= 0)) { notify("globalNotice", "err", "Please enter the Missing Curfew fine amount (0 or more)."); return; }
+            if (!(td >= 0) || ($("cfgTdOn").checked && tdRaw === "")) { notify("globalNotice", "err", "Please enter the Missing TD fine amount (0 or more) before making it finable."); return; }
+            const data = {
+                missingCurfewEnabled: true, missingCurfewLevel: $("cfgCurLevel").value, missingCurfewAmount: cur,
+                missingTDFineEnabled: $("cfgTdOn").checked, missingTDLevel: $("cfgTdLevel").value, missingTDAmount: td,
+                updatedByUid: adminUser.uid, updatedByName: adminData.name || "Administrator", updatedAt: serverTimestamp()
+            };
+            try {
+                await setDoc(doc(db, "firstYearsConfig", "current"), data);
+                await addDoc(collection(db, "activityLogs"), {
+                    category: "FIRST_YEARS", action: "MODIFIED", actorUid: adminUser.uid, actorName: adminData.name || "Administrator", actorType: "ADMIN",
+                    details: `Fine policy saved: Missing Curfew ${data.missingCurfewLevel} R${cur}; Missing TD ${data.missingTDFineEnabled ? "finable" : "not finable"} ${data.missingTDLevel} R${td}`,
+                    timestamp: serverTimestamp()
+                });
+                fyCfg = data;
+                notify("globalNotice", "ok", "Fine policy saved. It applies to future absences.");
+            } catch (e) { console.error(e); notify("globalNotice", "err", "Could not save the policy. " + (e.code === "permission-denied" ? "Permission denied." : e.message)); }
+        }
+        $("cfgSaveCur").addEventListener("click", saveConfig);
+        $("cfgSaveTd").addEventListener("click", saveConfig);
+
+        /* fines linked to one attendance record (targeted query by source id; loaded only when a record is opened) */
+        async function fetchSourceFines(fineType, sourceId) {
+            const res = await getDocs(query(collection(db, "fines"), where("fineType", "==", fineType), where("sourceId", "==", sourceId), limit(80)));
+            const map = {}; res.docs.forEach(d => { map[d.data().userId] = d.data(); });
+            return map;
+        }
+        const fineLine = f => f ? `<b>${FINE_LABEL[f.status] || esc(f.status)}</b> • R${Number(f.amount || 0).toFixed(2)} • ${esc(String(f.infringementLevel || "").replace("LEVEL_", "Level "))}` : "No fine";
+
+        async function loadCurfewFines(rec, box) {
+            try {
+                const map = await fetchSourceFines("MISSING_CURFEW", rec.id);
+                const absent = (rec.entries || []).filter(e => e.status === "ABSENT");
+                box.innerHTML = absent.length ? absent.map(e => `<div>${esc(e.name)} <span class="student-meta">Room ${esc(e.room || "-")}</span>: ${fineLine(map[e.uid])}</div>`).join("") : "No unexcused absences, so no fines.";
+            } catch (e) { console.error(e); box.textContent = "Could not load fines."; }
+        }
+        async function loadTdFines(rec, box) {
+            try {
+                const map = await fetchSourceFines("MISSING_TD", rec.id);
+                const miss = (rec.entries || []).filter(e => !e.attended && !e.excused);
+                box.innerHTML = miss.length ? miss.map(e => `<div>${esc(e.name)}: ${fineLine(map[e.uid])}</div>`).join("") : "No unexcused absences, so no fines.";
+            } catch (e) { console.error(e); box.textContent = "Could not load fines."; }
+        }
+
         const cmpCorr = (a, b) => String(a).localeCompare(String(b), undefined, { numeric: true });
         const pct = (n, d) => d ? Math.round((n / d) * 100) : 0;
         const addDays = (dateStr, n) => { const d = new Date(dateStr + "T00:00:00"); d.setDate(d.getDate() + n); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 10); };
@@ -411,6 +490,7 @@
                 });
 
                 await loadAll();
+                await loadConfig();
                 $("cDate").value = todayStr(); $("cDate").max = todayStr();
                 renderAll();
                 $("loadingState").style.display = "none";
@@ -487,9 +567,13 @@
                         <div class="admin-label">Absent</div>${names("ABSENT")}
                         <div class="admin-label" style="margin-top:8px;">Unmarked</div>${names(null)}
                         <div class="admin-label" style="margin-top:8px;">Excused</div>${names("EXCUSED")}
+                        <div class="admin-label" style="margin-top:8px;">Missing Curfew fines</div><div class="fineBox student-meta">Loading...</div>
                     </div></div>`;
             }).join("") : '<div class="empty" style="grid-column:1/-1;">Nothing matches these filters.</div>';
-            $("cCards").querySelectorAll(".corr-card[data-i]").forEach(card => card.addEventListener("click", () => card.querySelector(".drill").classList.toggle("open")));
+            $("cCards").querySelectorAll(".corr-card[data-i]").forEach(card => card.addEventListener("click", () => {
+                const dr = card.querySelector(".drill"); dr.classList.toggle("open");
+                if (dr.classList.contains("open") && !card.dataset.fines) { card.dataset.fines = "1"; loadCurfewFines(filtered[card.dataset.i].rec, dr.querySelector(".fineBox")); }
+            }));
 
             // seven-day matrix
             const days = Array.from({ length: 7 }, (_, k) => addDays(date, k - 6));
@@ -530,12 +614,13 @@
             $("tList").innerHTML = recs.length ? `<table><thead><tr><th>Date</th><th>Corridor</th><th>Theme</th><th>Mentor</th><th>Attendance</th><th>Status</th></tr></thead><tbody>${recs.map((r, i) => {
                 const rate = pct(r.attendedCount, r.totalFirstYears);
                 const flag = !r.notes ? '<span class="pill warn">No notes</span>' : r.attendedCount === 0 ? '<span class="pill bad">No attendance</span>' : '<span class="pill ok">Recorded</span>';
-                const missed = (r.entries || []).filter(e => !e.attended).map(e => esc(e.name)).join(", ") || "Everyone attended";
+                const missed = (r.entries || []).filter(e => !e.attended).map(e => esc(e.name) + (e.excused ? " (excused)" : "")).join(", ") || "Everyone attended";
                 return `<tr class="clickable" data-i="${i}"><td>${fmtDate(r.date)}</td><td>${esc(r.corridor)}</td><td>${esc(r.theme)}</td><td>${esc(r.mentorName)}</td><td>${r.attendedCount}/${r.totalFirstYears} (${rate}%)</td><td>${flag}</td></tr>
-                <tr class="detail" style="display:none;"><td colspan="6"><div class="admin-label">Discussion information</div><div style="margin-bottom:8px;white-space:pre-wrap;">${esc(r.notes) || "<span class='student-meta'>No notes recorded.</span>"}</div><div class="admin-label">Did not attend</div><div>${missed}</div></td></tr>`;
+                <tr class="detail" style="display:none;"><td colspan="6"><div class="admin-label">Discussion information</div><div style="margin-bottom:8px;white-space:pre-wrap;">${esc(r.notes) || "<span class='student-meta'>No notes recorded.</span>"}</div><div class="admin-label">Did not attend</div><div>${missed}</div><div class="admin-label" style="margin-top:8px;">Fines (missing a TD was ${r.fineEnabled ? "finable" : "not finable"} when submitted)</div><div class="fineBox student-meta">Loading...</div></td></tr>`;
             }).join("")}</tbody></table>` : '<div class="empty">No theme discussions match these filters.</div>';
             $("tList").querySelectorAll("tr.clickable").forEach(tr => tr.addEventListener("click", () => {
                 const d = tr.nextElementSibling; d.style.display = d.style.display === "none" ? "table-row" : "none";
+                if (d.style.display !== "none" && !tr.dataset.fines) { tr.dataset.fines = "1"; loadTdFines(recs[tr.dataset.i], d.querySelector(".fineBox")); }
             }));
         }
         $("tCorridor").addEventListener("change", renderTheme);
