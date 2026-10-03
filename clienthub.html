@@ -406,6 +406,11 @@ body {
     display: none;
 }
 
+/* Hide DC subcommittee section by default */
+#dcSection {
+    display: none;
+}
+
 /* =========================
    RESPONSIVE DESIGN
 ========================= */
@@ -583,7 +588,19 @@ body {
                     <button class="card-button btn-watermark" data-link="corridor.html"><span>Manage Corridor</span></button>
                 </div>
 
-            </div>
+            
+                <div class="service-card watermark-card" style="--card-icon: url('images/corridor.png');" id="corridorsCard">
+                    <div class="card-top">
+                        <span class="card-icon">
+                            <img src="images/corridor.png" alt="Corridors">
+                        </span>
+                        <h3 class="card-title">Corridors</h3>
+                        <p class="card-description">Track your corridor's breakages and report incidents directly to the RC VP.</p>
+                    </div>
+                    <button class="card-button btn-watermark" data-link="corridors.html"><span>Open Corridors</span></button>
+                </div>
+
+</div>
         </div>
 
         <!-- SECRETARY SECTION (CONDITIONAL FOR SECRETARY ROLES) -->
@@ -638,6 +655,25 @@ body {
                         <p class="card-description">See the Community Garden schedule and debate information published by RC ACTS.</p>
                     </div>
                     <button class="card-button btn-watermark" data-link="kovsieacts.html"><span>Open Kovsie Acts</span></button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- DC SUBCOMMITTEE SECTION (CONDITIONAL FOR DISCIPLINARY COMMITTEE HOUSE ROLES) -->
+        <div class="services-group" id="dcSection">
+            <h4 class="section-heading">Disciplinary Committee</h4>
+            <div class="card-grid">
+
+                <div class="service-card watermark-card" style="--card-icon: url('data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20viewBox=%270%200%2024%2024%27%3E%3Cpath%20d=%27M12%201L3%205v6c0%205.55%203.84%2010.74%209%2012%205.16-1.26%209-6.45%209-12V5l-9-4z%27/%3E%3C/svg%3E');">
+                    <div class="card-top">
+                        <span class="card-icon">
+                            <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor" aria-label="DC Subcom"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+                        </span>
+                        <h3 class="card-title">DC Subcom</h3>
+                        <p class="card-description">Track fines due and take part in private disciplinary cases.</p>
+                    </div>
+                    <button class="card-button btn-watermark" data-link="dcsubcom.html"><span>Open DC Subcom</span></button>
                 </div>
 
             </div>
@@ -713,6 +749,7 @@ const leadershipSection = document.getElementById("leadershipSection");
 const secretarySection = document.getElementById("secretarySection");
 const mentorSection = document.getElementById("mentorSection");
 const actsSection = document.getElementById("actsSection");
+const dcSection = document.getElementById("dcSection");
 const logoutButton = document.getElementById("logoutButton");
 
 /* =========================
@@ -831,6 +868,15 @@ onAuthStateChanged(auth, async (user) => {
             actsSection.style.display = "block";
         }
 
+        // Disciplinary Committee members (house roles DISCIPLINARY_COMMITTEE / DC_SECRETARY)
+        const isDcMember = houseRoles.some(role =>
+            typeof role === "string" && (role.toLowerCase().includes("disciplinary") || role.toLowerCase().startsWith("dc"))
+        );
+
+        if (isDcMember) {
+            dcSection.style.display = "block";
+        }
+
         // Reveal dashboard only after all security checks & data loading complete
         loadingState.style.display = "none";
         dashboardContent.style.display = "block";
@@ -844,4 +890,4 @@ onAuthStateChanged(auth, async (user) => {
 </script>
 
 </body>
-</html> 
+</html>
