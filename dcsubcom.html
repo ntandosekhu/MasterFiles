@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Beyers Naude - DC Subcommittee</title>
+    <style>
+        :root {
+            --space-blue-primary: #1D2951;
+            --space-blue-hover: #141C38;
+            --space-blue-light: #EFF3F9;
+            --space-blue-border: #D0DCED;
+            --space-blue-accent: #3B5295;
+            --bg-page: #F4F6F9;
+            --bg-card: #FFFFFF;
+            --text-main: #0F172A;
+            --text-muted: #475569;
+            --text-subtle: #64748B;
+            --danger-red: #DC2626;
+            --danger-red-hover: #B91C1C;
+            --ok-green: #15803D;
+            --ok-bg: #DCFCE7;
+            --warn-amber: #B45309;
+            --warn-bg: #FEF3C7;
+            --bad-bg: #FEE2E2;
+            --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+            --shadow-md: 0 4px 12px rgba(29, 41, 81, 0.08);
+            --shadow-lg: 0 10px 25px rgba(29, 41, 81, 0.12);
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* HEADER */
+        .header {
+            background-color: var(--space-blue-primary);
+            color: #FFFFFF;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            gap: 12px;
+        }
+        .brand { display: flex; flex-direction: column; }
+        .brand h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
+        .brand p { color: #A0B2D6; font-size: 13px; font-weight: 500; letter-spacing: 0.01em; margin-top: 2px; }
+        .header-actions { display: flex; gap: 10px; align-items: center; }
+
+        .logout-button, .back-button {
+            border: none;
+            color: #FFFFFF;
+            padding: 9px 18px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: background-color 0.15s ease, transform 0.1s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .logout-button { background-color: var(--danger-red); }
+        .logout-button:hover { background-color: var(--danger-red-hover); }
+        .back-button { background-color: var(--space-blue-accent); }
+        .back-button:hover { background-color: var(--space-blue-hover); }
+        .logout-button:active, .back-button:active { transform: scale(0.98); }
+
+        /* LAYOUT */
+        .container { max-width: 1200px; width: 100%; margin: 0 auto; padding: 32px 24px 60px; flex: 1; }
+        .dashboard-welcome { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--space-blue-border); }
+        .dashboard-welcome h2 { font-size: 26px; font-weight: 800; color: var(--space-blue-primary); letter-spacing: -0.02em; margin-bottom: 6px; }
+        .dashboard-welcome p { color: var(--text-muted); font-size: 15px; max-width: 800px; }
+
+        .admin-card {
+            background-color: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: 20px 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--space-blue-border);
+            border-left: 5px solid var(--space-blue-primary);
+            box-shadow: var(--shadow-sm);
+        }
+        .admin-label { color: var(--text-subtle); font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+        .admin-name { font-size: 17px; font-weight: 700; color: var(--text-main); }
+        .role-container { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; }
+        .role-badge {
+            display: inline-flex; align-items: center;
+            background-color: var(--space-blue-light); color: var(--space-blue-primary);
+            border: 1px solid var(--space-blue-border);
+            padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;
+        }
+
+        /* TABS */
+        .tab-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; border-bottom: 1px solid var(--space-blue-border); }
+        .tab-button {
+            background: none; border: none; cursor: pointer;
+            padding: 12px 18px; font-size: 14px; font-weight: 700;
+            color: var(--text-subtle); border-bottom: 3px solid transparent; margin-bottom: -1px;
+        }
+        .tab-button:hover { color: var(--space-blue-primary); }
+        .tab-button.active { color: var(--space-blue-primary); border-bottom-color: var(--space-blue-primary); }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        /* PANELS, FORMS, BUTTONS */
+        .panel {
+            background: var(--bg-card); border: 1px solid #E2E8F0; border-radius: var(--radius-lg);
+            padding: 22px; box-shadow: var(--shadow-sm); margin-bottom: 20px; position: relative; overflow: hidden;
+        }
+        .panel::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--space-blue-primary); opacity: .85; }
+        .panel h3 { font-size: 17px; font-weight: 700; color: var(--space-blue-primary); margin-bottom: 4px; letter-spacing: -0.01em; }
+        .panel .sub { color: var(--text-subtle); font-size: 13px; margin-bottom: 16px; }
+
+        .filter-row { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end; margin-bottom: 18px; }
+        .field { display: flex; flex-direction: column; gap: 4px; min-width: 160px; }
+        .field.grow { flex: 1; }
+        .field label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--text-subtle); }
+        input[type=text], input[type=date], select, textarea {
+            font: inherit; font-size: 14px; padding: 9px 12px; border: 1px solid var(--space-blue-border);
+            border-radius: var(--radius-sm); background: #fff; color: var(--text-main); width: 100%;
+        }
+        textarea { min-height: 90px; resize: vertical; }
+        input:focus, select:focus, textarea:focus { outline: 2px solid var(--space-blue-accent); outline-offset: 1px; }
+
+        .btn {
+            border: none; background: var(--space-blue-primary); color: #fff; padding: 10px 18px;
+            border-radius: var(--radius-sm); cursor: pointer; font-size: 13px; font-weight: 700;
+            transition: background-color .15s ease, transform .1s ease;
+        }
+        .btn:hover { background: var(--space-blue-hover); }
+        .btn:active { transform: scale(.98); }
+        .btn:disabled { opacity: .55; cursor: not-allowed; }
+        .btn.secondary { background: var(--space-blue-light); color: var(--space-blue-primary); border: 1px solid var(--space-blue-border); }
+        .btn.secondary:hover { background: var(--space-blue-border); }
+        .btn.danger { background: var(--danger-red); }
+        .btn.danger:hover { background: var(--danger-red-hover); }
+        .btn.small { padding: 6px 12px; font-size: 12px; }
+
+        /* LISTS & TABLES */
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th { text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-subtle); padding: 10px 12px; border-bottom: 2px solid var(--space-blue-border); white-space: nowrap; }
+        td { padding: 10px 12px; border-bottom: 1px solid #F1F5F9; vertical-align: top; }
+        tr.clickable { cursor: pointer; }
+        tr.clickable:hover td { background: var(--space-blue-light); }
+
+        .pill { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; }
+        .pill.ok { background: var(--ok-bg); color: var(--ok-green); }
+        .pill.warn { background: var(--warn-bg); color: var(--warn-amber); }
+        .pill.bad { background: var(--bad-bg); color: var(--danger-red); }
+        .pill.info { background: var(--space-blue-light); color: var(--space-blue-primary); }
+
+        .student-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 10px 0; border-bottom: 1px solid #F1F5F9; }
+        .student-name { font-weight: 600; }
+        .student-meta { color: var(--text-subtle); font-size: 12px; }
+        .seg { display: inline-flex; border: 1px solid var(--space-blue-border); border-radius: var(--radius-sm); overflow: hidden; }
+        .seg button { border: none; background: #fff; padding: 6px 12px; font-size: 12px; font-weight: 700; cursor: pointer; color: var(--text-muted); border-right: 1px solid var(--space-blue-border); }
+        .seg button:last-child { border-right: none; }
+        .seg button.on-present { background: var(--ok-green); color: #fff; }
+        .seg button.on-absent { background: var(--danger-red); color: #fff; }
+        .seg button.on-excused { background: var(--space-blue-accent); color: #fff; }
+
+        .kpi-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-bottom: 20px; }
+        .kpi { background: var(--bg-card); border: 1px solid #E2E8F0; border-radius: var(--radius-md); padding: 16px 18px; box-shadow: var(--shadow-sm); }
+        .kpi .num { font-size: 26px; font-weight: 800; color: var(--space-blue-primary); line-height: 1.1; }
+        .kpi .lbl { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-subtle); font-weight: 600; margin-top: 4px; }
+
+        .card-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+        .corr-card { background: var(--bg-card); border: 1px solid #E2E8F0; border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow-sm); position: relative; overflow: hidden; cursor: pointer; transition: all .2s ease-in-out; }
+        .corr-card::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--space-blue-primary); opacity: .85; }
+        .corr-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+        .corr-card h4 { font-size: 17px; font-weight: 700; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+        .corr-card .mentor { color: var(--text-subtle); font-size: 12px; margin-bottom: 12px; }
+        .stat-line { display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0; border-top: 1px solid #F1F5F9; color: var(--text-muted); }
+        .stat-line b { color: var(--text-main); }
+        .drill { margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--space-blue-border); font-size: 13px; display: none; }
+        .drill.open { display: block; }
+        .drill div { padding: 2px 0; }
+
+        .notice { padding: 12px 16px; border-radius: var(--radius-md); font-size: 14px; margin-bottom: 16px; display: none; }
+        .notice.show { display: block; }
+        .notice.ok { background: var(--ok-bg); color: var(--ok-green); }
+        .notice.err { background: var(--bad-bg); color: var(--danger-red); }
+        .notice.info { background: var(--space-blue-light); color: var(--space-blue-primary); }
+        .empty { color: var(--text-subtle); font-size: 14px; padding: 18px 0; text-align: center; }
+
+        #loadingState, #accessDeniedState { text-align: center; padding: 80px 20px; color: var(--text-muted); }
+        #accessDeniedState { display: none; }
+        #accessDeniedState h2 { color: var(--danger-red); margin-bottom: 8px; }
+        #mainContent { display: none; }
+
+        .footer { text-align: center; color: var(--text-subtle); font-size: 13px; font-weight: 500; padding: 24px 16px; border-top: 1px solid var(--space-blue-border); background: #fff; margin-top: auto; }
+
+        @media (max-width: 1024px) { .card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+        @media (max-width: 640px) {
+            .header { padding: 16px 20px; }
+            .brand h1 { font-size: 18px; }
+            .container { padding: 20px 16px 40px; }
+            .card-grid, .kpi-grid { grid-template-columns: 1fr; }
+            .dashboard-welcome h2 { font-size: 22px; }
+            .field { min-width: 100%; }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="brand">
+            <h1>House Beyers Naude</h1>
+            <p>House of Masters • DC Subcommittee</p>
+        </div>
+        <div class="header-actions">
+            <a class="back-button" href="clienthub.html">&larr; Client Hub</a>
+            <button class="logout-button" id="logoutButton">Log Out</button>
+        </div>
+    </header>
+
+    <main class="container">
+        <div id="loadingState">Loading DC Subcommittee...</div>
+        <div id="accessDeniedState">
+            <h2>Access Restricted</h2>
+            <p>This workspace is only available to Disciplinary Committee members.</p>
+        </div>
+
+        <div id="mainContent">
+            <section class="dashboard-welcome">
+                <h2>DC Subcommittee</h2>
+                <p>Track fines that are due and take part in private disciplinary cases.</p>
+            </section>
+            <section class="admin-card">
+                <div class="admin-label">Signed in as</div>
+                <div id="memberName" class="admin-name">Loading...</div>
+            </section>
+            <div id="globalNotice" class="notice"></div>
+
+            <div class="tab-bar">
+                <button class="tab-button active" data-tab="tabFines">Fines</button>
+                <button class="tab-button" data-tab="tabDc">DC Report</button>
+            </div>
+
+            <div class="tab-panel active" id="tabFines">
+                <div class="kpi-grid" id="fineKpis"></div>
+                <div class="panel">
+                    <h3>Fines</h3>
+                    <p class="sub">Fines only (not warnings). You can mark a fine that is due as paid.</p>
+                    <div class="filter-row">
+                        <button class="btn secondary" id="showDue">Fines due</button>
+                        <button class="btn secondary" id="showPaid">Recently paid</button>
+                    </div>
+                    <div id="fineList" class="table-wrap"></div>
+                </div>
+            </div>
+
+            <div class="tab-panel" id="tabDc"><div id="dcRoot"></div></div>
+        </div>
+    </main>
+
+    <footer class="footer">House Beyers Naude • House of Masters</footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+        import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app-check.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+        import {
+            getFirestore, doc, getDoc, getDocs, setDoc, addDoc, updateDoc,
+            collection, query, where, orderBy, limit, runTransaction, writeBatch, deleteDoc, serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDW6IArj2dZiqbf00Ix3SPPSqvxTKG0GgE",
+            authDomain: "master-files-95f6b.firebaseapp.com",
+            projectId: "master-files-95f6b",
+            storageBucket: "master-files-95f6b.firebasestorage.app",
+            messagingSenderId: "537891510061",
+            appId: "1:537891510061:web:fb46c8d1abae02b9e725a4",
+            measurementId: "G-4GNVR5EBJX"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const appCheck = initializeAppCheck(app, {
+            provider: new ReCaptchaV3Provider('6LfAPn8tAAAAAOa1QF1-NqwCu6aPsGWyOep3mo2s'),
+            isTokenAutoRefreshEnabled: true
+        });
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        /* SHARED HELPERS */
+        const $ = id => document.getElementById(id);
+        const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+        const todayStr = () => { const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 10); };
+        const fmtDate = s => { if (!s) return ""; const [y, m, d] = s.split("-"); return `${d}/${m}/${y}`; };
+        function notify(id, type, msg) { const n = $(id); n.className = "notice show " + type; n.textContent = msg; }
+        function clearNotify(id) { $(id).className = "notice"; }
+
+        function setupTabs() {
+            document.querySelectorAll(".tab-button").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    document.querySelectorAll(".tab-button").forEach(b => b.classList.remove("active"));
+                    document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+                    btn.classList.add("active");
+                    $(btn.dataset.tab).classList.add("active");
+                });
+            });
+        }
+
+        $("logoutButton").addEventListener("click", async () => {
+            try { await signOut(auth); window.location.href = "index.html"; }
+            catch (e) { console.error("Logout Error:", e); alert("Unable to log out. Please check your network connection."); }
+        });
+
+        /* =====================================================================
+           PRIVATE DC CASE WORKSPACE
+           Shared by discipline.html (mode "VP") and dcsubcom.html (mode "MEMBER").
+           IMPORTANT: nothing in this block writes to activityLogs. Every DC action
+           is recorded only in the case's own private "history" subcollection.
+           ===================================================================== */
+        const DC_ACTIVE = ["OPEN", "EVIDENCE", "HEARING", "VOTE", "DECISION"];
+        const DC_LABEL = { OPEN: "Open", EVIDENCE: "Evidence / Review", HEARING: "Hearing", VOTE: "Vote", DECISION: "Decision", CLOSED: "Closed" };
+        const DC_VOTE_LABEL = { NOT_STARTED: "Voting not started", OPEN: "Voting open", CLOSED: "Voting closed", DECIDED: "Decision recorded" };
+        let dcCtx = null, dcCases = [], dcCur = null, dcEvidence = [], dcComments = [], dcVotes = [], dcShowClosed = false;
+
+        const dcQ = id => document.getElementById(id);
+        const dcEsc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+        const dcFmt = ts => ts && ts.toDate ? ts.toDate().toLocaleString("en-ZA", { dateStyle: "short", timeStyle: "short" }) : "-";
+        const dcKind = s => s === "CLOSED" ? "info" : s === "VOTE" ? "warn" : s === "DECISION" ? "ok" : "info";
+        function dcMsg(type, text) { const n = dcQ("dcNotice"); if (!n) return; n.className = "notice show " + type; n.textContent = text; }
+        const dcErr = e => e && e.code === "permission-denied" ? "Permission denied." : ((e && e.message) || "Unknown error");
+
+        function dcMakeRef() {
+            const d = new Date();
+            return `DC-${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, "0")}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
+        }
+        function dcHistory(batch, caseId, action, detail) {
+            batch.set(doc(collection(db, "dcCases", caseId, "history")), {
+                action, detail: detail || "", byUid: dcCtx.uid, byName: dcCtx.name, at: serverTimestamp()
+            });
+        }
+
+        /* creates a case (+ its first history entry) in one batch; "extra" may add more writes (e.g. link a corridor report) */
+        async function dcCreateCase(user, d, extra) {
+            const ref = doc(collection(db, "dcCases"));
+            const batch = writeBatch(db);
+            batch.set(ref, {
+                caseRef: dcMakeRef(), subjectName: d.subjectName, subjectStudentNumber: d.subjectStudentNumber || "",
+                summary: d.summary || "", source: d.source || "MANUAL", sourceReportId: d.sourceReportId || "",
+                status: "OPEN", voteStatus: "NOT_STARTED", voteRound: 0, decision: "", decisionNote: "",
+                createdByUid: user.uid, createdByName: user.name, createdAt: serverTimestamp(), updatedAt: serverTimestamp()
+            });
+            batch.set(doc(collection(db, "dcCases", ref.id, "history")), {
+                action: "CASE_CREATED", detail: d.source === "CORRIDOR_REPORT" ? "Escalated from a corridor report" : "Created by the RC VP",
+                byUid: user.uid, byName: user.name, at: serverTimestamp()
+            });
+            if (extra) extra(batch, ref.id);
+            await batch.commit();
+            return ref.id;
+        }
+
+        function dcInit(ctx) {
+            dcCtx = ctx;
+            ctx.root.innerHTML = `<div id="dcNotice" class="notice"></div><div id="dcList"></div><div id="dcDetail" style="display:none;"></div>`;
+            dcLoadCases();
+            dcQ("dcDetail").addEventListener("click", dcDetailClick);
+            dcQ("dcList").addEventListener("click", dcListClick);
+        }
+
+        /* ---------- LIST (targeted query: active cases only, closed on request) ---------- */
+        async function dcLoadCases() {
+            dcQ("dcList").innerHTML = '<div class="empty">Loading cases...</div>';
+            try {
+                const q = dcShowClosed
+                    ? query(collection(db, "dcCases"), where("status", "==", "CLOSED"), limit(30))
+                    : query(collection(db, "dcCases"), where("status", "in", DC_ACTIVE), limit(50));
+                const res = await getDocs(q);
+                dcCases = res.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+                dcRenderList();
+            } catch (e) { console.error(e); dcQ("dcList").innerHTML = `<div class="empty">Could not load cases. ${dcEsc(dcErr(e))}</div>`; }
+        }
+
+        function dcRenderList() {
+            const vp = dcCtx.mode === "VP";
+            dcQ("dcList").innerHTML = `<div class="panel"><h3>${dcShowClosed ? "Closed" : "Active"} DC Cases</h3>
+                <p class="sub">Private. ${vp ? "Cases you create here become visible to the Disciplinary Committee." : "Cases released to the Disciplinary Committee."}</p>
+                <div class="filter-row">${vp ? '<button class="btn" data-dc="newform">+ New DC Case</button>' : ""}
+                <button class="btn secondary" data-dc="toggleclosed">${dcShowClosed ? "Show active cases" : "Show closed cases"}</button>
+                <button class="btn secondary" data-dc="refresh">Refresh</button></div>
+                <div id="dcNewForm" style="display:none;margin-bottom:16px;">
+                    <div class="filter-row"><div class="field grow"><label>Subject (student name)</label><input type="text" id="dcnName" maxlength="100"></div>
+                    <div class="field"><label>Student number</label><input type="text" id="dcnNo" maxlength="20"></div></div>
+                    <div class="field" style="margin-bottom:12px;"><label>Summary of the incident</label><textarea id="dcnSummary" maxlength="2000"></textarea></div>
+                    <button class="btn" data-dc="create">Create Case</button> <button class="btn secondary" data-dc="cancelnew">Cancel</button></div>
+                <div class="table-wrap">${dcCases.length ? `<table><thead><tr><th>Case</th><th>Subject</th><th>Source</th><th>Status</th><th>Voting</th><th>Created</th><th></th></tr></thead><tbody>${dcCases.map(c => `<tr>
+                    <td><b>${dcEsc(c.caseRef)}</b></td><td>${dcEsc(c.subjectName)}<div class="student-meta">${dcEsc(c.subjectStudentNumber)}</div></td>
+                    <td>${c.source === "CORRIDOR_REPORT" ? "Corridor report" : "Created by RC VP"}</td>
+                    <td><span class="pill ${dcKind(c.status)}">${DC_LABEL[c.status] || c.status}</span></td><td>${DC_VOTE_LABEL[c.voteStatus] || ""}</td>
+                    <td>${dcFmt(c.createdAt)}</td><td><button class="btn small" data-dc="open" data-id="${c.id}">Open</button></td></tr>`).join("")}</tbody></table>` : '<div class="empty">No cases.</div>'}</div></div>`;
+        }
+
+        async function dcListClick(ev) {
+            const b = ev.target.closest("[data-dc]"); if (!b) return;
+            const a = b.dataset.dc;
+            if (a === "open") dcOpenCase(b.dataset.id);
+            else if (a === "refresh") dcLoadCases();
+            else if (a === "toggleclosed") { dcShowClosed = !dcShowClosed; dcLoadCases(); }
+            else if (a === "newform") dcQ("dcNewForm").style.display = "block";
+            else if (a === "cancelnew") dcQ("dcNewForm").style.display = "none";
+            else if (a === "create") {
+                const name = dcQ("dcnName").value.trim();
+                if (!name) { dcMsg("err", "Please enter the subject's name."); return; }
+                b.disabled = true;
+                try {
+                    const id = await dcCreateCase({ uid: dcCtx.uid, name: dcCtx.name },
+                        { subjectName: name, subjectStudentNumber: dcQ("dcnNo").value.trim(), summary: dcQ("dcnSummary").value.trim(), source: "MANUAL" });
+                    dcMsg("ok", "Case created."); await dcLoadCases(); dcOpenCase(id);
+                } catch (e) { console.error(e); dcMsg("err", "Could not create the case. " + dcErr(e)); b.disabled = false; }
+            }
+        }
+
+        /* ---------- CASE FILE (loaded only when a case is opened) ---------- */
+        async function dcOpenCase(id) {
+            dcMsg("info", "Loading case file...");
+            try {
+                const snap = await getDoc(doc(db, "dcCases", id));
+                if (!snap.exists()) { dcMsg("err", "That case no longer exists."); return; }
+                dcCur = { id, ...snap.data() };
+                const [ev, cm] = await Promise.all([
+                    getDocs(query(collection(db, "dcCases", id, "evidence"), limit(100))),
+                    getDocs(query(collection(db, "dcCases", id, "comments"), limit(300)))
+                ]);
+                dcEvidence = ev.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (a.submittedAt?.seconds || 0) - (b.submittedAt?.seconds || 0));
+                dcComments = cm.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (a.createdAt?.seconds || 0) - (b.createdAt?.seconds || 0));
+                dcVotes = [];
+                if (dcCur.voteRound > 0) {
+                    const mine = dcCtx.mode === "MEMBER" && !["CLOSED", "DECIDED"].includes(dcCur.voteStatus);
+                    const vq = mine ? query(collection(db, "dcCases", id, "votes"), where("round", "==", dcCur.voteRound), where("memberUid", "==", dcCtx.uid))
+                                    : query(collection(db, "dcCases", id, "votes"), where("round", "==", dcCur.voteRound));
+                    dcVotes = (await getDocs(vq)).docs.map(d => ({ id: d.id, ...d.data() }));
+                }
+                dcQ("dcNotice").className = "notice";
+                dcQ("dcList").style.display = "none"; dcQ("dcDetail").style.display = "block";
+                dcRenderDetail();
+            } catch (e) { console.error(e); dcMsg("err", "Could not open the case. " + dcErr(e)); }
+        }
+
+        function dcRenderDetail() {
+            const c = dcCur, vp = dcCtx.mode === "VP", closed = c.status === "CLOSED";
+            const tally = ["GUILTY", "NOT_GUILTY"].map(k => [k, dcVotes.filter(v => v.decision === k).length]);
+            const myVote = dcVotes.find(v => v.memberUid === dcCtx.uid);
+            const showVotes = vp || ["CLOSED", "DECIDED"].includes(c.voteStatus);
+
+            const controls = vp && !closed ? `<div class="panel"><h3>RC VP Controls</h3><p class="sub">You decide when the case moves forward. Not every case needs a hearing.</p>
+                <div class="filter-row" style="margin-bottom:0;">
+                <button class="btn secondary" data-dc="stage" data-v="EVIDENCE">Evidence / Review</button>
+                <button class="btn secondary" data-dc="stage" data-v="HEARING">Open Hearing</button>
+                ${c.voteStatus === "OPEN" ? '<button class="btn" data-dc="closevote">Close Vote</button>' : `<button class="btn" data-dc="openvote">${c.voteRound > 0 ? "Open New Vote" : "Open Vote"}</button>`}
+                <button class="btn secondary" data-dc="decide">Record Decision</button>
+                <button class="btn danger" data-dc="closecase">Close Case</button></div>
+                <div id="dcDecideBox" style="display:none;margin-top:14px;"><div class="filter-row"><div class="field"><label>Decision</label><select id="dcDecision"><option value="GUILTY">Guilty</option><option value="NOT_GUILTY">Not Guilty</option></select></div>
+                <div class="field grow"><label>Decision note</label><input type="text" id="dcDecisionNote" maxlength="500"></div><button class="btn" data-dc="savedecision">Save Decision</button></div></div></div>` : "";
+
+            const evHtml = dcEvidence.length ? dcEvidence.map((e, i) => {
+                const cms = dcComments.filter(x => x.evidenceId === e.id);
+                return `<div class="student-row" style="display:block;"><div><b>Evidence #${i + 1}: ${dcEsc(e.title)}</b> <span class="pill info">${dcEsc(e.type)}</span></div>
+                    <div class="student-meta">Submitted by ${dcEsc(e.submittedByName)} • ${dcFmt(e.submittedAt)}</div>
+                    <div style="white-space:pre-wrap;margin:6px 0;">${dcEsc(e.content)}</div>
+                    <div style="border-left:3px solid var(--space-blue-border);padding-left:12px;margin-left:4px;">${cms.map(m => `<div style="margin-bottom:6px;"><span class="student-meta">${dcEsc(m.authorName)} • ${dcFmt(m.createdAt)}</span><div style="white-space:pre-wrap;">${dcEsc(m.text)}</div></div>`).join("") || '<div class="student-meta">No comments yet.</div>'}
+                    ${closed ? "" : `<div class="filter-row" style="margin:8px 0 0;"><div class="field grow"><input type="text" id="cm_${e.id}" maxlength="1000" placeholder="Add a comment on this evidence"></div><button class="btn small" data-dc="comment" data-id="${e.id}">Comment</button></div>`}</div></div>`;
+            }).join("") : '<div class="empty">No evidence has been added yet.</div>';
+
+            let votePanel = "";
+            if (c.voteRound > 0 || c.voteStatus === "OPEN") {
+                votePanel = `<div class="panel"><h3>Vote ${c.voteRound ? "(round " + c.voteRound + ")" : ""}</h3><p class="sub">${DC_VOTE_LABEL[c.voteStatus]}</p>`;
+                if (!vp && c.voteStatus === "OPEN") {
+                    votePanel += myVote ? `<div>You voted <b>${myVote.decision === "GUILTY" ? "Guilty" : "Not Guilty"}</b>.<div class="student-meta" style="white-space:pre-wrap;">${dcEsc(myVote.motivation)}</div><div class="student-meta">Votes cannot be changed.</div></div>`
+                        : `<div class="filter-row"><label style="display:flex;gap:6px;align-items:center;"><input type="radio" name="dcVoteChoice" value="GUILTY" style="width:auto;"> Guilty</label>
+                           <label style="display:flex;gap:6px;align-items:center;"><input type="radio" name="dcVoteChoice" value="NOT_GUILTY" style="width:auto;"> Not Guilty</label></div>
+                           <div class="field" style="margin-bottom:12px;"><label>Motivation (required)</label><textarea id="dcMotivation" maxlength="1000"></textarea></div><button class="btn" data-dc="vote">Submit Vote</button>`;
+                } else if (showVotes) {
+                    votePanel += `<div style="margin-bottom:8px;"><b>Guilty: ${tally[0][1]}</b> • <b>Not Guilty: ${tally[1][1]}</b></div>` +
+                        (dcVotes.map(v => `<div class="student-row" style="display:block;"><b>${dcEsc(v.memberName)}</b>: ${v.decision === "GUILTY" ? "Guilty" : "Not Guilty"}<div class="student-meta" style="white-space:pre-wrap;">${dcEsc(v.motivation)}</div></div>`).join("") || '<div class="student-meta">No votes submitted yet.</div>');
+                } else votePanel += '<div class="student-meta">Results are shown once the RC VP closes the vote.</div>';
+                votePanel += "</div>";
+            }
+
+            dcQ("dcDetail").innerHTML = `<div style="margin-bottom:12px;"><button class="btn secondary" data-dc="back">&larr; All cases</button></div>
+                <div class="panel"><h3>${dcEsc(c.caseRef)} • ${dcEsc(c.subjectName)}</h3>
+                <p class="sub">${dcEsc(c.subjectStudentNumber)} • Created by ${dcEsc(c.createdByName)} on ${dcFmt(c.createdAt)} • ${c.source === "CORRIDOR_REPORT" ? "From a corridor report" : "Created by the RC VP"}</p>
+                <div style="margin-bottom:10px;"><span class="pill ${dcKind(c.status)}">${DC_LABEL[c.status]}</span> <span class="pill info">${DC_VOTE_LABEL[c.voteStatus]}</span>
+                ${c.decision ? `<span class="pill ${c.decision === "GUILTY" ? "bad" : "ok"}">Decision: ${c.decision === "GUILTY" ? "Guilty" : "Not Guilty"}</span>` : ""}</div>
+                <div style="white-space:pre-wrap;">${dcEsc(c.summary) || '<span class="student-meta">No summary.</span>'}</div>
+                ${c.decisionNote ? `<div class="student-meta" style="margin-top:8px;">Decision note: ${dcEsc(c.decisionNote)}</div>` : ""}</div>
+                ${controls}
+                <div class="panel"><h3>Evidence</h3><p class="sub">Evidence cannot be edited once added. Comments belong to the evidence item they sit under.</p>${evHtml}
+                ${closed ? "" : `<div style="margin-top:16px;border-top:1px dashed var(--space-blue-border);padding-top:14px;"><div class="admin-label" style="margin-bottom:8px;">Add evidence</div>
+                <div class="filter-row"><div class="field"><label>Type</label><select id="dcEvType"><option value="STATEMENT">Statement</option><option value="DOCUMENT">Document / reference</option><option value="RECORD">Record</option><option value="NOTE">Note</option></select></div>
+                <div class="field grow"><label>Title</label><input type="text" id="dcEvTitle" maxlength="120"></div></div>
+                <div class="field" style="margin-bottom:12px;"><label>Content or reference (text only)</label><textarea id="dcEvContent" maxlength="3000"></textarea></div>
+                <button class="btn" data-dc="addevidence">Add Evidence</button></div>`}</div>
+                ${votePanel}
+                <div class="panel"><h3>Case History</h3><p class="sub">Private history of this case. It is separate from the Activity Log.</p>
+                <button class="btn secondary small" data-dc="history">Load history</button><div id="dcHistory" style="margin-top:12px;"></div></div>`;
+        }
+
+        async function dcBatchAct(fn, okMsg) {
+            const batch = writeBatch(db);
+            fn(batch);
+            try { await batch.commit(); await dcOpenCase(dcCur.id); dcMsg("ok", okMsg); }
+            catch (e) { console.error(e); dcMsg("err", "That did not work. " + dcErr(e)); }
+        }
+        const dcCaseRef = () => doc(db, "dcCases", dcCur.id);
+
+        async function dcDetailClick(ev) {
+            const b = ev.target.closest("[data-dc]"); if (!b) return;
+            const a = b.dataset.dc, c = dcCur;
+            if (a === "back") { dcQ("dcDetail").style.display = "none"; dcQ("dcList").style.display = "block"; dcLoadCases(); return; }
+            if (a === "history") {
+                try {
+                    const res = await getDocs(query(collection(db, "dcCases", c.id, "history"), limit(100)));
+                    const rows = res.docs.map(d => d.data()).sort((x, y) => (y.at?.seconds || 0) - (x.at?.seconds || 0));
+                    dcQ("dcHistory").innerHTML = rows.map(h => `<div class="student-row"><div><b>${dcEsc(h.action.replace(/_/g, " "))}</b><div class="student-meta">${dcEsc(h.detail)}</div></div><div class="student-meta">${dcEsc(h.byName)} • ${dcFmt(h.at)}</div></div>`).join("") || '<div class="empty">No history.</div>';
+                } catch (e) { dcMsg("err", "Could not load history. " + dcErr(e)); }
+                return;
+            }
+            if (a === "decide") { dcQ("dcDecideBox").style.display = "block"; return; }
+
+            // ----- RC VP actions (each writes the change + a private history entry together) -----
+            if (a === "stage") { const v = b.dataset.v; await dcBatchAct(bt => { bt.update(dcCaseRef(), { status: v, updatedAt: serverTimestamp() }); dcHistory(bt, c.id, "STAGE_CHANGED", "Moved to " + DC_LABEL[v]); }, "Case moved to " + DC_LABEL[v] + "."); }
+            else if (a === "openvote") { const r = (c.voteRound || 0) + 1; await dcBatchAct(bt => { bt.update(dcCaseRef(), { status: "VOTE", voteStatus: "OPEN", voteRound: r, updatedAt: serverTimestamp() }); dcHistory(bt, c.id, "VOTE_OPENED", "Vote round " + r); }, "Voting is now open."); }
+            else if (a === "closevote") { await dcBatchAct(bt => { bt.update(dcCaseRef(), { status: "DECISION", voteStatus: "CLOSED", updatedAt: serverTimestamp() }); dcHistory(bt, c.id, "VOTE_CLOSED", "Vote round " + c.voteRound); }, "Voting closed."); }
+            else if (a === "savedecision") {
+                const d = dcQ("dcDecision").value, n = dcQ("dcDecisionNote").value.trim();
+                await dcBatchAct(bt => { bt.update(dcCaseRef(), { status: "DECISION", voteStatus: "DECIDED", decision: d, decisionNote: n, decidedAt: serverTimestamp(), updatedAt: serverTimestamp() }); dcHistory(bt, c.id, "DECISION_RECORDED", d === "GUILTY" ? "Guilty" : "Not Guilty"); }, "Decision recorded.");
+            }
+            else if (a === "closecase") { if (!confirm("Close this case? Evidence, comments and votes can no longer be added.")) return; await dcBatchAct(bt => { bt.update(dcCaseRef(), { status: "CLOSED", updatedAt: serverTimestamp() }); dcHistory(bt, c.id, "CASE_CLOSED", ""); }, "Case closed."); }
+
+            // ----- evidence / comments / votes (VP and committee members) -----
+            else if (a === "addevidence") {
+                const title = dcQ("dcEvTitle").value.trim(), content = dcQ("dcEvContent").value.trim();
+                if (!title) { dcMsg("err", "Please give the evidence a title."); return; }
+                await dcBatchAct(bt => {
+                    bt.set(doc(collection(db, "dcCases", c.id, "evidence")), { type: dcQ("dcEvType").value, title, content, submittedByUid: dcCtx.uid, submittedByName: dcCtx.name, submittedAt: serverTimestamp() });
+                    dcHistory(bt, c.id, "EVIDENCE_ADDED", title);
+                }, "Evidence added.");
+            }
+            else if (a === "comment") {
+                const input = dcQ("cm_" + b.dataset.id), text = input.value.trim();
+                if (!text) return;
+                await dcBatchAct(bt => {
+                    bt.set(doc(collection(db, "dcCases", c.id, "comments")), { evidenceId: b.dataset.id, text, authorUid: dcCtx.uid, authorName: dcCtx.name, createdAt: serverTimestamp() });
+                    dcHistory(bt, c.id, "EVIDENCE_COMMENTED", "");
+                }, "Comment added.");
+            }
+            else if (a === "vote") {
+                const choice = document.querySelector('input[name="dcVoteChoice"]:checked'), motivation = dcQ("dcMotivation").value.trim();
+                if (!choice) { dcMsg("err", "Please choose Guilty or Not Guilty."); return; }
+                if (!motivation) { dcMsg("err", "Please give a motivation for your vote."); return; }
+                if (!confirm("Submit your vote? It cannot be changed.")) return;
+                await dcBatchAct(bt => {
+                    bt.set(doc(db, "dcCases", c.id, "votes", `${c.voteRound}_${dcCtx.uid}`), { round: c.voteRound, memberUid: dcCtx.uid, memberName: dcCtx.name, decision: choice.value, motivation, submittedAt: serverTimestamp() });
+                    dcHistory(bt, c.id, "VOTE_SUBMITTED", "Vote round " + c.voteRound);   // the decision itself is not logged here
+                }, "Your vote has been recorded.");
+            }
+        }
+
+        setupTabs();
+
+        let me = null, myName = "Member", fines = [], fineMode = "Active", dcStarted = false;
+        const money = n => "R" + Number(n || 0).toFixed(2);
+        const finDate = f => f.dateIssued && f.dateIssued.toDate ? f.dateIssued.toDate().toLocaleDateString("en-ZA") : "-";
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) { window.location.href = "index.html"; return; }
+            try {
+                const snap = await getDoc(doc(db, "users", user.uid));
+                const data = snap.exists() ? snap.data() : null;
+                const roles = data && Array.isArray(data.houseRoles) ? data.houseRoles : [];
+                // same pattern as Secretary / Mentors / Kovsie Acts: a house role on users/{uid}
+                const ok = roles.some(r => typeof r === "string" && (r.toLowerCase().includes("disciplinary") || r.toLowerCase().startsWith("dc")));
+                if (!ok) { $("loadingState").style.display = "none"; $("accessDeniedState").style.display = "block"; return; }
+                me = user; myName = data.name || data.fullName || user.displayName || "Member";
+                $("memberName").textContent = myName;
+                $("loadingState").style.display = "none";
+                $("mainContent").style.display = "block";
+                loadFines();                                   // Fines overview only; DC cases wait for the tab
+            } catch (e) { console.error(e); $("loadingState").textContent = "Something went wrong. Please try again."; }
+        });
+
+        document.querySelector('[data-tab="tabDc"]').addEventListener("click", () => {
+            if (dcStarted) return; dcStarted = true;
+            dcInit({ mode: "MEMBER", uid: me.uid, name: myName, root: $("dcRoot") });
+        });
+
+        async function loadFines() {
+            try {
+                // type + status are both equality filters, so no composite index is needed
+                const res = await getDocs(query(collection(db, "fines"), where("type", "==", "FINE"), where("status", "==", fineMode), limit(100)));
+                fines = res.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (b.dateIssued?.seconds || 0) - (a.dateIssued?.seconds || 0));
+                const total = fines.reduce((a, f) => a + Number(f.amount || 0), 0);
+                $("fineKpis").innerHTML = fineMode === "Active"
+                    ? [[fines.length, "Fines due"], [money(total), "Total outstanding"]].map(([n, l]) => `<div class="kpi"><div class="num">${n}</div><div class="lbl">${l}</div></div>`).join("")
+                    : [[fines.length, "Recently paid (shown)"], [money(total), "Amount"]].map(([n, l]) => `<div class="kpi"><div class="num">${n}</div><div class="lbl">${l}</div></div>`).join("");
+                $("fineList").innerHTML = fines.length ? `<table><thead><tr><th>Resident</th><th>Room / Corridor</th><th>Offence</th><th>Amount</th><th>Issued</th><th>Status</th><th></th></tr></thead><tbody>${fines.map(f => `<tr>
+                    <td><b>${esc(f.residentName)}</b><div class="student-meta">${esc(f.studentNumber)}</div></td><td>${esc(f.roomNumber)} / ${esc(f.corridor)}</td>
+                    <td style="max-width:280px;">${esc(f.reason)}<div class="student-meta">${esc(f.infringementLevel || "")}</div></td><td>${money(f.amount)}</td><td>${finDate(f)}</td>
+                    <td>${fineMode === "Active" ? '<span class="pill warn">Due</span>' : '<span class="pill ok">Paid</span>'}</td>
+                    <td>${fineMode === "Active" ? `<button class="btn small" data-pay="${f.id}">Mark paid</button>` : ""}</td></tr>`).join("")}</tbody></table>`
+                    : `<div class="empty">${fineMode === "Active" ? "No fines are currently due." : "No paid fines to show."}</div>`;
+                $("fineList").querySelectorAll("button[data-pay]").forEach(b => b.addEventListener("click", () => markPaid(b.dataset.pay, b)));
+            } catch (e) {
+                console.error(e);
+                $("fineList").innerHTML = `<div class="empty">Could not load fines. ${esc(e.code === "permission-denied" ? "Permission denied." : e.message)}</div>`;
+            }
+        }
+        $("showDue").addEventListener("click", () => { fineMode = "Active"; loadFines(); });
+        $("showPaid").addEventListener("click", () => { fineMode = "Paid"; loadFines(); });
+
+        async function markPaid(id, btn) {
+            const f = fines.find(x => x.id === id); if (!f) return;
+            if (!confirm(`Mark ${f.residentName}'s fine of ${money(f.amount)} as PAID?`)) return;
+            btn.disabled = true;
+            try {
+                const batch = writeBatch(db);
+                batch.update(doc(db, "fines", id), { status: "Paid", paid: true, datePaid: serverTimestamp() });
+                // ordinary administrative activity -> the normal Activity Log
+                batch.set(doc(collection(db, "activityLogs")), {
+                    category: "FINES", action: "MODIFIED", actorUid: me.uid, actorName: myName, actorRole: "DISCIPLINARY_COMMITTEE", actorType: "HOUSEMATE",
+                    subjectName: f.residentName || "", subjectStudentNumber: f.studentNumber || "", recordId: id,
+                    details: "Fine payment status changed: Due → Paid", timestamp: serverTimestamp()
+                });
+                await batch.commit();
+                notify("globalNotice", "ok", "Fine marked as paid.");
+                loadFines();
+            } catch (e) { console.error(e); notify("globalNotice", "err", "Could not update the fine. " + (e.code === "permission-denied" ? "Permission denied." : e.message)); btn.disabled = false; }
+        }
+    </script>
+</body>
+</html>
