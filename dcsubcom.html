@@ -261,10 +261,17 @@
                 <div class="kpi-grid" id="fineKpis"></div>
                 <div class="panel">
                     <h3>Fines</h3>
-                    <p class="sub">Fines only (not warnings). You can mark a fine that is due as paid.</p>
+                    <p class="sub">All fines (not warnings), including automatic Missing Curfew and Missing Theme Discussion fines. You can mark a fine as paid, or correct a payment marked by mistake.</p>
                     <div class="filter-row">
-                        <button class="btn secondary" id="showDue">Fines due</button>
-                        <button class="btn secondary" id="showPaid">Recently paid</button>
+                        <div class="field"><label for="fType">Fine type</label>
+                            <select id="fType">
+                                <option value="">All types</option>
+                                <option value="MISSING_CURFEW">Missing Curfew</option>
+                                <option value="MISSING_TD">Missing Theme Discussion</option>
+                                <option value="OTHER">Other / manually issued</option>
+                            </select></div>
+                        <button class="btn secondary" id="showDue">Unpaid</button>
+                        <button class="btn secondary" id="showPaid">Paid</button>
                     </div>
                     <div id="fineList" class="table-wrap"></div>
                 </div>
@@ -361,7 +368,7 @@
             const batch = writeBatch(db);
             batch.set(ref, {
                 caseRef: dcMakeRef(), subjectName: d.subjectName, subjectStudentNumber: d.subjectStudentNumber || "",
-                summary: d.summary || "", source: d.source || "MANUAL", sourceReportId: d.sourceReportId || "",
+                summary: d.summary || "", source: d.source || "MANUAL", sourceReportId: d.sourceReportId || "", relatedFineIds: d.relatedFineIds || [],
                 status: "OPEN", voteStatus: "NOT_STARTED", voteRound: 0, decision: "", decisionNote: "",
                 createdByUid: user.uid, createdByName: user.name, createdAt: serverTimestamp(), updatedAt: serverTimestamp()
             });
@@ -404,7 +411,8 @@
                 <button class="btn secondary" data-dc="refresh">Refresh</button></div>
                 <div id="dcNewForm" style="display:none;margin-bottom:16px;">
                     <div class="filter-row"><div class="field grow"><label>Subject (student name)</label><input type="text" id="dcnName" maxlength="100"></div>
-                    <div class="field"><label>Student number</label><input type="text" id="dcnNo" maxlength="20"></div></div>
+                    <div class="field"><label>Student number</label><input type="text" id="dcnNo" maxlength="20"></div>
+                    <div class="field grow"><label>Related fine ID(s), optional</label><input type="text" id="dcnFines" maxlength="300" placeholder="Fine ID, separated by commas"></div></div>
                     <div class="field" style="margin-bottom:12px;"><label>Summary of the incident</label><textarea id="dcnSummary" maxlength="2000"></textarea></div>
                     <button class="btn" data-dc="create">Create Case</button> <button class="btn secondary" data-dc="cancelnew">Cancel</button></div>
                 <div class="table-wrap">${dcCases.length ? `<table><thead><tr><th>Case</th><th>Subject</th><th>Source</th><th>Status</th><th>Voting</th><th>Created</th><th></th></tr></thead><tbody>${dcCases.map(c => `<tr>
@@ -428,7 +436,7 @@
                 b.disabled = true;
                 try {
                     const id = await dcCreateCase({ uid: dcCtx.uid, name: dcCtx.name },
-                        { subjectName: name, subjectStudentNumber: dcQ("dcnNo").value.trim(), summary: dcQ("dcnSummary").value.trim(), source: "MANUAL" });
+                        { subjectName: name, subjectStudentNumber: dcQ("dcnNo").value.trim(), summary: dcQ("dcnSummary").value.trim(), source: "MANUAL", relatedFineIds: dcQ("dcnFines").value.split(",").map(x => x.trim()).filter(Boolean).slice(0, 10) });
                     dcMsg("ok", "Case created."); await dcLoadCases(); dcOpenCase(id);
                 } catch (e) { console.error(e); dcMsg("err", "Could not create the case. " + dcErr(e)); b.disabled = false; }
             }
@@ -507,6 +515,7 @@
                 ${c.decision ? `<span class="pill ${c.decision === "GUILTY" ? "bad" : "ok"}">Decision: ${c.decision === "GUILTY" ? "Guilty" : "Not Guilty"}</span>` : ""}</div>
                 <div style="white-space:pre-wrap;">${dcEsc(c.summary) || '<span class="student-meta">No summary.</span>'}</div>
                 ${c.decisionNote ? `<div class="student-meta" style="margin-top:8px;">Decision note: ${dcEsc(c.decisionNote)}</div>` : ""}</div>
+                ${(c.relatedFineIds || []).length ? `<div class="panel"><h3>Related fines</h3><p class="sub">References to existing fine records (the fines themselves are not copied).</p>${c.relatedFineIds.map(f => `<div class="student-meta" style="font-family:monospace;">${dcEsc(f)}</div>`).join("")}</div>` : ""}
                 ${controls}
                 <div class="panel"><h3>Evidence</h3><p class="sub">Evidence cannot be edited once added. Comments belong to the evidence item they sit under.</p>${evHtml}
                 ${closed ? "" : `<div style="margin-top:16px;border-top:1px dashed var(--space-blue-border);padding-top:14px;"><div class="admin-label" style="margin-bottom:8px;">Add evidence</div>
@@ -585,6 +594,9 @@
         let me = null, myName = "Member", fines = [], fineMode = "Active", dcStarted = false;
         const money = n => "R" + Number(n || 0).toFixed(2);
         const finDate = f => f.dateIssued && f.dateIssued.toDate ? f.dateIssued.toDate().toLocaleDateString("en-ZA") : "-";
+        const TYPE_LABEL = { MISSING_CURFEW: "Missing Curfew", MISSING_TD: "Missing Theme Discussion" };
+        const SRC_LABEL = { CURFEW: "Curfew", THEME_DISCUSSION: "Theme Discussion" };
+        const lvl = l => String(l || "").replace("LEVEL_", "Level ");
 
         onAuthStateChanged(auth, async (user) => {
             if (!user) { window.location.href = "index.html"; return; }
@@ -609,21 +621,30 @@
         });
 
         async function loadFines() {
+            const t = $("fType").value;
+            // equality filters only (type, status, fineType), so no composite index is needed
+            const cons = [where("type", "==", "FINE"), where("status", "==", fineMode)];
+            if (t === "MISSING_CURFEW" || t === "MISSING_TD") cons.push(where("fineType", "==", t));
+            cons.push(limit(100));
             try {
-                // type + status are both equality filters, so no composite index is needed
-                const res = await getDocs(query(collection(db, "fines"), where("type", "==", "FINE"), where("status", "==", fineMode), limit(100)));
-                fines = res.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (b.dateIssued?.seconds || 0) - (a.dateIssued?.seconds || 0));
+                const res = await getDocs(query(collection(db, "fines"), ...cons));
+                fines = res.docs.map(d => ({ id: d.id, ...d.data() }))
+                    .filter(f => t !== "OTHER" || !f.fineType)
+                    .sort((a, b) => (b.dateIssued?.seconds || 0) - (a.dateIssued?.seconds || 0));
                 const total = fines.reduce((a, f) => a + Number(f.amount || 0), 0);
-                $("fineKpis").innerHTML = fineMode === "Active"
-                    ? [[fines.length, "Fines due"], [money(total), "Total outstanding"]].map(([n, l]) => `<div class="kpi"><div class="num">${n}</div><div class="lbl">${l}</div></div>`).join("")
-                    : [[fines.length, "Recently paid (shown)"], [money(total), "Amount"]].map(([n, l]) => `<div class="kpi"><div class="num">${n}</div><div class="lbl">${l}</div></div>`).join("");
-                $("fineList").innerHTML = fines.length ? `<table><thead><tr><th>Resident</th><th>Room / Corridor</th><th>Offence</th><th>Amount</th><th>Issued</th><th>Status</th><th></th></tr></thead><tbody>${fines.map(f => `<tr>
+                const label = fineMode === "Active" ? "Unpaid fines" : "Paid fines (shown)";
+                $("fineKpis").innerHTML = [[fines.length, label], [money(total), fineMode === "Active" ? "Total outstanding" : "Amount"]]
+                    .map(([n, l]) => `<div class="kpi"><div class="num">${n}</div><div class="lbl">${l}</div></div>`).join("");
+                $("fineList").innerHTML = fines.length ? `<table><thead><tr><th>Student</th><th>Room / Corridor</th><th>Fine type</th><th>Source</th><th>Level / Amount</th><th>Date</th><th>Status</th><th></th></tr></thead><tbody>${fines.map(f => `<tr>
                     <td><b>${esc(f.residentName)}</b><div class="student-meta">${esc(f.studentNumber)}</div></td><td>${esc(f.roomNumber)} / ${esc(f.corridor)}</td>
-                    <td style="max-width:280px;">${esc(f.reason)}<div class="student-meta">${esc(f.infringementLevel || "")}</div></td><td>${money(f.amount)}</td><td>${finDate(f)}</td>
-                    <td>${fineMode === "Active" ? '<span class="pill warn">Due</span>' : '<span class="pill ok">Paid</span>'}</td>
-                    <td>${fineMode === "Active" ? `<button class="btn small" data-pay="${f.id}">Mark paid</button>` : ""}</td></tr>`).join("")}</tbody></table>`
-                    : `<div class="empty">${fineMode === "Active" ? "No fines are currently due." : "No paid fines to show."}</div>`;
-                $("fineList").querySelectorAll("button[data-pay]").forEach(b => b.addEventListener("click", () => markPaid(b.dataset.pay, b)));
+                    <td>${f.fineType ? `<span class="pill info">${TYPE_LABEL[f.fineType] || esc(f.fineType)}</span>` : "Other"}<div class="student-meta" style="max-width:240px;">${esc(f.reason)}</div></td>
+                    <td>${f.sourceType ? (SRC_LABEL[f.sourceType] || esc(f.sourceType)) : "Manual"}</td>
+                    <td>${esc(lvl(f.infringementLevel))}<div><b>${money(f.amount)}</b></div></td><td>${finDate(f)}</td>
+                    <td>${fineMode === "Active" ? '<span class="pill warn">Unpaid</span>' : '<span class="pill ok">Paid</span>'}</td>
+                    <td>${fineMode === "Active" ? `<button class="btn small" data-pay="${f.id}">Mark paid</button>` : `<button class="btn secondary small" data-unpay="${f.id}">Mark unpaid</button>`}</td></tr>`).join("")}</tbody></table>`
+                    : `<div class="empty">${fineMode === "Active" ? "No unpaid fines match this filter." : "No paid fines match this filter."}</div>`;
+                $("fineList").querySelectorAll("button[data-pay]").forEach(b => b.addEventListener("click", () => changePayment(b.dataset.pay, true, b)));
+                $("fineList").querySelectorAll("button[data-unpay]").forEach(b => b.addEventListener("click", () => changePayment(b.dataset.unpay, false, b)));
             } catch (e) {
                 console.error(e);
                 $("fineList").innerHTML = `<div class="empty">Could not load fines. ${esc(e.code === "permission-denied" ? "Permission denied." : e.message)}</div>`;
@@ -631,22 +652,24 @@
         }
         $("showDue").addEventListener("click", () => { fineMode = "Active"; loadFines(); });
         $("showPaid").addEventListener("click", () => { fineMode = "Paid"; loadFines(); });
+        $("fType").addEventListener("change", loadFines);
 
-        async function markPaid(id, btn) {
+        async function changePayment(id, toPaid, btn) {
             const f = fines.find(x => x.id === id); if (!f) return;
-            if (!confirm(`Mark ${f.residentName}'s fine of ${money(f.amount)} as PAID?`)) return;
+            const what = f.fineType ? TYPE_LABEL[f.fineType] : "Fine";
+            if (!confirm(`Mark ${f.residentName}'s ${what.toLowerCase()} fine of ${money(f.amount)} as ${toPaid ? "PAID" : "UNPAID"}?`)) return;
             btn.disabled = true;
             try {
                 const batch = writeBatch(db);
-                batch.update(doc(db, "fines", id), { status: "Paid", paid: true, datePaid: serverTimestamp() });
+                batch.update(doc(db, "fines", id), toPaid ? { status: "Paid", paid: true, datePaid: serverTimestamp() } : { status: "Active", paid: false, datePaid: null });
                 // ordinary administrative activity -> the normal Activity Log
                 batch.set(doc(collection(db, "activityLogs")), {
                     category: "FINES", action: "MODIFIED", actorUid: me.uid, actorName: myName, actorRole: "DISCIPLINARY_COMMITTEE", actorType: "HOUSEMATE",
                     subjectName: f.residentName || "", subjectStudentNumber: f.studentNumber || "", recordId: id,
-                    details: "Fine payment status changed: Due → Paid", timestamp: serverTimestamp()
+                    details: `Fine payment status changed (${what}): ${toPaid ? "Unpaid → Paid" : "Paid → Unpaid"}`, timestamp: serverTimestamp()
                 });
                 await batch.commit();
-                notify("globalNotice", "ok", "Fine marked as paid.");
+                notify("globalNotice", "ok", toPaid ? "Fine marked as paid." : "Fine marked as unpaid.");
                 loadFines();
             } catch (e) { console.error(e); notify("globalNotice", "err", "Could not update the fine. " + (e.code === "permission-denied" ? "Permission denied." : e.message)); btn.disabled = false; }
         }
