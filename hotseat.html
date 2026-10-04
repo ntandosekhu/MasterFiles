@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Beyers Naude - Hotseat</title>
+    <style>
+        :root {
+            --space-blue-primary: #1D2951;
+            --space-blue-hover: #141C38;
+            --space-blue-light: #EFF3F9;
+            --space-blue-border: #D0DCED;
+            --space-blue-accent: #3B5295;
+            --bg-page: #F4F6F9;
+            --bg-card: #FFFFFF;
+            --text-main: #0F172A;
+            --text-muted: #475569;
+            --text-subtle: #64748B;
+            --danger-red: #DC2626;
+            --danger-red-hover: #B91C1C;
+            --ok-green: #15803D;
+            --ok-bg: #DCFCE7;
+            --warn-amber: #B45309;
+            --warn-bg: #FEF3C7;
+            --bad-bg: #FEE2E2;
+            --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+            --shadow-md: 0 4px 12px rgba(29, 41, 81, 0.08);
+            --shadow-lg: 0 10px 25px rgba(29, 41, 81, 0.12);
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* HEADER */
+        .header {
+            background-color: var(--space-blue-primary);
+            color: #FFFFFF;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            gap: 12px;
+        }
+        .brand { display: flex; flex-direction: column; }
+        .brand h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
+        .brand p { color: #A0B2D6; font-size: 13px; font-weight: 500; letter-spacing: 0.01em; margin-top: 2px; }
+        .header-actions { display: flex; gap: 10px; align-items: center; }
+
+        .logout-button, .back-button {
+            border: none;
+            color: #FFFFFF;
+            padding: 9px 18px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: background-color 0.15s ease, transform 0.1s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .logout-button { background-color: var(--danger-red); }
+        .logout-button:hover { background-color: var(--danger-red-hover); }
+        .back-button { background-color: var(--space-blue-accent); }
+        .back-button:hover { background-color: var(--space-blue-hover); }
+        .logout-button:active, .back-button:active { transform: scale(0.98); }
+
+        /* LAYOUT */
+        .container { max-width: 1200px; width: 100%; margin: 0 auto; padding: 32px 24px 60px; flex: 1; }
+        .dashboard-welcome { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--space-blue-border); }
+        .dashboard-welcome h2 { font-size: 26px; font-weight: 800; color: var(--space-blue-primary); letter-spacing: -0.02em; margin-bottom: 6px; }
+        .dashboard-welcome p { color: var(--text-muted); font-size: 15px; max-width: 800px; }
+
+        .admin-card {
+            background-color: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: 20px 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--space-blue-border);
+            border-left: 5px solid var(--space-blue-primary);
+            box-shadow: var(--shadow-sm);
+        }
+        .admin-label { color: var(--text-subtle); font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+        .admin-name { font-size: 17px; font-weight: 700; color: var(--text-main); }
+        .role-container { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; }
+        .role-badge {
+            display: inline-flex; align-items: center;
+            background-color: var(--space-blue-light); color: var(--space-blue-primary);
+            border: 1px solid var(--space-blue-border);
+            padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;
+        }
+
+        /* TABS */
+        .tab-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; border-bottom: 1px solid var(--space-blue-border); }
+        .tab-button {
+            background: none; border: none; cursor: pointer;
+            padding: 12px 18px; font-size: 14px; font-weight: 700;
+            color: var(--text-subtle); border-bottom: 3px solid transparent; margin-bottom: -1px;
+        }
+        .tab-button:hover { color: var(--space-blue-primary); }
+        .tab-button.active { color: var(--space-blue-primary); border-bottom-color: var(--space-blue-primary); }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        /* PANELS, FORMS, BUTTONS */
+        .panel {
+            background: var(--bg-card); border: 1px solid #E2E8F0; border-radius: var(--radius-lg);
+            padding: 22px; box-shadow: var(--shadow-sm); margin-bottom: 20px; position: relative; overflow: hidden;
+        }
+        .panel::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--space-blue-primary); opacity: .85; }
+        .panel h3 { font-size: 17px; font-weight: 700; color: var(--space-blue-primary); margin-bottom: 4px; letter-spacing: -0.01em; }
+        .panel .sub { color: var(--text-subtle); font-size: 13px; margin-bottom: 16px; }
+
+        .filter-row { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end; margin-bottom: 18px; }
+        .field { display: flex; flex-direction: column; gap: 4px; min-width: 160px; }
+        .field.grow { flex: 1; }
+        .field label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--text-subtle); }
+        input[type=text], input[type=date], select, textarea {
+            font: inherit; font-size: 14px; padding: 9px 12px; border: 1px solid var(--space-blue-border);
+            border-radius: var(--radius-sm); background: #fff; color: var(--text-main); width: 100%;
+        }
+        textarea { min-height: 90px; resize: vertical; }
+        input:focus, select:focus, textarea:focus { outline: 2px solid var(--space-blue-accent); outline-offset: 1px; }
+
+        .btn {
+            border: none; background: var(--space-blue-primary); color: #fff; padding: 10px 18px;
+            border-radius: var(--radius-sm); cursor: pointer; font-size: 13px; font-weight: 700;
+            transition: background-color .15s ease, transform .1s ease;
+        }
+        .btn:hover { background: var(--space-blue-hover); }
+        .btn:active { transform: scale(.98); }
+        .btn:disabled { opacity: .55; cursor: not-allowed; }
+        .btn.secondary { background: var(--space-blue-light); color: var(--space-blue-primary); border: 1px solid var(--space-blue-border); }
+        .btn.secondary:hover { background: var(--space-blue-border); }
+        .btn.danger { background: var(--danger-red); }
+        .btn.danger:hover { background: var(--danger-red-hover); }
+        .btn.small { padding: 6px 12px; font-size: 12px; }
+
+        /* LISTS & TABLES */
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th { text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-subtle); padding: 10px 12px; border-bottom: 2px solid var(--space-blue-border); white-space: nowrap; }
+        td { padding: 10px 12px; border-bottom: 1px solid #F1F5F9; vertical-align: top; }
+        tr.clickable { cursor: pointer; }
+        tr.clickable:hover td { background: var(--space-blue-light); }
+
+        .pill { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; }
+        .pill.ok { background: var(--ok-bg); color: var(--ok-green); }
+        .pill.warn { background: var(--warn-bg); color: var(--warn-amber); }
+        .pill.bad { background: var(--bad-bg); color: var(--danger-red); }
+        .pill.info { background: var(--space-blue-light); color: var(--space-blue-primary); }
+
+        .student-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 10px 0; border-bottom: 1px solid #F1F5F9; }
+        .student-name { font-weight: 600; }
+        .student-meta { color: var(--text-subtle); font-size: 12px; }
+        .seg { display: inline-flex; border: 1px solid var(--space-blue-border); border-radius: var(--radius-sm); overflow: hidden; }
+        .seg button { border: none; background: #fff; padding: 6px 12px; font-size: 12px; font-weight: 700; cursor: pointer; color: var(--text-muted); border-right: 1px solid var(--space-blue-border); }
+        .seg button:last-child { border-right: none; }
+        .seg button.on-present { background: var(--ok-green); color: #fff; }
+        .seg button.on-absent { background: var(--danger-red); color: #fff; }
+        .seg button.on-excused { background: var(--space-blue-accent); color: #fff; }
+
+        .kpi-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-bottom: 20px; }
+        .kpi { background: var(--bg-card); border: 1px solid #E2E8F0; border-radius: var(--radius-md); padding: 16px 18px; box-shadow: var(--shadow-sm); }
+        .kpi .num { font-size: 26px; font-weight: 800; color: var(--space-blue-primary); line-height: 1.1; }
+        .kpi .lbl { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-subtle); font-weight: 600; margin-top: 4px; }
+
+        .card-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+        .corr-card { background: var(--bg-card); border: 1px solid #E2E8F0; border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow-sm); position: relative; overflow: hidden; cursor: pointer; transition: all .2s ease-in-out; }
+        .corr-card::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--space-blue-primary); opacity: .85; }
+        .corr-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+        .corr-card h4 { font-size: 17px; font-weight: 700; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+        .corr-card .mentor { color: var(--text-subtle); font-size: 12px; margin-bottom: 12px; }
+        .stat-line { display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0; border-top: 1px solid #F1F5F9; color: var(--text-muted); }
+        .stat-line b { color: var(--text-main); }
+        .drill { margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--space-blue-border); font-size: 13px; display: none; }
+        .drill.open { display: block; }
+        .drill div { padding: 2px 0; }
+
+        .notice { padding: 12px 16px; border-radius: var(--radius-md); font-size: 14px; margin-bottom: 16px; display: none; }
+        .notice.show { display: block; }
+        .notice.ok { background: var(--ok-bg); color: var(--ok-green); }
+        .notice.err { background: var(--bad-bg); color: var(--danger-red); }
+        .notice.info { background: var(--space-blue-light); color: var(--space-blue-primary); }
+        .empty { color: var(--text-subtle); font-size: 14px; padding: 18px 0; text-align: center; }
+
+        #loadingState, #accessDeniedState { text-align: center; padding: 80px 20px; color: var(--text-muted); }
+        #accessDeniedState { display: none; }
+        #accessDeniedState h2 { color: var(--danger-red); margin-bottom: 8px; }
+        #mainContent { display: none; }
+
+        .footer { text-align: center; color: var(--text-subtle); font-size: 13px; font-weight: 500; padding: 24px 16px; border-top: 1px solid var(--space-blue-border); background: #fff; margin-top: auto; }
+
+        @media (max-width: 1024px) { .card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+        @media (max-width: 640px) {
+            .header { padding: 16px 20px; }
+            .brand h1 { font-size: 18px; }
+            .container { padding: 20px 16px 40px; }
+            .card-grid, .kpi-grid { grid-template-columns: 1fr; }
+            .dashboard-welcome h2 { font-size: 22px; }
+            .field { min-width: 100%; }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="brand">
+            <h1>House Beyers Naude</h1>
+            <p>House of Masters • Hotseat</p>
+        </div>
+        <div class="header-actions">
+            <a class="back-button" href="admin.html">&larr; Administration</a>
+            <button class="logout-button" id="logoutButton">Log Out</button>
+        </div>
+    </header>
+
+    <main class="container">
+        <div id="loadingState">Loading Hotseat...</div>
+        <div id="accessDeniedState">
+            <h2>Access Restricted</h2>
+            <p>Hotseat is only available to the Residence Prime.</p>
+        </div>
+
+        <div id="mainContent">
+            <section class="dashboard-welcome">
+                <h2>Hotseat</h2>
+                <p>RC accountability: what has the house asked of each RC member, who is responsible, and how long it has been waiting. This is an index over work in the other modules. It is information for you, and it does not take any action.</p>
+            </section>
+
+            <div id="globalNotice" class="notice"></div>
+
+            <div class="kpi-grid" id="kpis"></div>
+
+            <div class="panel">
+                <h3>RC Team</h3>
+                <p class="sub">Select a member to see their outstanding items. Workload (received), what is still outstanding, what is late, and how quickly work gets completed are shown separately on purpose.</p>
+                <div id="teamTable" class="table-wrap"></div>
+                <div class="student-meta" style="margin-top:10px;" id="indexNote"></div>
+            </div>
+
+            <div class="panel" id="detailPanel" style="display:none;">
+                <h3 id="detailTitle"></h3>
+                <p class="sub" id="detailSub"></p>
+                <div class="filter-row">
+                    <button class="btn secondary small" id="detailDone">Show recently completed</button>
+                    <button class="btn secondary small" id="detailClose">Close</button>
+                </div>
+                <div id="detailBody"></div>
+            </div>
+
+            <div class="panel">
+                <h3>Response Windows</h3>
+                <p class="sub">How many hours a request may wait before it counts as late. A change applies to items that arrive after it is saved. Until you save, the defaults shown are used.</p>
+                <div id="cfgNotice" class="notice"></div>
+                <div class="filter-row" id="cfgRow"></div>
+                <button class="btn" id="cfgSave">Save response windows</button>
+            </div>
+
+            <div class="panel">
+                <h3>Index Health</h3>
+                <p class="sub">Hotseat is rebuilt automatically every Monday. If the numbers ever look wrong, rebuild it now from the source records.</p>
+                <div id="rebuildNotice" class="notice"></div>
+                <button class="btn secondary" id="rebuildBtn">Rebuild index now</button>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">House Beyers Naude • House of Masters</footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app.js";
+        import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-app-check.js";
+        import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-functions.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-auth.js";
+        import {
+            getFirestore, doc, getDoc, getDocs, setDoc, addDoc, updateDoc,
+            collection, query, where, orderBy, limit, runTransaction, writeBatch, deleteDoc, serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/12.17.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDW6IArj2dZiqbf00Ix3SPPSqvxTKG0GgE",
+            authDomain: "master-files-95f6b.firebaseapp.com",
+            projectId: "master-files-95f6b",
+            storageBucket: "master-files-95f6b.firebasestorage.app",
+            messagingSenderId: "537891510061",
+            appId: "1:537891510061:web:fb46c8d1abae02b9e725a4",
+            measurementId: "G-4GNVR5EBJX"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const appCheck = initializeAppCheck(app, {
+            provider: new ReCaptchaV3Provider('6LfAPn8tAAAAAOa1QF1-NqwCu6aPsGWyOep3mo2s'),
+            isTokenAutoRefreshEnabled: true
+        });
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        /* SHARED HELPERS */
+        const $ = id => document.getElementById(id);
+        const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+        const todayStr = () => { const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 10); };
+        const fmtDate = s => { if (!s) return ""; const [y, m, d] = s.split("-"); return `${d}/${m}/${y}`; };
+        function notify(id, type, msg) { const n = $(id); n.className = "notice show " + type; n.textContent = msg; }
+        function clearNotify(id) { $(id).className = "notice"; }
+
+        function setupTabs() {
+            document.querySelectorAll(".tab-button").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    document.querySelectorAll(".tab-button").forEach(b => b.classList.remove("active"));
+                    document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+                    btn.classList.add("active");
+                    $(btn.dataset.tab).classList.add("active");
+                });
+            });
+        }
+
+        $("logoutButton").addEventListener("click", async () => {
+            try { await signOut(auth); window.location.href = "index.html"; }
+            catch (e) { console.error("Logout Error:", e); alert("Unable to log out. Please check your network connection."); }
+        });
+
+        const DAY = 86400000, HOUR = 3600000;
+        const ROLE_LABEL = { RC_BREAKAGES: "RC Breakages", SECRETARY: "Secretary", ACADEMICS: "Academics", VICE_PRIME: "RC VP", RC_ACTS: "RC ACTS",
+            RC_FIRST_YEARS: "RC First Years", RC_DISCIPLINE: "RC Discipline", RC_SPORTS: "RC Sports", RC_SOCIAL: "RC Social", RC_CULTURE: "RC Culture",
+            RC_ACADEMICS: "RC Academics", RC_HOUSE: "RC House" };
+        const INTEGRATED = new Set(["RC_BREAKAGES", "SECRETARY", "VICE_PRIME", "RC_ACTS", "RC_FIRST_YEARS"]);
+        const SOURCE_LABEL = { BREAKAGES: "Breakages", BOOKINGS: "Bookings", DISCIPLINE_ADMIN: "Discipline", CORRIDORS: "Corridors", ACTS: "ACTS", FCOM: "FCOM" };
+        const DEFAULT_HOURS = { BREAKAGES: 72, BOOKINGS: 48, DISCIPLINE_ADMIN: 72, CORRIDORS: 48, ACTS: 72, FCOM: 168 };
+        const labelOf = r => ROLE_LABEL[r] || String(r).replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+
+        let adminUser = null, members = {}, holders = {}, detailRole = null;
+
+        const age = ms => { const d = Math.floor(ms / DAY); if (d >= 1) return d + "d"; const h = Math.floor(ms / HOUR); return h >= 1 ? h + "h" : "<1h"; };
+        const errMsg = e => e && e.code === "permission-denied" ? "Permission denied." : (e && e.message) || "Unknown error";
+        function deny() { $("loadingState").style.display = "none"; $("accessDeniedState").style.display = "block"; }
+
+        /* Prime check: admins/{uid}, ACTIVE, role PRIME (the Firestore rules enforce the same, independently) */
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) { window.location.href = "index.html"; return; }
+            try {
+                const snap = await getDoc(doc(db, "admins", user.uid));
+                if (!snap.exists()) { await signOut(auth); window.location.href = "index.html"; return; }
+                const d = snap.data(), roles = (Array.isArray(d.role) ? d.role : [d.role]).map(r => String(r).toUpperCase());
+                if (d.status !== "ACTIVE" || !roles.includes("PRIME")) { deny(); return; }
+                adminUser = user;
+                $("loadingState").style.display = "none"; $("mainContent").style.display = "block";
+                await Promise.all([loadMembers(), loadConfig()]);
+            } catch (e) { console.error(e); deny(); }
+        });
+
+        /* ONE list read of the small per-role summaries + one list of admins (for the names). No source records are read. */
+        async function loadMembers() {
+            try {
+                const [mSnap, aSnap] = await Promise.all([getDocs(collection(db, "hotseatMembers")), getDocs(collection(db, "admins"))]);
+                members = {}; mSnap.docs.forEach(d => { members[d.id] = d.data(); });
+                holders = {};
+                aSnap.docs.forEach(d => {
+                    const a = d.data(); if (a.status !== "ACTIVE") return;
+                    (Array.isArray(a.role) ? a.role : [a.role]).forEach(r => { if (r && r !== "PRIME") (holders[r] = holders[r] || []).push(a.name || "Member"); });
+                });
+                render();
+            } catch (e) { console.error(e); $("teamTable").innerHTML = `<div class="empty">Could not load Hotseat. ${esc(errMsg(e))}</div>`; }
+        }
+
+        function stats(m, now) {
+            const open = Object.values((m && m.open) || {}), done = Object.values((m && m.done) || {});
+            const start = new Date(); start.setHours(0, 0, 0, 0); const endDay = start.getTime() + DAY;
+            const week = now - 7 * DAY, month = now - 30 * DAY;
+            const resp = done.filter(x => x.x >= month).map(x => x.x - x.c);
+            return {
+                open: open.length,
+                overdue: open.filter(o => o.d < now).length,                         // lateness is calculated here, never stored
+                dueToday: open.filter(o => o.d >= now && o.d < endDay).length,
+                oldest: open.length ? now - Math.min(...open.map(o => o.c)) : null,
+                received7: open.filter(o => o.c >= week).length + done.filter(x => x.c >= week).length,
+                completed7: done.filter(x => x.x >= week).length,
+                avgResp: resp.length ? resp.reduce((a, b) => a + b, 0) / resp.length : null
+            };
+        }
+
+        function render() {
+            const now = Date.now();
+            const roleKeys = [...new Set([...Object.keys(holders), ...Object.keys(members)])]
+                .filter(r => r === "SECRETARY" || r === "ACADEMICS" || r === "VICE_PRIME" || r.startsWith("RC_"));
+            const rows = roleKeys.map(r => ({ role: r, st: stats(members[r], now) }))
+                .sort((a, b) => b.st.overdue - a.st.overdue || (b.st.oldest || 0) - (a.st.oldest || 0) || labelOf(a.role).localeCompare(labelOf(b.role)));
+            const sum = k => rows.reduce((a, r) => a + r.st[k], 0);
+            $("kpis").innerHTML = [[sum("open"), "Outstanding"], [sum("overdue"), "Overdue"], [sum("dueToday"), "Due today"], [sum("completed7"), "Completed (last 7 days)"]]
+                .map(([n, l]) => `<div class="kpi"><div class="num">${n}</div><div class="lbl">${l}</div></div>`).join("");
+            $("teamTable").innerHTML = rows.length ? `<table><thead><tr><th>RC member</th><th>Outstanding</th><th>Due today</th><th>Overdue</th><th>Oldest</th><th>Received (7d)</th><th>Completed (7d)</th><th>Avg response (30d)</th></tr></thead><tbody>${rows.map(({ role, st }) => `
+                <tr class="clickable" data-role="${esc(role)}"><td><b>${esc(labelOf(role))}</b><div class="student-meta">${esc((holders[role] || []).join(", ") || "No active holder")}${INTEGRATED.has(role) ? "" : " • no module feeds Hotseat yet"}</div></td>
+                <td>${st.open}</td><td>${st.dueToday}</td><td>${st.overdue ? `<span class="pill bad">${st.overdue}</span>` : "0"}</td><td>${st.oldest === null ? "-" : age(st.oldest)}</td>
+                <td>${st.received7}</td><td>${st.completed7}</td><td>${st.avgResp === null ? "-" : age(st.avgResp)}</td></tr>`).join("")}</tbody></table>` : '<div class="empty">No RC members found.</div>';
+            $("teamTable").querySelectorAll("tr.clickable").forEach(tr => tr.addEventListener("click", () => openMember(tr.dataset.role, false)));
+            const updated = Object.values(members).map(m => m.updatedAt && m.updatedAt.toMillis ? m.updatedAt.toMillis() : 0).reduce((a, b) => Math.max(a, b), 0);
+            $("indexNote").textContent = Object.keys(members).length ? `Index last updated ${updated ? new Date(updated).toLocaleString("en-ZA") : "recently"}. Sources indexed: Breakages, Bookings awaiting confirmation, Disputed fines, Corridor reports, ACTS requests, FCOM suggestions.` : "Nothing has been indexed yet. Items appear as work arrives in the modules above, or use Rebuild index now.";
+        }
+
+        /* member drill-down: ONLY that role's items are queried (equality filters, no index needed) */
+        async function openMember(role, completed) {
+            detailRole = role; $("detailPanel").style.display = "block";
+            $("detailTitle").textContent = labelOf(role); $("detailSub").textContent = completed ? "Recently completed items" : "Outstanding items, most urgent first";
+            $("detailBody").innerHTML = '<div class="empty">Loading...</div>';
+            try {
+                const res = await getDocs(query(collection(db, "hotseatItems"), where("assignedRole", "==", role), where("state", "==", completed ? "COMPLETED" : "OUTSTANDING"), limit(completed ? 40 : 100)));
+                const items = res.docs.map(d => ({ id: d.id, ...d.data() }));
+                const now = Date.now(), start = new Date(); start.setHours(0, 0, 0, 0); const endDay = start.getTime() + DAY;
+                const row = (i, tail) => `<div class="student-row"><div><b>${esc(i.title)}</b><div class="student-meta">${esc(SOURCE_LABEL[i.sourceType] || i.sourceType)} • waiting ${age(now - i.createdAtMs)}</div></div>
+                    <div style="display:flex;gap:12px;align-items:center;">${tail}<a class="btn secondary small" style="text-decoration:none;" href="${esc(i.page)}">Open source</a></div></div>`;
+                if (completed) {
+                    items.sort((a, b) => b.completedAtMs - a.completedAtMs);
+                    $("detailBody").innerHTML = items.length ? items.map(i => row(i, `<span class="pill ${i.completedAtMs <= i.dueAtMs ? "ok" : "warn"}">${i.completedAtMs <= i.dueAtMs ? "On time" : "Late"} • done in ${age(i.completedAtMs - i.createdAtMs)}</span>`)).join("") : '<div class="empty">No completed items in the last 60 days.</div>';
+                    return;
+                }
+                items.sort((a, b) => a.dueAtMs - b.dueAtMs);
+                const groups = [["Overdue", items.filter(i => i.dueAtMs < now), i => `<span class="pill bad">${age(now - i.dueAtMs)} overdue</span>`],
+                                ["Due today", items.filter(i => i.dueAtMs >= now && i.dueAtMs < endDay), i => `<span class="pill warn">due in ${age(i.dueAtMs - now)}</span>`],
+                                ["Upcoming", items.filter(i => i.dueAtMs >= endDay), i => `<span class="pill info">due in ${age(i.dueAtMs - now)}</span>`]];
+                $("detailBody").innerHTML = items.length ? groups.filter(g => g[1].length).map(g => `<div class="admin-label" style="margin:14px 0 4px;">${g[0]} (${g[1].length})</div>${g[1].map(i => row(i, g[2](i))).join("")}`).join("") : '<div class="empty">Nothing outstanding.</div>';
+            } catch (e) { console.error(e); $("detailBody").innerHTML = `<div class="empty">Could not load items. ${esc(errMsg(e))}</div>`; }
+        }
+        $("detailDone").addEventListener("click", () => detailRole && openMember(detailRole, true));
+        $("detailClose").addEventListener("click", () => { $("detailPanel").style.display = "none"; detailRole = null; });
+
+        /* response windows */
+        async function loadConfig() {
+            let hours = { ...DEFAULT_HOURS };
+            try { const c = await getDoc(doc(db, "hotseatConfig", "rules")); if (c.exists() && c.data().hours) hours = { ...hours, ...c.data().hours }; } catch (e) { console.error(e); }
+            $("cfgRow").innerHTML = Object.keys(DEFAULT_HOURS).map(k => `<div class="field" style="min-width:130px;"><label for="cfg_${k}">${SOURCE_LABEL[k]} (hours)</label><input type="text" id="cfg_${k}" inputmode="numeric" value="${esc(hours[k])}"></div>`).join("");
+        }
+        $("cfgSave").addEventListener("click", async () => {
+            const hours = {};
+            for (const k of Object.keys(DEFAULT_HOURS)) {
+                const n = Number($("cfg_" + k).value);
+                if (!(n > 0 && n <= 1440)) { notify("cfgNotice", "err", `${SOURCE_LABEL[k]}: enter a number of hours between 1 and 1440.`); return; }
+                hours[k] = n;
+            }
+            try { await setDoc(doc(db, "hotseatConfig", "rules"), { hours, updatedByUid: adminUser.uid, updatedAt: serverTimestamp() }); notify("cfgNotice", "ok", "Saved. This applies to items that arrive from now on."); }
+            catch (e) { console.error(e); notify("cfgNotice", "err", "Could not save. " + errMsg(e)); }
+        });
+
+        /* rebuild (runs on the server and re-checks that you are the Prime) */
+        $("rebuildBtn").addEventListener("click", async () => {
+            if (!confirm("Rebuild the Hotseat index from the source records now?")) return;
+            const btn = $("rebuildBtn"); btn.disabled = true; notify("rebuildNotice", "info", "Rebuilding...");
+            try {
+                const out = await httpsCallable(getFunctions(app), "hotseatRebuild")();
+                notify("rebuildNotice", "ok", `Rebuilt: ${out.data.outstanding} outstanding item(s) across ${out.data.roles} role(s).`);
+                await loadMembers();
+            } catch (e) { console.error(e); notify("rebuildNotice", "err", "Could not rebuild. The Cloud Functions may not be deployed yet. " + (e.message || "")); }
+            finally { btn.disabled = false; }
+        });
+    </script>
+</body>
+</html>
