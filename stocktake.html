@@ -3,91 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Master Files - Sports & First Aid Stocktake</title>
+    <title>House Beyers Naude - Stocktake</title>
 
     <style>
+        /* MASTER FILES DESIGN TOKENS */
         :root {
-            --primary: #1d2951;
-            --primary-hover: #151f3d;
-            --primary-light: #3b82f6;
-            --background-dark: #0b1329;
-            --card-bg: #ffffff;
-            --text-dark: #0f172a;
-            --text-muted: #64748b;
-            --border-color: #e2e8f0;
-            --error-color: #dc2626;
-            --error-bg: #fef2f2;
-            --error-border: #fecaca;
-            --success-color: #166534;
-            --success-bg: #f0fdf4;
-            --success-border: #bbf7d0;
-            --warning-color: #d97706;
-            --warning-bg: #fffbeb;
-            --warning-border: #fde68a;
+            --primary: #1D2951;
+            --primary-hover: #141C38;
+            --primary-light: #3B5295;
+            --space-blue-light: #EFF3F9;
+            --space-blue-border: #D0DCED;
+            --bg-page: #F4F6F9;
+            --card-bg: #FFFFFF;
+            --text-dark: #0F172A;
+            --text-muted: #64748B;
+            --border-color: #E2E8F0;
+            --error-color: #DC2626;
+            --error-bg: #FEE2E2;
+            --success-color: #15803D;
+            --success-bg: #DCFCE7;
+            --warning-color: #B45309;
+            --warning-bg: #FEF3C7;
+            --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+            --shadow-md: 0 4px 12px rgba(29, 41, 81, 0.08);
+            --shadow-lg: 0 10px 25px rgba(29, 41, 81, 0.12);
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             min-height: 100vh;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background: radial-gradient(circle at 80% 20%, #1e3a8a 0%, #0f172a 50%, var(--background-dark) 100%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 32px 20px;
+            background-color: var(--bg-page);
             color: var(--text-dark);
             line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
         }
 
-        .container {
-            width: 100%;
-            max-width: 1100px;
-        }
+        .loading-state { text-align: center; padding: 80px 20px; color: var(--text-muted); font-size: 16px; font-weight: 600; }
 
-        /* Header Navigation */
-        .app-header {
-            width: 100%;
+        /* HEADER */
+        .header {
+            background-color: var(--primary);
+            color: #FFFFFF;
+            padding: 16px 32px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 24px;
-            color: #ffffff;
-        }
-
-        .app-header h1 {
-            font-size: 24px;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-        }
-
-        .app-header p {
-            font-size: 13px;
-            color: #94a3b8;
-        }
-
-        .main-card {
-            width: 100%;
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 32px 28px;
-            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.1);
-        }
-
-        /* Navigation Tabs */
-        .tab-nav {
-            display: flex;
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: 0;
+            z-index: 100;
             gap: 12px;
-            border-bottom: 2px solid var(--border-color);
-            margin-bottom: 24px;
         }
+        .brand { display: flex; flex-direction: column; }
+        .brand h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
+        .brand p { color: #A0B2D6; font-size: 13px; font-weight: 500; letter-spacing: 0.01em; margin-top: 2px; }
+        .back-button {
+            background-color: var(--primary-light);
+            color: #FFFFFF;
+            padding: 9px 18px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background-color 0.15s ease, transform 0.1s ease;
+        }
+        .back-button:hover { background-color: var(--primary-hover); }
+        .back-button:active { transform: scale(0.98); }
 
+        /* LAYOUT */
+        .container { max-width: 1200px; width: 100%; margin: 0 auto; padding: 32px 24px 60px; }
+        .dashboard-welcome { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--space-blue-border); }
+        .dashboard-welcome h2 { font-size: 26px; font-weight: 800; color: var(--primary); letter-spacing: -0.02em; margin-bottom: 6px; }
+        .dashboard-welcome p { color: #475569; font-size: 15px; max-width: 800px; }
+        .main-card { width: 100%; }
+
+        .footer { text-align: center; color: var(--text-muted); font-size: 13px; font-weight: 500; padding: 24px 16px; border-top: 1px solid var(--space-blue-border); background: #fff; }
+
+        /* TABS */
+        .tab-nav { display: flex; gap: 8px; flex-wrap: wrap; border-bottom: 1px solid var(--space-blue-border); margin-bottom: 20px; }
         .tab-btn {
-            padding: 12px 20px;
+            padding: 12px 18px;
             font-size: 14px;
             font-weight: 700;
             color: var(--text-muted);
@@ -95,366 +95,126 @@
             border: none;
             border-bottom: 3px solid transparent;
             cursor: pointer;
-            transition: all 0.2s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: -2px;
+            margin-bottom: -1px;
         }
+        .tab-btn:hover { color: var(--primary); }
+        .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
 
-        .tab-btn:hover {
-            color: var(--primary-light);
-        }
+        /* SUMMARY CARDS */
+        .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 16px; margin-bottom: 20px; }
+        .summary-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 16px 18px; box-shadow: var(--shadow-sm); }
+        .summary-card .label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 600; order: 2; margin-top: 4px; }
+        .summary-card .value { font-size: 26px; font-weight: 800; color: var(--primary); line-height: 1.1; }
+        .summary-card { display: flex; flex-direction: column; }
 
-        .tab-btn.active {
-            color: var(--primary);
-            border-bottom-color: var(--primary);
-        }
-
-        /* Summary Cards Grid */
-        .summary-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-
-        .summary-card {
-            background: #f8fafc;
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 16px;
-            text-align: center;
-        }
-
-        .summary-card .label {
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            letter-spacing: 0.5px;
-        }
-
-        .summary-card .value {
-            font-size: 24px;
-            font-weight: 800;
-            color: var(--primary);
-            margin-top: 4px;
-        }
-
-        /* Controls / Search & Actions */
+        /* CONTROLS */
         .controls-bar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;
+            background: var(--card-bg); border: 1px solid var(--border-color); border-left: 5px solid var(--primary);
+            border-radius: var(--radius-md); padding: 16px 20px; margin-bottom: 20px; box-shadow: var(--shadow-sm);
         }
-
-        .search-filter-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            flex: 1;
-            min-width: 280px;
+        .search-filter-group { display: flex; flex-wrap: wrap; gap: 12px; flex: 1; min-width: 260px; }
+        .search-input { flex: 1; min-width: 220px; }
+        input[type=text], input[type=number], input[type=date], select, textarea {
+            font: inherit; font-size: 14px; padding: 9px 12px; border: 1px solid var(--space-blue-border);
+            border-radius: var(--radius-sm); background: #fff; color: var(--text-dark);
         }
+        .search-filter-group input, .search-filter-group select { min-width: 160px; }
+        input:focus, select:focus, textarea:focus { outline: 2px solid var(--primary-light); outline-offset: 1px; }
+        input[readonly] { background: var(--space-blue-light); color: var(--primary); font-weight: 700; }
 
-        input, select, textarea {
-            padding: 10px 14px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 14px;
-            background-color: #f8fafc;
-            color: var(--text-dark);
-            outline: none;
-            transition: all 0.2s ease;
-        }
-
-        input:focus, select:focus, textarea:focus {
-            background-color: #ffffff;
-            border-color: var(--primary-light);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-        }
-
-        .search-input {
-            flex: 1;
-            min-width: 180px;
-        }
-
+        /* BUTTONS */
         .btn {
-            border: none;
-            border-radius: 8px;
-            padding: 10px 18px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
+            display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+            border: none; padding: 10px 18px; border-radius: var(--radius-sm); cursor: pointer;
+            font-size: 13px; font-weight: 700; transition: background-color 0.15s ease, transform 0.1s ease;
         }
+        .btn:active { transform: scale(0.98); }
+        .btn-primary { background: var(--primary); color: #fff; }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-secondary { background: var(--space-blue-light); color: var(--primary); border: 1px solid var(--space-blue-border); }
+        .btn-secondary:hover { background: var(--space-blue-border); }
+        .btn-danger { background: var(--error-color); color: #fff; }
+        .btn-danger:hover { background: #B91C1C; }
+        .btn:disabled { opacity: 0.55; cursor: not-allowed; }
+        .btn-sm { padding: 5px 10px; font-size: 12px; }
 
-        .btn-primary {
-            background: var(--primary);
-            color: #ffffff;
-            box-shadow: 0 4px 12px rgba(29, 41, 81, 0.2);
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-hover);
-            transform: translateY(-1px);
-        }
-
-        .btn-secondary {
-            background: #e2e8f0;
-            color: #334155;
-        }
-
-        .btn-secondary:hover {
-            background: #cbd5e1;
-        }
-
-        .btn-danger {
-            background: var(--error-color);
-            color: #ffffff;
-        }
-
-        .btn-danger:hover {
-            background: #b91c1c;
-        }
-
-        .btn:disabled {
-            background: #94a3b8;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        /* Table & Data Container */
+        /* TABLE */
         .table-container {
-            width: 100%;
-            overflow-x: auto;
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
+            background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm); overflow-x: auto; position: relative;
         }
+        .table-container::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--primary); opacity: 0.85; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 4px; }
+        th { text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); padding: 12px 14px; border-bottom: 2px solid var(--space-blue-border); white-space: nowrap; }
+        td { padding: 12px 14px; border-bottom: 1px solid #F1F5F9; vertical-align: top; }
+        tbody tr:hover td { background: #F8FAFC; }
+        td .btn { margin: 2px 2px 2px 0; }
+        .empty-cell { text-align: center; padding: 24px !important; color: var(--text-muted); }
+        .muted { color: var(--text-muted); }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-            font-size: 14px;
-        }
+        /* BADGES */
+        .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; }
+        .badge-neutral { background: var(--space-blue-light); color: var(--primary); }
+        .badge-good, .badge-valid { background: var(--success-bg); color: var(--success-color); }
+        .badge-fair, .badge-expiring { background: var(--warning-bg); color: var(--warning-color); }
+        .badge-damaged, .badge-expired, .badge-low, .badge-unusable, .badge-missing { background: var(--error-bg); color: var(--error-color); }
 
-        th {
-            background: #f1f5f9;
-            padding: 12px 16px;
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            color: #475569;
-            border-bottom: 1px solid var(--border-color);
-        }
+        /* MODALS */
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.55); align-items: center; justify-content: center; z-index: 200; padding: 20px; }
+        .modal-overlay.active { display: flex; }
+        .modal { background: var(--card-bg); border-radius: var(--radius-lg); width: 100%; max-width: 640px; max-height: 90vh; overflow-y: auto; padding: 24px; box-shadow: var(--shadow-lg); border-top: 4px solid var(--primary); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+        .modal-header h2 { font-size: 18px; font-weight: 700; color: var(--primary); letter-spacing: -0.01em; }
+        .close-modal { background: none; border: none; font-size: 26px; line-height: 1; color: var(--text-muted); cursor: pointer; }
+        .close-modal:hover { color: var(--text-dark); }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .form-group { display: flex; flex-direction: column; gap: 4px; }
+        .form-group.full { grid-column: 1 / -1; }
+        .form-group label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; }
+        .modal-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+        .message { display: none; padding: 12px 16px; border-radius: var(--radius-md); font-size: 14px; margin-top: 14px; }
+        .message.error { display: block; background: var(--error-bg); color: var(--error-color); }
+        .message.success { display: block; background: var(--success-bg); color: var(--success-color); }
 
-        td {
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--border-color);
-            color: #334155;
-        }
+        /* HISTORY */
+        .history-list { max-height: 420px; overflow-y: auto; }
+        .history-item { padding: 12px 0; border-bottom: 1px solid #F1F5F9; font-size: 14px; }
+        .history-item .meta { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
 
-        tr:last-child td {
-            border-bottom: none;
-        }
-
-        tr:hover td {
-            background-color: #f8fafc;
-        }
-
-        /* Status & Condition Badges */
-        .badge {
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-
-        .badge-good, .badge-valid {
-            background: var(--success-bg);
-            color: var(--success-color);
-            border: 1px solid var(--success-border);
-        }
-
-        .badge-fair, .badge-expiring {
-            background: var(--warning-bg);
-            color: var(--warning-color);
-            border: 1px solid var(--warning-border);
-        }
-
-        .badge-damaged, .badge-expired, .badge-low, .badge-unusable, .badge-missing {
-            background: var(--error-bg);
-            color: var(--error-color);
-            border: 1px solid var(--error-border);
-        }
-
-        /* Modal Styles */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(15, 23, 42, 0.7);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.2s ease;
-        }
-
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .modal {
-            background: #ffffff;
-            width: 100%;
-            max-width: 650px;
-            max-height: 90vh;
-            overflow-y: auto;
-            border-radius: 16px;
-            padding: 28px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 12px;
-        }
-
-        .modal-header h2 {
-            font-size: 20px;
-            font-weight: 800;
-            color: var(--primary);
-        }
-
-        .close-modal {
-            background: none;
-            border: none;
-            font-size: 24px;
-            color: var(--text-muted);
-            cursor: pointer;
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 16px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-group.full {
-            grid-column: 1 / -1;
-        }
-
-        .form-group label {
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            color: #334155;
-            margin-bottom: 6px;
-        }
-
-        .modal-footer {
-            margin-top: 24px;
-            display: flex;
-            justify-content: flex-end;
-            gap: 12px;
-        }
-
-        /* Message Box */
-        .message {
-            display: none;
-            margin-top: 16px;
-            padding: 12px 16px;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 600;
-            text-align: center;
-        }
-
-        .message.error {
-            display: block;
-            background: var(--error-bg);
-            border: 1px solid var(--error-border);
-            color: var(--error-color);
-        }
-
-        .message.success {
-            display: block;
-            background: var(--success-bg);
-            border: 1px solid var(--success-border);
-            color: var(--success-color);
-        }
-
-        /* History List */
-        .history-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 12px;
-        }
-
-        .history-item {
-            background: #f8fafc;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 12px;
-            font-size: 13px;
-        }
-
-        .history-item .meta {
-            font-size: 11px;
-            color: var(--text-muted);
-            margin-bottom: 4px;
-        }
-
-        @media (max-width: 768px) {
-            body { padding: 16px; }
-            .main-card { padding: 20px 16px; }
+        @media (max-width: 640px) {
+            .header { padding: 16px 20px; }
+            .brand h1 { font-size: 18px; }
+            .container { padding: 20px 16px 40px; }
+            .dashboard-welcome h2 { font-size: 22px; }
             .form-grid { grid-template-columns: 1fr; }
-            .form-group.full { grid-column: auto; }
-            .controls-bar { flex-direction: column; align-items: stretch; }
-            .search-filter-group { flex-direction: column; }
+            .search-filter-group input, .search-filter-group select { min-width: 100%; }
         }
     </style>
 </head>
 <body>
 
-<div id="appCheckLoading" style="color: #ffffff; font-size: 16px; font-weight: 600; text-align: center;">
+<div id="appCheckLoading" class="loading-state">
     Initializing Application...
 </div>
 
-<div class="container" id="appContent" style="display: none;">
+<div id="appContent" style="display: none;">
 
-    <div class="app-header">
-        <div>
-            <h1>Sports & First Aid Stocktake</h1>
-            <p>Residence Inventory Management System</p>
+    <header class="header">
+        <div class="brand">
+            <h1>House Beyers Naude</h1>
+            <p>House of Masters • Stocktake</p>
         </div>
-    </div>
+        <a class="back-button" href="admin.html">&larr; Administration</a>
+    </header>
+
+    <main class="container">
+
+    <section class="dashboard-welcome">
+        <h2>Sports & First Aid Stocktake</h2>
+        <p>Residence inventory management: track equipment and supplies, their condition and quantities, and the history of every stocktake.</p>
+    </section>
 
     <div class="main-card">
         
@@ -538,7 +298,7 @@
                         </tr>
                     </thead>
                     <tbody id="sportsTableBody">
-                        <tr><td colspan="7" style="text-align: center; padding: 20px;">Loading sports inventory...</td></tr>
+                        <tr><td colspan="7" class="empty-cell">Loading sports inventory...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -610,13 +370,17 @@
                         </tr>
                     </thead>
                     <tbody id="firstAidTableBody">
-                        <tr><td colspan="9" style="text-align: center; padding: 20px;">Loading first aid inventory...</td></tr>
+                        <tr><td colspan="9" class="empty-cell">Loading first aid inventory...</td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
 
     </div>
+
+    </main>
+
+    <footer class="footer">House Beyers Naude • House of Masters</footer>
 </div>
 
 <!-- SPORTS ITEM MODAL (ADD / EDIT) -->
@@ -658,19 +422,19 @@
                 </div>
                 <div class="form-group">
                     <label>Good Quantity</label>
-                    <input type="number" id="sportsQtyGood" min="0" value="0" onchange="calculateSportsTotal()">
+                    <input type="number" id="sportsQtyGood" min="0" value="0">
                 </div>
                 <div class="form-group">
                     <label>Fair Quantity</label>
-                    <input type="number" id="sportsQtyFair" min="0" value="0" onchange="calculateSportsTotal()">
+                    <input type="number" id="sportsQtyFair" min="0" value="0">
                 </div>
                 <div class="form-group">
                     <label>Damaged Quantity</label>
-                    <input type="number" id="sportsQtyDamaged" min="0" value="0" onchange="calculateSportsTotal()">
+                    <input type="number" id="sportsQtyDamaged" min="0" value="0">
                 </div>
                 <div class="form-group">
                     <label>Missing Quantity</label>
-                    <input type="number" id="sportsQtyMissing" min="0" value="0" onchange="calculateSportsTotal()">
+                    <input type="number" id="sportsQtyMissing" min="0" value="0">
                 </div>
                 <div class="form-group full">
                     <label>Total Calculated Quantity</label>
@@ -917,6 +681,25 @@
         }
     }
 
+    // SHARED CALCULATIONS (each rule is written once and reused)
+    // Sports quantity breakdown + total (stored total wins, otherwise the sum of the four counts)
+    function sportsQty(item) {
+        const good = item.qtyGood || 0, fair = item.qtyFair || 0, damaged = item.qtyDamaged || 0, missing = item.qtyMissing || 0;
+        return { good, fair, damaged, missing, total: item.quantity || (good + fair + damaged + missing) };
+    }
+
+    // First aid stock state: low stock / expired / expiring within 30 days
+    function faState(item, now, soon) {
+        const isLow = !!(item.minQuantity && item.quantity <= item.minQuantity);
+        let isExp = false, isExpSoon = false;
+        if (item.expiryDate) {
+            const expDate = new Date(item.expiryDate);
+            if (expDate < now) isExp = true;
+            else if (expDate <= soon) isExpSoon = true;
+        }
+        return { isLow, isExp, isExpSoon };
+    }
+
     // RENDER SPORTS
     window.renderSportsTable = function() {
         const search = document.getElementById("sportsSearch").value.toLowerCase();
@@ -947,11 +730,7 @@
         let totAttention = 0;
 
         rawSportsData.forEach(item => {
-            const qGood = item.qtyGood || 0;
-            const qFair = item.qtyFair || 0;
-            const qDmg = item.qtyDamaged || 0;
-            const qMis = item.qtyMissing || 0;
-            const itemTotal = item.quantity || (qGood + qFair + qDmg + qMis);
+            const { good: qGood, fair: qFair, damaged: qDmg, missing: qMis, total: itemTotal } = sportsQty(item);
 
             totQty += itemTotal;
             totDamaged += qDmg;
@@ -968,7 +747,7 @@
 
         const tbody = document.getElementById("sportsTableBody");
         if (filtered.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 20px;">No sports equipment found.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="7" class="empty-cell">No sports equipment found.</td></tr>`;
             return;
         }
 
@@ -976,30 +755,26 @@
             const lastDate = item.lastStocktakeDate ? new Date(item.lastStocktakeDate).toLocaleDateString() : 'N/A';
             const admin = item.lastStocktakeAdmin || 'N/A';
 
-            const qGood = item.qtyGood || 0;
-            const qFair = item.qtyFair || 0;
-            const qDmg = item.qtyDamaged || 0;
-            const qMis = item.qtyMissing || 0;
-            const itemTotal = item.quantity || (qGood + qFair + qDmg + qMis);
+            const { good: qGood, fair: qFair, damaged: qDmg, missing: qMis, total: itemTotal } = sportsQty(item);
 
             return `
                 <tr>
                     <td><strong>${escapeHtml(item.name)}</strong></td>
-                    <td><span class="badge" style="background:#f1f5f9; color:#334155;">${escapeHtml(item.category || 'N/A')}</span></td>
+                    <td><span class="badge badge-neutral">${escapeHtml(item.category || 'N/A')}</span></td>
                     <td>${escapeHtml(item.sport || 'N/A')}</td>
                     <td>
                         <strong>${itemTotal}</strong> Total
-                        <br><small style="color:var(--text-muted)">Good: ${qGood} | Fair: ${qFair} | Damaged: ${qDmg} | Missing: ${qMis}</small>
+                        <br><small class="muted">Good: ${qGood} | Fair: ${qFair} | Damaged: ${qDmg} | Missing: ${qMis}</small>
                     </td>
                     <td>${escapeHtml(item.location || 'N/A')}</td>
-                    <td>${lastDate}<br><small style="color:var(--text-muted)">by ${escapeHtml(admin)}</small></td>
+                    <td>${lastDate}<br><small class="muted">by ${escapeHtml(admin)}</small></td>
                     <td>
                         ${isAdminUser ? `
-                            <button class="btn btn-secondary" style="padding:4px 8px; font-size:12px;" onclick="openEditSportsModal('${item.id}')">Edit</button>
-                            <button class="btn btn-secondary" style="padding:4px 8px; font-size:12px;" onclick="viewHistory('sportsStock', '${item.id}', '${escapeHtml(item.name)}')">History</button>
-                            <button class="btn btn-danger" style="padding:4px 8px; font-size:12px;" onclick="archiveItem('sportsStock', '${item.id}', '${escapeHtml(item.name)}')">Archive</button>
+                            <button class="btn btn-secondary btn-sm" onclick="openEditSportsModal('${item.id}')">Edit</button>
+                            <button class="btn btn-secondary btn-sm" onclick="viewHistory('sportsStock', '${item.id}', '${escapeHtml(item.name)}')">History</button>
+                            <button class="btn btn-danger btn-sm" onclick="archiveItem('sportsStock', '${item.id}', '${escapeHtml(item.name)}')">Archive</button>
                         ` : `
-                            <button class="btn btn-secondary" style="padding:4px 8px; font-size:12px;" onclick="viewHistory('sportsStock', '${item.id}', '${escapeHtml(item.name)}')">History</button>
+                            <button class="btn btn-secondary btn-sm" onclick="viewHistory('sportsStock', '${item.id}', '${escapeHtml(item.name)}')">History</button>
                         `}
                     </td>
                 </tr>
@@ -1022,15 +797,7 @@
                                   (item.location || "").toLowerCase().includes(search);
             const matchesCat = !categoryFilter || item.category === categoryFilter;
 
-            let isLow = (item.minQuantity && item.quantity <= item.minQuantity);
-            let isExp = false;
-            let isExpSoon = false;
-
-            if (item.expiryDate) {
-                const expDate = new Date(item.expiryDate);
-                if (expDate < now) isExp = true;
-                else if (expDate <= thirtyDaysAhead) isExpSoon = true;
-            }
+            const { isLow, isExp, isExpSoon } = faState(item, now, thirtyDaysAhead);
 
             let matchesStat = true;
             if (statusFilter === "LOW_STOCK") matchesStat = isLow;
@@ -1050,13 +817,10 @@
         rawFirstAidData.forEach(item => {
             totQty += (item.quantity || 0);
 
-            if (item.minQuantity && item.quantity <= item.minQuantity) totLow++;
-
-            if (item.expiryDate) {
-                const expDate = new Date(item.expiryDate);
-                if (expDate < now) totExpired++;
-                else if (expDate <= thirtyDaysAhead) totExpiring++;
-            }
+            const st = faState(item, now, thirtyDaysAhead);
+            if (st.isLow) totLow++;
+            if (st.isExp) totExpired++;
+            if (st.isExpSoon) totExpiring++;
         });
 
         document.getElementById("faSummaryTotalItems").textContent = totItems;
@@ -1067,7 +831,7 @@
 
         const tbody = document.getElementById("firstAidTableBody");
         if (filtered.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; padding: 20px;">No first aid supplies found.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="9" class="empty-cell">No first aid supplies found.</td></tr>`;
             return;
         }
 
@@ -1075,38 +839,32 @@
             const lastDate = item.lastStocktakeDate ? new Date(item.lastStocktakeDate).toLocaleDateString() : 'N/A';
             const admin = item.lastStocktakeAdmin || 'N/A';
 
-            let statusBadge = '<span class="badge badge-good">Valid</span>';
-            if (item.minQuantity && item.quantity <= item.minQuantity) {
-                statusBadge = '<span class="badge badge-low">Low Stock</span>';
-            }
+            const st = faState(item, now, thirtyDaysAhead);
+            let statusBadge = st.isLow
+                ? '<span class="badge badge-low">Low Stock</span>'
+                : '<span class="badge badge-good">Valid</span>';
+            if (st.isExp) statusBadge += ' <span class="badge badge-expired">Expired</span>';
+            else if (st.isExpSoon) statusBadge += ' <span class="badge badge-expiring">Expiring Soon</span>';
 
-            let expDisplay = item.expiryDate ? new Date(item.expiryDate).toLocaleDateString() : 'N/A';
-            if (item.expiryDate) {
-                const expDate = new Date(item.expiryDate);
-                if (expDate < now) {
-                    statusBadge += ' <span class="badge badge-expired">Expired</span>';
-                } else if (expDate <= thirtyDaysAhead) {
-                    statusBadge += ' <span class="badge badge-expiring">Expiring Soon</span>';
-                }
-            }
+            const expDisplay = item.expiryDate ? new Date(item.expiryDate).toLocaleDateString() : 'N/A';
 
             return `
                 <tr>
                     <td><strong>${escapeHtml(item.name)}</strong></td>
-                    <td><span class="badge" style="background:#f1f5f9; color:#334155;">${escapeHtml(item.category || 'N/A')}</span></td>
+                    <td><span class="badge badge-neutral">${escapeHtml(item.category || 'N/A')}</span></td>
                     <td><strong>${item.quantity || 0}</strong> ${escapeHtml(item.unit || '')}</td>
                     <td>${item.minQuantity || 'N/A'}</td>
                     <td>${expDisplay}</td>
                     <td>${escapeHtml(item.location || 'N/A')}</td>
                     <td>${statusBadge}</td>
-                    <td>${lastDate}<br><small style="color:var(--text-muted)">by ${escapeHtml(admin)}</small></td>
+                    <td>${lastDate}<br><small class="muted">by ${escapeHtml(admin)}</small></td>
                     <td>
                         ${isAdminUser ? `
-                            <button class="btn btn-secondary" style="padding:4px 8px; font-size:12px;" onclick="openEditFirstAidModal('${item.id}')">Edit</button>
-                            <button class="btn btn-secondary" style="padding:4px 8px; font-size:12px;" onclick="viewHistory('firstAidStock', '${item.id}', '${escapeHtml(item.name)}')">History</button>
-                            <button class="btn btn-danger" style="padding:4px 8px; font-size:12px;" onclick="archiveItem('firstAidStock', '${item.id}', '${escapeHtml(item.name)}')">Archive</button>
+                            <button class="btn btn-secondary btn-sm" onclick="openEditFirstAidModal('${item.id}')">Edit</button>
+                            <button class="btn btn-secondary btn-sm" onclick="viewHistory('firstAidStock', '${item.id}', '${escapeHtml(item.name)}')">History</button>
+                            <button class="btn btn-danger btn-sm" onclick="archiveItem('firstAidStock', '${item.id}', '${escapeHtml(item.name)}')">Archive</button>
                         ` : `
-                            <button class="btn btn-secondary" style="padding:4px 8px; font-size:12px;" onclick="viewHistory('firstAidStock', '${item.id}', '${escapeHtml(item.name)}')">History</button>
+                            <button class="btn btn-secondary btn-sm" onclick="viewHistory('firstAidStock', '${item.id}', '${escapeHtml(item.name)}')">History</button>
                         `}
                     </td>
                 </tr>
@@ -1115,13 +873,19 @@
     };
 
     // SPORTS MODAL ACTIONS
-    window.calculateSportsTotal = function() {
-        const qGood = parseInt(document.getElementById("sportsQtyGood").value) || 0;
-        const qFair = parseInt(document.getElementById("sportsQtyFair").value) || 0;
-        const qDmg = parseInt(document.getElementById("sportsQtyDamaged").value) || 0;
-        const qMis = parseInt(document.getElementById("sportsQtyMissing").value) || 0;
-        document.getElementById("sportsQtyTotal").value = qGood + qFair + qDmg + qMis;
-    };
+    function readSportsQuantities() {
+        const n = id => parseInt(document.getElementById(id).value) || 0;
+        const q = { qtyGood: n("sportsQtyGood"), qtyFair: n("sportsQtyFair"), qtyDamaged: n("sportsQtyDamaged"), qtyMissing: n("sportsQtyMissing") };
+        q.total = q.qtyGood + q.qtyFair + q.qtyDamaged + q.qtyMissing;
+        return q;
+    }
+
+    function calculateSportsTotal() {
+        document.getElementById("sportsQtyTotal").value = readSportsQuantities().total;
+    }
+
+    ["sportsQtyGood", "sportsQtyFair", "sportsQtyDamaged", "sportsQtyMissing"].forEach(id =>
+        document.getElementById(id).addEventListener("input", calculateSportsTotal));
 
     window.openAddSportsModal = function() {
         if (!isAdminUser) return;
@@ -1162,11 +926,7 @@
         const name = document.getElementById("sportsName").value.trim();
         const category = document.getElementById("sportsCategory").value;
         const sport = document.getElementById("sportsSport").value.trim();
-        const qtyGood = parseInt(document.getElementById("sportsQtyGood").value) || 0;
-        const qtyFair = parseInt(document.getElementById("sportsQtyFair").value) || 0;
-        const qtyDamaged = parseInt(document.getElementById("sportsQtyDamaged").value) || 0;
-        const qtyMissing = parseInt(document.getElementById("sportsQtyMissing").value) || 0;
-        const total = qtyGood + qtyFair + qtyDamaged + qtyMissing;
+        const { qtyGood, qtyFair, qtyDamaged, qtyMissing, total } = readSportsQuantities();
         const location = document.getElementById("sportsLocation").value.trim();
         const notes = document.getElementById("sportsNotes").value.trim();
 
