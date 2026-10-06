@@ -106,6 +106,7 @@
         .summary-card .label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 600; order: 2; margin-top: 4px; }
         .summary-card .value { font-size: 26px; font-weight: 800; color: var(--primary); line-height: 1.1; }
         .summary-card { display: flex; flex-direction: column; }
+        .summary-card .sub { order: 3; font-size: 12px; color: var(--text-muted); margin-top: 2px; }
 
         /* CONTROLS */
         .controls-bar {
@@ -229,12 +230,9 @@
             <!-- Summary Grid -->
             <div class="summary-grid">
                 <div class="summary-card">
-                    <div class="label">Total Items</div>
+                    <div class="label">Items in Stock</div>
                     <div class="value" id="sportsSummaryTotalItems">0</div>
-                </div>
-                <div class="summary-card">
-                    <div class="label">Total Quantity</div>
-                    <div class="value" id="sportsSummaryTotalQty">0</div>
+                    <div class="sub"><span id="sportsSummaryTotalQty">0</span> units in total</div>
                 </div>
                 <div class="summary-card">
                     <div class="label">Damaged</div>
@@ -309,12 +307,9 @@
             <!-- Summary Grid -->
             <div class="summary-grid">
                 <div class="summary-card">
-                    <div class="label">Total Items</div>
+                    <div class="label">Items in Stock</div>
                     <div class="value" id="faSummaryTotalItems">0</div>
-                </div>
-                <div class="summary-card">
-                    <div class="label">Total Quantity</div>
-                    <div class="value" id="faSummaryTotalQty">0</div>
+                    <div class="sub"><span id="faSummaryTotalQty">0</span> units in total</div>
                 </div>
                 <div class="summary-card">
                     <div class="label">Low Stock</div>
@@ -606,7 +601,10 @@
     async function verifyAdminAuthorization(uid) {
         try {
             const adminDoc = await getDoc(doc(db, "admins", uid));
-            if (adminDoc.exists()) {
+            // Same rule as Firestore: an ACTIVE admin with a stocktake role (Prime, Vice Prime, RC Sports, RC House)
+            const adminData = adminDoc.exists() ? adminDoc.data() : null;
+            const adminRoles = adminData ? (Array.isArray(adminData.role) ? adminData.role : [adminData.role]).map(r => String(r).toUpperCase()) : [];
+            if (adminData && adminData.status === "ACTIVE" && ["PRIME", "VICE_PRIME", "RC_SPORTS", "RC_HOUSE"].some(r => adminRoles.includes(r))) {
                 isAdminUser = true;
                 const userDoc = await getDoc(doc(db, "users", uid));
                 if (userDoc.exists()) {
